@@ -1,0 +1,14 @@
+AccessRights:
+  col: A
+  vocabulary_list:
+    NON_PUBLIC: http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC
+    PUBLIC: http://publications.europa.eu/resource/authority/access-right/PUBLIC
+    RESTRICTED: http://publications.europa.eu/resource/authority/access-right/RESTRICTED
+  en:
+    RESTRICTED: Restricted
+    NON_PUBLIC: Non public
+    PUBLIC: Public
+  fr:
+    RESTRICTED: Restreint
+    NON_PUBLIC: Non public
+    PUBLIC: Public

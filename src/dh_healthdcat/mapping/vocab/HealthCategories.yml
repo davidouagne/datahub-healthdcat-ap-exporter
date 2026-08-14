@@ -1,0 +1,79 @@
+HealthCategories:
+  col: A
+  vocabulary_list:
+    EHRS: http://13.81.34.152:1101/resource/authority/healthcategories/EHRS
+    DIOH: http://13.81.34.152:1101/resource/authority/healthcategories/DIOH
+    NRPE: http://13.81.34.152:1101/resource/authority/healthcategories/NRPE
+    RPDG: http://13.81.34.152:1101/resource/authority/healthcategories/RPDG
+    HRAD: http://13.81.34.152:1101/resource/authority/healthcategories/HRAD
+    HGPD: http://13.81.34.152:1101/resource/authority/healthcategories/HGPD
+    HPML: http://13.81.34.152:1101/resource/authority/healthcategories/HPML
+    PGEH: http://13.81.34.152:1101/resource/authority/healthcategories/PGEH
+    WELA: http://13.81.34.152:1101/resource/authority/healthcategories/WELA
+    IDHP: http://13.81.34.152:1101/resource/authority/healthcategories/IDHP
+    PHDR: http://13.81.34.152:1101/resource/authority/healthcategories/PHDR
+    MRMR: http://13.81.34.152:1101/resource/authority/healthcategories/MRMR
+    EHCT: http://13.81.34.152:1101/resource/authority/healthcategories/EHCT
+    EMRD: http://13.81.34.152:1101/resource/authority/healthcategories/EMRD
+    RMMD: http://13.81.34.152:1101/resource/authority/healthcategories/RMMD
+    RQSH: http://13.81.34.152:1101/resource/authority/healthcategories/RQSH
+    EINS: http://13.81.34.152:1101/resource/authority/healthcategories/EINS
+  en:
+    EHRS: Electronic Health Data from EHRs
+    DIOH: Data on factors impacting on health, including socio-economic, environmental
+      and behavioural determinants of health
+    NRPE: Aggregated data on healthcare needs, resources allocated to healthcare,
+      the provision of and access to healthcare, healthcare expenditure and financing
+    RPDG: Data on pathogens that impact human health
+    HRAD: Healthcare-related administrative data, including on dispensations, reimbursement
+      claims and reimbursements
+    HGPD: Human genetic, epigenomic and genomic data
+    HPML: Other human molecular data such as proteomic, transcriptomic, metabolomic,
+      lipidomic and other omic data
+    PGEH: Personal electronic health data automatically generated through medical
+      devices
+    WELA: Data from wellness applications
+    IDHP: Data on professional status, and on the specialisation and institution of
+      health professionals involved in the treatment of a natural person
+    PHDR: Data from population-based health data registries such as public health
+      registries
+    MRMR: Data from medical registries and mortality registries
+    EHCT: Data from clinical trials, clinical studies, clinical investigations and
+      performance studies subject to Regulation (EU) No 536/2014, Regulation (EU)
+      2024/1938 of the European Parliament and of the Council34, Regulation (EU)
+      2017/745 and Regulation (EU) 2017/746
+    EMRD: Other health data from medical devices
+    RMMD: Data from registries for medicinal products and medical devices
+    RQSH: Data from research cohorts, questionnaires and surveys related to health,
+      after the first publication of the related results
+    EINS: Health data from biobanks and associated databases
+  fr:
+    EHRS: Dossiers de santé électroniques
+    DIOH: Données sur les facteurs influant sur la santé, y compris les déterminants
+      socio-économiques, environnementaux et comportementaux de la santé
+    NRPE: Données agrégées sur les besoins en soins de santé, les ressources allouées
+      aux soins de santé, la prestation et l'accès aux soins de santé, les dépenses
+      de santé et le financement de la santé
+    RPDG: Données sur les agents pathogènes, ayant un impact sur la santé humaine
+    HRAD: Données administratives liées aux soins de santé, y compris les données
+      de dispensation, de réclamations et de remboursements
+    HGPD: Données génétiques, épigénomiques et génomiques humaines
+    HPML: Autres données moléculaires humaines telles que les données protéomiques,
+      transcriptomiques, métabolomiques, lipidomiques et autres données omiques
+    PGEH: Données de santé électroniques personnelles générées automatiquement via
+      des dispositifs médicaux
+    WELA: Données provenant d'applications de bien-être
+    IDHP: Données sur le statut professionnel, la spécialisation et l'établissement
+      des professionnels de santé impliqués dans le traitement d'une personne physique
+    PHDR: Registres de données de santé basés sur la population (registres de santé
+      publique)
+    MRMR: Données provenant des registres médicaux et des registres de mortalité
+    EHCT: Données provenant d'essais cliniques, d'études cliniques et d'investigations
+      cliniques soumises respectivement au Règlement (UE) 536/2014, au Règlement
+      [SOHO], au Règlement (UE) 2017/745 et au Règlement (UE) 2017/746
+    EMRD: Autres données de santé provenant de dispositifs médicaux
+    RMMD: Données provenant des registres des produits médicinaux et des dispositifs
+      médicaux
+    RQSH: Données provenant de cohortes de recherche, de questionnaires et d'enquêtes
+      liés à la santé, après la première publication des résultats
+    EINS: Données de santé provenant de biobanques et de bases de données associées

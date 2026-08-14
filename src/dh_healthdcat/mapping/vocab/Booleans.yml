@@ -1,0 +1,11 @@
+Booleans:
+  col: A
+  vocabulary_list:
+    'true': 'true'
+    'false': 'false'
+  en:
+    'true': 'Yes'
+    'false': 'No'
+  fr:
+    'true': Oui
+    'false': Non

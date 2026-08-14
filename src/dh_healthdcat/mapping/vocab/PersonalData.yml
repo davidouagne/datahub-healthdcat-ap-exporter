@@ -1,0 +1,226 @@
+PersonalData:
+  col: A
+  vocabulary_list:
+    Domicile: https://w3id.org/dpv/dpv-pd#Domicile
+    BirthPlace: https://w3id.org/dpv/dpv-pd#BirthPlace
+    PhysicalAddress: https://w3id.org/dpv/dpv-pd#PhysicalAddress
+    EmailAddress: https://w3id.org/dpv/dpv-pd#EmailAddress
+    IPAddress: https://w3id.org/dpv/dpv-pd#IPAddress
+    BirthDate: https://w3id.org/dpv/dpv-pd#BirthDate
+    OfficialID: https://w3id.org/dpv/dpv-pd#OfficialID
+    Name: https://w3id.org/dpv/dpv-pd#Name
+    TelephoneNumber: https://w3id.org/dpv/dpv-pd#TelephoneNumber
+    Gender: https://w3id.org/dpv/dpv-pd#Gender
+    AccountIdentifier: https://w3id.org/dpv/dpv-pd#AccountIdentifier
+    Identifier: https://w3id.org/dpv/dpv-pd#Identifier
+    Age: https://w3id.org/dpv/dpv-pd#Age
+    MedicalHealth: https://w3id.org/dpv/dpv-pd#MedicalHealth
+    TradeUnionMembership: https://w3id.org/dpv/dpv-pd#TradeUnionMembership
+    Authenticating: https://w3id.org/dpv/dpv-pd#Authenticating
+    PhysicalCharacteristic: https://w3id.org/dpv/dpv-pd#PhysicalCharacteristic
+    Citizenship: https://w3id.org/dpv/dpv-pd#Citizenship
+    DNACode: https://w3id.org/dpv/dpv-pd#DNACode
+    PINCode: https://w3id.org/dpv/dpv-pd#PINCode
+    BankAccount: https://w3id.org/dpv/dpv-pd#BankAccount
+    CriminalConviction: https://w3id.org/dpv/dpv-pd#CriminalConviction
+    KnowledgeBelief: https://w3id.org/dpv/dpv-pd#KnowledgeBelief
+    EmailContent: https://w3id.org/dpv/dpv-pd#EmailContent
+    GPSCoordinate: https://w3id.org/dpv/dpv-pd#GPSCoordinate
+    PhilosophicalBelief: https://w3id.org/dpv/dpv-pd#PhilosophicalBelief
+    ReligiousBelief: https://w3id.org/dpv/dpv-pd#ReligiousBelief
+    Demographic: https://w3id.org/dpv/dpv-pd#Demographic
+    PersonalDocuments: https://w3id.org/dpv/dpv-pd#PersonalDocuments
+    Behavioral: https://w3id.org/dpv/dpv-pd#Behavioral
+    Genetic: https://w3id.org/dpv/dpv-pd#Genetic
+    HealthRecord: https://w3id.org/dpv/dpv-pd#HealthRecord
+    Education: https://w3id.org/dpv/dpv-pd#Education
+    Emotion: https://w3id.org/dpv/dpv-pd#Emotion
+    Job: https://w3id.org/dpv/dpv-pd#Job
+    DigitalFingerprint: https://w3id.org/dpv/dpv-pd#DigitalFingerprint
+    MaritalStatus: https://w3id.org/dpv/dpv-pd#MaritalStatus
+    Ethnicity: https://w3id.org/dpv/dpv-pd#Ethnicity
+    Family: https://w3id.org/dpv/dpv-pd#Family
+    Geographic: https://w3id.org/dpv/dpv-pd#Geographic
+    BloodType: https://w3id.org/dpv/dpv-pd#BloodType
+    Disability: https://w3id.org/dpv/dpv-pd#Disability
+    AuthenticationHistory: https://w3id.org/dpv/dpv-pd#AuthenticationHistory
+    EmploymentHistory: https://w3id.org/dpv/dpv-pd#EmploymentHistory
+    HealthHistory: https://w3id.org/dpv/dpv-pd#HealthHistory
+    Password: https://w3id.org/dpv/dpv-pd#Password
+    Nationality: https://w3id.org/dpv/dpv-pd#Nationality
+    Username: https://w3id.org/dpv/dpv-pd#Username
+    VehicalLicenseNumber: https://w3id.org/dpv/dpv-pd#VehicalLicenseNumber
+    Opinion: https://w3id.org/dpv/dpv-pd#Opinion
+    PoliticalOpinion: https://w3id.org/dpv/dpv-pd#PoliticalOpinion
+    Sexual: https://w3id.org/dpv/dpv-pd#Sexual
+    Passport: https://w3id.org/dpv/dpv-pd#Passport
+    Country: https://w3id.org/dpv/dpv-pd#Country
+    PerformanceAtWork: https://w3id.org/dpv/dpv-pd#PerformanceAtWork
+    Picture: https://w3id.org/dpv/dpv-pd#Picture
+    SecretText: https://w3id.org/dpv/dpv-pd#SecretText
+    Piercing: https://w3id.org/dpv/dpv-pd#Piercing
+    Weight: https://w3id.org/dpv/dpv-pd#Weight
+    PrivacyPreference: https://w3id.org/dpv/dpv-pd#PrivacyPreference
+    Prescription: https://w3id.org/dpv/dpv-pd#Prescription
+    Religion: https://w3id.org/dpv/dpv-pd#Religion
+    Salary: https://w3id.org/dpv/dpv-pd#Salary
+    Health: https://w3id.org/dpv/dpv-pd#Health
+    FamilyStructure: https://w3id.org/dpv/dpv-pd#FamilyStructure
+    Height: https://w3id.org/dpv/dpv-pd#Height
+    Tattoo: https://w3id.org/dpv/dpv-pd#Tattoo
+    SkinTone: https://w3id.org/dpv/dpv-pd#SkinTone
+    PhysicalTrait: https://w3id.org/dpv/dpv-pd#PhysicalTrait
+    IncomeBracket: https://w3id.org/dpv/dpv-pd#IncomeBracket
+    Identifying: https://w3id.org/dpv/pd#Identifying
+    Death: https://w3id.org/dpv/pd#Death
+    Other: https://w3id.org/dpv/dpv-pd#Other
+
+  en:
+    Domicile: Domicile
+    BirthPlace: Birth Place
+    PhysicalAddress: Physical Address
+    EmailAddress: Email Address
+    IPAddress: IP Address
+    BirthDate: Birth Date
+    OfficialID: Official ID
+    Name: Name
+    TelephoneNumber: Telephone Number
+    Gender: Gender
+    AccountIdentifier: Account Identifier
+    Identifier: Identifier
+    Age: Age
+    MedicalHealth: Medical Health
+    TradeUnionMembership: Trade Union Membership
+    Authenticating: Authenticating
+    PhysicalCharacteristic: Physical Characteristic
+    Citizenship: Citizenship
+    DNACode: DNA Code
+    PINCode: PIN Code
+    BankAccount: Bank Account
+    CriminalConviction: Criminal Conviction
+    KnowledgeBelief: Knowledge Belief
+    EmailContent: Email Content
+    GPSCoordinate: GPS Coordinate
+    PhilosophicalBelief: Philosophical Belief
+    ReligiousBelief: Religious Belief
+    Demographic: Demographic
+    PersonalDocuments: Personal Documents
+    Behavioral: Behavioral
+    Genetic: Genetic
+    HealthRecord: Health Record
+    Education: Education
+    Emotion: Emotion
+    Job: Job
+    DigitalFingerprint: Digital Fingerprint
+    MaritalStatus: Marital Status
+    Ethnicity: Ethnicity
+    Family: Family
+    Geographic: Geographic
+    BloodType: Blood Type
+    Disability: Disability
+    AuthenticationHistory: Authentication History
+    EmploymentHistory: Employment History
+    HealthHistory: Health History
+    Password: Password
+    Nationality: Nationality
+    Username: Username
+    VehicalLicenseNumber: Vehicle License Number
+    Opinion: Opinion
+    PoliticalOpinion: Political Opinion
+    Sexual: Sexual
+    Passport: Passport
+    Country: Country
+    PerformanceAtWork: Performance At Work
+    Picture: Picture
+    SecretText: Secret Text
+    Piercing: Piercing
+    Weight: Weight
+    PrivacyPreference: Privacy Preference
+    Prescription: Prescription
+    Religion: Religion
+    Salary: Salary
+    Health: Health
+    FamilyStructure: Family Structure
+    Height: Height
+    Tattoo: Tattoo
+    SkinTone: Skin Tone
+    PhysicalTrait: Physical Trait
+    IncomeBracket: Income Bracket
+    Identifying: Initials
+    Death: Death date
+    Other: Other
+
+  fr:
+    Domicile: Adresse de décès
+    BirthPlace: Adresse de naissance
+    PhysicalAddress: Adresse de résidence
+    EmailAddress: Adresse email
+    IPAddress: Adresse IP
+    BirthDate: Date de naissance
+    OfficialID: NIR / Numéro de sécurité sociale
+    Name: Nom, prénom
+    TelephoneNumber: Numéro de téléphone / fax
+    Gender: Sexe
+    AccountIdentifier: URL (site personnel, profil utilisateur, ...)
+    Identifier: Tout autre ID relié à un individu
+    Age: Âge
+    MedicalHealth: Antécédents médicaux (familiaux et individuels)
+    TradeUnionMembership: Appartenance syndicale
+    Authenticating: "Authentification (ex. : identifiants de connexion)"
+    PhysicalCharacteristic: Caractéristiques physiques
+    Citizenship: Citoyenneté
+    DNACode: Code ADN
+    PINCode: Code PIN
+    BankAccount: Compte bancaire
+    CriminalConviction: Condamnation criminelle
+    KnowledgeBelief: Connaissances et croyances
+    EmailContent: "Contenu d'email"
+    GPSCoordinate: Coordonnées GPS
+    PhilosophicalBelief: Croyance philosophique
+    ReligiousBelief: Croyance religieuse
+    Demographic: Données démographiques
+    PersonalDocuments: "Documents personnels (ex. carte d’identité, permis, etc.)"
+    Behavioral: Données comportementales
+    Genetic: Données génétiques
+    HealthRecord: Dossier médical
+    Education: Éducation
+    Emotion: Émotions
+    Job: Emploi
+    DigitalFingerprint: Empreinte numérique
+    MaritalStatus: État civil
+    Ethnicity: Ethnicité
+    Family: Famille
+    Geographic: Données géographiques
+    BloodType: Groupe sanguin
+    Disability: Handicap
+    AuthenticationHistory: "Historique d'authentification"
+    EmploymentHistory: "Historique d'emploi"
+    HealthHistory: Historique médical
+    Password: Mot de passe
+    Nationality: Nationalité
+    Username: "Nom d'utilisateur"
+    VehicalLicenseNumber: Numéro de permis de conduire
+    Opinion: Opinion
+    PoliticalOpinion: Opinion politique
+    Sexual: Orientation sexuelle
+    Passport: Passeport
+    Country: Pays (si lié à une personne identifiable)
+    PerformanceAtWork: Performance professionnelle
+    Picture: Photo
+    SecretText: Phrase secrète
+    Piercing: Piercing
+    Weight: Poids
+    PrivacyPreference: Préférences en matière de confidentialité
+    Prescription: Prescription
+    Religion: Religion
+    Salary: Salaire
+    Health: Santé (inclut mentale et physique)
+    FamilyStructure: Structure familiale
+    Height: Taille
+    Tattoo: Tatouage
+    SkinTone: Teint de peau
+    PhysicalTrait: Traits physiques
+    IncomeBracket: Tranche de revenus
+    Death: Date de décès
+    Identifying: Initiales
+    Other: Autre

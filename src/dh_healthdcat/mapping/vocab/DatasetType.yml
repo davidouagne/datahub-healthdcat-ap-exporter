@@ -1,0 +1,83 @@
+DatasetType:
+  col: A
+  vocabulary_list:
+    PERSONAL_DATA: http://publications.europa.eu/resource/authority/dataset-type/PERSONAL_DATA
+    APROF: http://publications.europa.eu/resource/authority/dataset-type/APROF
+    ATTO_LEX: http://publications.europa.eu/resource/authority/dataset-type/ATTO_LEX
+    ATTO_PUB: http://publications.europa.eu/resource/authority/dataset-type/ATTO_PUB
+    CODE_LIST: http://publications.europa.eu/resource/authority/dataset-type/CODE_LIST
+    CORE_COMP: http://publications.europa.eu/resource/authority/dataset-type/CORE_COMP
+    DIRECTORY: http://publications.europa.eu/resource/authority/dataset-type/DIRECTORY
+    DOMAIN_MODEL: http://publications.europa.eu/resource/authority/dataset-type/DOMAIN_MODEL
+    DSCRP_SERV: http://publications.europa.eu/resource/authority/dataset-type/DSCRP_SERV
+    GEOSPATIAL: http://publications.europa.eu/resource/authority/dataset-type/GEOSPATIAL
+    GLOSSARY: http://publications.europa.eu/resource/authority/dataset-type/GLOSSARY
+    HVD: http://publications.europa.eu/resource/authority/dataset-type/HVD
+    IEPD: http://publications.europa.eu/resource/authority/dataset-type/IEPD
+    MAPPING: http://publications.europa.eu/resource/authority/dataset-type/MAPPING
+    NAL: http://publications.europa.eu/resource/authority/dataset-type/NAL
+    ONTOLOGY: http://publications.europa.eu/resource/authority/dataset-type/ONTOLOGY
+    RELEASE: http://publications.europa.eu/resource/authority/dataset-type/RELEASE
+    SCHEMA: http://publications.europa.eu/resource/authority/dataset-type/SCHEMA
+    STATISTICAL: http://publications.europa.eu/resource/authority/dataset-type/STATISTICAL
+    STYLES: http://publications.europa.eu/resource/authority/dataset-type/STYLES
+    SYNTAX_ECD_SCHEME: http://publications.europa.eu/resource/authority/dataset-type/SYNTAX_ECD_SCHEME
+    SYNTHETIC_DATA: http://publications.europa.eu/resource/authority/dataset-type/SYNTHETIC_DATA
+    TAXONOMY: http://publications.europa.eu/resource/authority/dataset-type/TAXONOMY
+    TEST_DATA: http://publications.europa.eu/resource/authority/dataset-type/TEST_DATA
+    THESAURUS: http://publications.europa.eu/resource/authority/dataset-type/THESAURUS
+    Other: http://publications.europa.eu/resource/authority/dataset-type/OTHER
+  en:
+    PERSONAL_DATA: Personal data
+    APROF: Professional data
+    ATTO_LEX: Legal data
+    ATTO_PUB: Public data
+    CODE_LIST: Code list
+    CORE_COMP: Core component
+    DIRECTORY: Directory
+    DOMAIN_MODEL: Domain model
+    DSCRP_SERV: Description service
+    GEOSPATIAL: Geospatial
+    GLOSSARY: Glossary
+    HVD: High-value dataset
+    IEPD: Information exchange package
+    MAPPING: Mapping
+    NAL: Named authority list
+    ONTOLOGY: Ontology
+    RELEASE: Release
+    SCHEMA: Schema
+    STATISTICAL: Statistical data
+    STYLES: Styles
+    SYNTAX_ECD_SCHEME: Syntax scheme
+    SYNTHETIC_DATA: Synthetic data
+    TAXONOMY: Taxonomy
+    TEST_DATA: Test data
+    THESAURUS: Thesaurus
+    Other: Other
+  fr:
+    PERSONAL_DATA: Données personnelles
+    APROF: Données professionnelles
+    ATTO_LEX: Données légales
+    ATTO_PUB: Données publiques
+    CODE_LIST: Liste de codes
+    CORE_COMP: Données de base
+    DIRECTORY: Annuaire
+    DOMAIN_MODEL: Modèle de domaine
+    DSCRP_SERV: Service de description
+    GEOSPATIAL: Géospatial
+    GLOSSARY: Glossaire
+    HVD: Données de haute valeur
+    IEPD: Paquet d'échange d'information
+    MAPPING: Mapping
+    NAL: Liste d'autorité nommée
+    ONTOLOGY: Ontologie
+    RELEASE: Version publiée
+    SCHEMA: Schéma
+    STATISTICAL: Données statistiques
+    STYLES: Styles
+    SYNTAX_ECD_SCHEME: Schéma syntaxique
+    SYNTHETIC_DATA: Données synthétiques
+    TAXONOMY: Taxonomie
+    TEST_DATA: Données de test
+    THESAURUS: Thésaurus
+    Other: Autre

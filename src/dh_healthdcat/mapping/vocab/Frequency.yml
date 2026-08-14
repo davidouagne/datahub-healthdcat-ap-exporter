@@ -1,0 +1,119 @@
+Frequency:
+  col: A
+  vocabulary_list:
+    10MIN: http://publications.europa.eu/resource/authority/frequency/10MIN
+    12HRS: http://publications.europa.eu/resource/authority/frequency/12HRS
+    15MIN: http://publications.europa.eu/resource/authority/frequency/15MIN
+    1MIN: http://publications.europa.eu/resource/authority/frequency/1MIN
+    30MIN: http://publications.europa.eu/resource/authority/frequency/30MIN
+    5MIN: http://publications.europa.eu/resource/authority/frequency/5MIN
+    ANNUAL: http://publications.europa.eu/resource/authority/frequency/ANNUAL
+    ANNUAL_2: http://publications.europa.eu/resource/authority/frequency/ANNUAL_2
+    ANNUAL_3: http://publications.europa.eu/resource/authority/frequency/ANNUAL_3
+    AS_NEEDED: http://publications.europa.eu/resource/authority/frequency/AS_NEEDED
+    BIDECENNIAL: http://publications.europa.eu/resource/authority/frequency/BIDECENNIAL
+    BIENNIAL: http://publications.europa.eu/resource/authority/frequency/BIENNIAL
+    BIHOURLY: http://publications.europa.eu/resource/authority/frequency/BIHOURLY
+    BIMONTHLY: http://publications.europa.eu/resource/authority/frequency/BIMONTHLY
+    BIWEEKLY: http://publications.europa.eu/resource/authority/frequency/BIWEEKLY
+    CONT: http://publications.europa.eu/resource/authority/frequency/CONT
+    DAILY: http://publications.europa.eu/resource/authority/frequency/DAILY
+    DAILY_2: http://publications.europa.eu/resource/authority/frequency/DAILY_2
+    DECENNIAL: http://publications.europa.eu/resource/authority/frequency/DECENNIAL
+    HOURLY: http://publications.europa.eu/resource/authority/frequency/HOURLY
+    IRREG: http://publications.europa.eu/resource/authority/frequency/IRREG
+    MONTHLY: http://publications.europa.eu/resource/authority/frequency/MONTHLY
+    MONTHLY_2: http://publications.europa.eu/resource/authority/frequency/MONTHLY_2
+    MONTHLY_3: http://publications.europa.eu/resource/authority/frequency/MONTHLY_3
+    NEVER: http://publications.europa.eu/resource/authority/frequency/NEVER
+    NOT_PLANNED: http://publications.europa.eu/resource/authority/frequency/NOT_PLANNED
+    OTHER: http://publications.europa.eu/resource/authority/frequency/OTHER
+    QUADRENNIAL: http://publications.europa.eu/resource/authority/frequency/QUADRENNIAL
+    QUARTERLY: http://publications.europa.eu/resource/authority/frequency/QUARTERLY
+    QUINQUENNIAL: http://publications.europa.eu/resource/authority/frequency/QUINQUENNIAL
+    TRIDECENNIAL: http://publications.europa.eu/resource/authority/frequency/TRIDECENNIAL
+    TRIENNIAL: http://publications.europa.eu/resource/authority/frequency/TRIENNIAL
+    TRIHOURLY: http://publications.europa.eu/resource/authority/frequency/TRIHOURLY
+    UNKNOWN: http://publications.europa.eu/resource/authority/frequency/UNKNOWN
+    UPDATE_CONT: http://publications.europa.eu/resource/authority/frequency/UPDATE_CONT
+    WEEKLY: http://publications.europa.eu/resource/authority/frequency/WEEKLY
+    WEEKLY_2: http://publications.europa.eu/resource/authority/frequency/WEEKLY_2
+    WEEKLY_3: http://publications.europa.eu/resource/authority/frequency/WEEKLY_3
+  en:
+    10MIN: 10 minutes
+    12HRS: 12 hours
+    15MIN: 15 minutes
+    1MIN: 1 minute
+    30MIN: 30 minutes
+    5MIN: 5 minutes
+    ANNUAL: Annual
+    ANNUAL_2: Twice yearly
+    ANNUAL_3: Three times yearly
+    AS_NEEDED: As needed
+    BIDECENNIAL: Every 20 years
+    BIENNIAL: Biennial
+    BIHOURLY: Every 2 hours
+    BIMONTHLY: Bimonthly
+    BIWEEKLY: Biweekly
+    CONT: Continuous
+    DAILY: Daily
+    DAILY_2: Twice daily
+    DECENNIAL: Decennial
+    HOURLY: Hourly
+    IRREG: Irregular
+    MONTHLY: Monthly
+    MONTHLY_2: Twice monthly
+    MONTHLY_3: Three times monthly
+    NEVER: Never
+    NOT_PLANNED: Not planned
+    OTHER: Other
+    QUADRENNIAL: Quadrennial
+    QUARTERLY: Quarterly
+    QUINQUENNIAL: Quinquennial
+    TRIDECENNIAL: Every 13 years
+    TRIENNIAL: Triennial
+    TRIHOURLY: Every 3 hours
+    UNKNOWN: Unknown
+    UPDATE_CONT: Continuous update
+    WEEKLY: Weekly
+    WEEKLY_2: Twice weekly
+    WEEKLY_3: Three times weekly
+  fr:
+    10MIN: 10 minutes
+    12HRS: 12 heures
+    15MIN: 15 minutes
+    1MIN: 1 minute
+    30MIN: 30 minutes
+    5MIN: 5 minutes
+    ANNUAL: Annuel
+    ANNUAL_2: Deux fois par an
+    ANNUAL_3: Trois fois par an
+    AS_NEEDED: Au besoin
+    BIDECENNIAL: Tous les 20 ans
+    BIENNIAL: Bisannuel
+    BIHOURLY: Toutes les 2 heures
+    BIMONTHLY: Bimensuel
+    BIWEEKLY: Bihebdomadaire
+    CONT: Continu
+    DAILY: Quotidien
+    DAILY_2: Deux fois par jour
+    DECENNIAL: Décennal
+    HOURLY: Horaire
+    IRREG: Irrégulier
+    MONTHLY: Mensuel
+    MONTHLY_2: Deux fois par mois
+    MONTHLY_3: Trois fois par mois
+    NEVER: Jamais
+    NOT_PLANNED: Non planifié
+    OTHER: Autre
+    QUADRENNIAL: Quadriennal
+    QUARTERLY: Trimestriel
+    QUINQUENNIAL: Quinquennal
+    TRIDECENNIAL: Tous les 13 ans
+    TRIENNIAL: Triennal
+    TRIHOURLY: Toutes les 3 heures
+    UNKNOWN: Inconnu
+    UPDATE_CONT: Mise à jour continue
+    WEEKLY: Hebdomadaire
+    WEEKLY_2: Deux fois par semaine
+    WEEKLY_3: Trois fois par semaine

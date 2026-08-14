@@ -1,0 +1,38 @@
+PublisherType:
+  col: A
+  vocabulary_list:
+    National Statistics Institute: http://healthdataportal.eu/resource/authority/publisher-type/statitics
+    Registry: http://healthdataportal.eu/resource/authority/publisher-type/registry
+    National Public Health Institute: http://healthdataportal.eu/resource/authority/publisher-type/nationalPublicHealthInstitute
+    Biobank: http://healthdataportal.eu/resource/authority/publisher-type/biobank
+    Research Institution: http://healthdataportal.eu/resource/authority/publisher-type/researchInstitution
+    Hospital or Healthcare System: http://healthdataportal.eu/resource/authority/publisher-type/healthcareSystem
+    Government Health Department: http://healthdataportal.eu/resource/authority/publisher-type/govHealth
+    Non-Governmental Organizations: http://healthdataportal.eu/resource/authority/publisher-type/ngo
+    Pharmaceutical and Biotechnology Company: http://healthdataportal.eu/resource/authority/publisher-type/pharmaBiotech
+    International Health Organization: http://healthdataportal.eu/resource/authority/publisher-type/healthOrganisation
+    Health Insurance Company: http://healthdataportal.eu/resource/authority/publisher-type/healthInsurance
+  en:
+    National Statistics Institute: National Statistics Institute
+    Registry: Registry
+    National Public Health Institute: National Public Health Institute
+    Biobank: Biobank
+    Research Institution: Research Institution
+    Hospital or Healthcare System: Hospital or Healthcare System
+    Government Health Department: Government Health Department
+    Non-Governmental Organizations: Non-Governmental Organizations
+    Pharmaceutical and Biotechnology Company: Pharmaceutical and Biotechnology Company
+    International Health Organization: International Health Organization
+    Health Insurance Company: Health Insurance Company
+  fr:
+    National Statistics Institute: Institut national de statistiques
+    Registry: Registre
+    National Public Health Institute: Institut national de santé publique
+    Biobank: Biobanque
+    Research Institution: Institution de recherche
+    Hospital or Healthcare System: Hôpital ou système de santé
+    Government Health Department: Ministère ou organisation gouvernementale de la santé
+    Non-Governmental Organizations: Organisations non gouvernementales
+    Pharmaceutical and Biotechnology Company: Société pharmaceutique et biotechnologique
+    International Health Organization: Organisation internationale de santé
+    Health Insurance Company: Compagnie d'assurance santé

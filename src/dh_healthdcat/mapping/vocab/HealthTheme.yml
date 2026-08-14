@@ -1,0 +1,65 @@
+HealthTheme:
+  col: A
+  vocabulary_list:
+    climate_health: http://13.81.34.152:1101/resource/authority/health-theme/CLIMATE_HEALTH
+    antimicrobial_control: http://13.81.34.152:1101/resource/authority/health-theme/ANTIMICROBIAL_CONTROL
+    environmental_health: http://13.81.34.152:1101/resource/authority/health-theme/ENVIRONMENTAL_HEALTH
+    blood_infections: http://13.81.34.152:1101/resource/authority/health-theme/BLOOD_INFECTIONS
+    health_systems: http://13.81.34.152:1101/resource/authority/health-theme/HEALTH_SYSTEMS
+    sensory_health: http://13.81.34.152:1101/resource/authority/health-theme/SENSORY_HEALTH
+    respiratory_diseases: http://13.81.34.152:1101/resource/authority/health-theme/RESPIRATORY_DISEASES
+    lifecourse_health: http://13.81.34.152:1101/resource/authority/health-theme/LIFECOURSE_HEALTH
+    immunization_diseases: http://13.81.34.152:1101/resource/authority/health-theme/IMMUNIZATION_DISEASES
+    enteric_infections: http://13.81.34.152:1101/resource/authority/health-theme/ENTERIC_INFECTIONS
+    injury_prevention: http://13.81.34.152:1101/resource/authority/health-theme/INJURY_PREVENTION
+    emergency_settings: http://13.81.34.152:1101/resource/authority/health-theme/EMERGENCY_SETTINGS
+    cancer_disease: http://13.81.34.152:1101/resource/authority/health-theme/CANCER_DISEASE
+    vector_diseases: http://13.81.34.152:1101/resource/authority/health-theme/VECTOR_DISEASES
+    health_products: http://13.81.34.152:1101/resource/authority/health-theme/HEALTH_PRODUCTS
+    noncommunicable_diseases: http://13.81.34.152:1101/resource/authority/health-theme/NONCOMMUNICABLE_DISEASES
+    mental_health: http://13.81.34.152:1101/resource/authority/health-theme/MENTAL_HEALTH
+    reproductive_health: http://13.81.34.152:1101/resource/authority/health-theme/REPRODUCTIVE_HEALTH
+    nutrition_security: http://13.81.34.152:1101/resource/authority/health-theme/NUTRITION_SECURITY
+    tropical_diseases: http://13.81.34.152:1101/resource/authority/health-theme/TROPICAL_DISEASES
+  en:
+    climate_health: Climate Health
+    antimicrobial_control: Antimicrobial Control
+    environmental_health: Environmental Health
+    blood_infections: Blood Infections
+    health_systems: Health Systems
+    sensory_health: Sensory Health
+    respiratory_diseases: Respiratory Diseases
+    lifecourse_health: Lifecourse Health
+    immunization_diseases: Immunization Diseases
+    enteric_infections: Enteric Infections
+    injury_prevention: Injury Prevention
+    emergency_settings: Emergency Settings
+    cancer_disease: Cancer Disease
+    vector_diseases: Vector Diseases
+    health_products: Health Products
+    noncommunicable_diseases: Noncommunicable Diseases
+    mental_health: Mental Health
+    reproductive_health: Reproductive Health
+    nutrition_security: Nutrition Security
+    tropical_diseases: Tropical Diseases
+  fr:
+    climate_health: Santé climatique
+    antimicrobial_control: Contrôle antimicrobien
+    environmental_health: Santé environnementale
+    blood_infections: Infections sanguines
+    health_systems: Systèmes de santé
+    sensory_health: Santé sensorielle
+    respiratory_diseases: Maladies respiratoires
+    lifecourse_health: Santé tout au long de la vie
+    immunization_diseases: Maladies liées à la vaccination
+    enteric_infections: Infections entériques
+    injury_prevention: Prévention des blessures
+    emergency_settings: Situations d'urgence
+    cancer_disease: Maladie cancéreuse
+    vector_diseases: Maladies vectorielles
+    health_products: Produits de santé
+    noncommunicable_diseases: Maladies non transmissibles
+    mental_health: Santé mentale
+    reproductive_health: Santé reproductive
+    nutrition_security: Sécurité nutritionnelle
+    tropical_diseases: Maladies tropicales

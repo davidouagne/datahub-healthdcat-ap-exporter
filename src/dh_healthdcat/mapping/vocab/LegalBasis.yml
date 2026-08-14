@@ -1,0 +1,42 @@
+# Vocabulaire d'auteur (dh-healthdcat), pas un fichier HDH vendu.
+#
+# Les clés reprennent EXACTEMENT la forme stockée par
+# `fr.aphp.healthdcat.legalBasis` (assets.yml, kind: STRUCTURED_PROPERTY) :
+# préfixées "eu-gdpr:", pas les identifiants locaux bruts du DPV. Les 12
+# `allowedValues` d'assets.yml correspondent terme à terme à l'extension GDPR
+# du DPV (Data Privacy Vocabulary), confirmé le 2026-08-14 par lecture de
+# https://w3id.org/dpv/legal/eu/gdpr (redirige vers
+# https://w3c-cg.github.io/dpv/2.3/legal/eu/gdpr).
+#
+# ⚠️ Piège évité : la première version de ce fichier utilisait des clés sans
+# préfixe ("A6-1-a") — elles ne correspondaient à AUCUNE valeur réellement
+# stockée par DataHub (qui écrit "eu-gdpr:A6-1-a"), ce qui aurait fait
+# échouer silencieusement toute résolution de base légale à l'export.
+LegalBasis:
+  namespace: "https://w3id.org/dpv/legal/eu/gdpr#"
+  vocabulary_list:
+    eu-gdpr:A6-1-a: "https://w3id.org/dpv/legal/eu/gdpr#A6-1-a"
+    eu-gdpr:A6-1-b: "https://w3id.org/dpv/legal/eu/gdpr#A6-1-b"
+    eu-gdpr:A6-1-c: "https://w3id.org/dpv/legal/eu/gdpr#A6-1-c"
+    eu-gdpr:A6-1-d: "https://w3id.org/dpv/legal/eu/gdpr#A6-1-d"
+    eu-gdpr:A6-1-e: "https://w3id.org/dpv/legal/eu/gdpr#A6-1-e"
+    eu-gdpr:A6-1-f: "https://w3id.org/dpv/legal/eu/gdpr#A6-1-f"
+    eu-gdpr:A9-2-a: "https://w3id.org/dpv/legal/eu/gdpr#A9-2-a"
+    eu-gdpr:A9-2-b: "https://w3id.org/dpv/legal/eu/gdpr#A9-2-b"
+    eu-gdpr:A9-2-c: "https://w3id.org/dpv/legal/eu/gdpr#A9-2-c"
+    eu-gdpr:A9-2-h: "https://w3id.org/dpv/legal/eu/gdpr#A9-2-h"
+    eu-gdpr:A9-2-i: "https://w3id.org/dpv/legal/eu/gdpr#A9-2-i"
+    eu-gdpr:A9-2-j: "https://w3id.org/dpv/legal/eu/gdpr#A9-2-j"
+  fr:
+    eu-gdpr:A6-1-a: "Consentement (Art. 6.1.a)"
+    eu-gdpr:A6-1-b: "Exécution d'un contrat (Art. 6.1.b)"
+    eu-gdpr:A6-1-c: "Obligation légale (Art. 6.1.c)"
+    eu-gdpr:A6-1-d: "Intérêts vitaux (Art. 6.1.d)"
+    eu-gdpr:A6-1-e: "Mission d'intérêt public (Art. 6.1.e)"
+    eu-gdpr:A6-1-f: "Intérêts légitimes (Art. 6.1.f)"
+    eu-gdpr:A9-2-a: "Consentement explicite (Art. 9.2.a)"
+    eu-gdpr:A9-2-b: "Droit du travail / protection sociale (Art. 9.2.b)"
+    eu-gdpr:A9-2-c: "Intérêts vitaux (Art. 9.2.c)"
+    eu-gdpr:A9-2-h: "Médecine préventive / soins (Art. 9.2.h)"
+    eu-gdpr:A9-2-i: "Intérêt public de santé publique (Art. 9.2.i)"
+    eu-gdpr:A9-2-j: "Recherche scientifique / statistiques (Art. 9.2.j)"

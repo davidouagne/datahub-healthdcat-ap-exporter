@@ -1,0 +1,30 @@
+# Vocabulaire d'auteur (dh-healthdcat), pas vendu du HDH — le HDH ne publie pas
+# de dictionnaire "systèmes de codage" parmi ses 19 vocabulaires contrôlés.
+#
+# Couvre les valeurs de `fr.aphp.healthdcat.coding` déclarées dans assets.yml.
+# Les URI HL7/OMS/WHO-CC sont des systèmes canoniques stables. CIP13/UCD/CCAM/NFS
+# n'ont pas d'URI internationale de référence : on utilise un espace de noms
+# AP-HP local, explicitement non déréférençable, en attendant un identifiant
+# officiel ANS/HDH — ce n'est PAS une erreur de saisie si ces quatre-là
+# ressemblent à un placeholder.
+CodingSystem:
+  vocabulary_list:
+    SNOMED-CT: "http://snomed.info/sct"
+    LOINC: "http://loinc.org"
+    ICD-10: "http://hl7.org/fhir/sid/icd-10"
+    ICD-11: "http://id.who.int/icd/release/11/mms"
+    ATC: "http://www.whocc.no/atc"
+    CIP13: "https://aphp.fr/codesystem/cip13"
+    UCD: "https://aphp.fr/codesystem/ucd"
+    CCAM: "https://aphp.fr/codesystem/ccam"
+    NFS: "https://aphp.fr/codesystem/nfs"
+  fr:
+    SNOMED-CT: "SNOMED CT"
+    LOINC: "LOINC"
+    ICD-10: "CIM-10"
+    ICD-11: "CIM-11"
+    ATC: "Classification ATC"
+    CIP13: "Code CIP13 (médicament, France)"
+    UCD: "Code UCD (unité commune de dispensation)"
+    CCAM: "Classification Commune des Actes Médicaux"
+    NFS: "Nomenclature française (biologie)"

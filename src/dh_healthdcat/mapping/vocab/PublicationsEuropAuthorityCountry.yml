@@ -1,0 +1,1015 @@
+PublicationsEuropAuthorityCountry:
+  col: A
+  vocabulary_list:
+    ABW: http://publications.europa.eu/resource/authority/country/ABW
+    AFG: http://publications.europa.eu/resource/authority/country/AFG
+    AFI: http://publications.europa.eu/resource/authority/country/AFI
+    AGO: http://publications.europa.eu/resource/authority/country/AGO
+    AIA: http://publications.europa.eu/resource/authority/country/AIA
+    ALA: http://publications.europa.eu/resource/authority/country/ALA
+    ALB: http://publications.europa.eu/resource/authority/country/ALB
+    AND: http://publications.europa.eu/resource/authority/country/AND
+    ANT: http://publications.europa.eu/resource/authority/country/ANT
+    ARE: http://publications.europa.eu/resource/authority/country/ARE
+    ARG: http://publications.europa.eu/resource/authority/country/ARG
+    ARM: http://publications.europa.eu/resource/authority/country/ARM
+    ASM: http://publications.europa.eu/resource/authority/country/ASM
+    ATA: http://publications.europa.eu/resource/authority/country/ATA
+    ATB: http://publications.europa.eu/resource/authority/country/ATB
+    ATF: http://publications.europa.eu/resource/authority/country/ATF
+    ATG: http://publications.europa.eu/resource/authority/country/ATG
+    ATN: http://publications.europa.eu/resource/authority/country/ATN
+    AUS: http://publications.europa.eu/resource/authority/country/AUS
+    AUT: http://publications.europa.eu/resource/authority/country/AUT
+    AZE: http://publications.europa.eu/resource/authority/country/AZE
+    BDI: http://publications.europa.eu/resource/authority/country/BDI
+    BEL: http://publications.europa.eu/resource/authority/country/BEL
+    BEN: http://publications.europa.eu/resource/authority/country/BEN
+    BES: http://publications.europa.eu/resource/authority/country/BES
+    BFA: http://publications.europa.eu/resource/authority/country/BFA
+    BGD: http://publications.europa.eu/resource/authority/country/BGD
+    BGR: http://publications.europa.eu/resource/authority/country/BGR
+    BHR: http://publications.europa.eu/resource/authority/country/BHR
+    BHS: http://publications.europa.eu/resource/authority/country/BHS
+    BIH: http://publications.europa.eu/resource/authority/country/BIH
+    BLM: http://publications.europa.eu/resource/authority/country/BLM
+    BLR: http://publications.europa.eu/resource/authority/country/BLR
+    BLZ: http://publications.europa.eu/resource/authority/country/BLZ
+    BMU: http://publications.europa.eu/resource/authority/country/BMU
+    BOL: http://publications.europa.eu/resource/authority/country/BOL
+    BRA: http://publications.europa.eu/resource/authority/country/BRA
+    BRB: http://publications.europa.eu/resource/authority/country/BRB
+    BRN: http://publications.europa.eu/resource/authority/country/BRN
+    BTN: http://publications.europa.eu/resource/authority/country/BTN
+    BUR: http://publications.europa.eu/resource/authority/country/BUR
+    BVT: http://publications.europa.eu/resource/authority/country/BVT
+    BWA: http://publications.europa.eu/resource/authority/country/BWA
+    BYS: http://publications.europa.eu/resource/authority/country/BYS
+    CAF: http://publications.europa.eu/resource/authority/country/CAF
+    CAN: http://publications.europa.eu/resource/authority/country/CAN
+    CCK: http://publications.europa.eu/resource/authority/country/CCK
+    CHE: http://publications.europa.eu/resource/authority/country/CHE
+    CHL: http://publications.europa.eu/resource/authority/country/CHL
+    CHN: http://publications.europa.eu/resource/authority/country/CHN
+    CIV: http://publications.europa.eu/resource/authority/country/CIV
+    CMR: http://publications.europa.eu/resource/authority/country/CMR
+    COD: http://publications.europa.eu/resource/authority/country/COD
+    COG: http://publications.europa.eu/resource/authority/country/COG
+    COK: http://publications.europa.eu/resource/authority/country/COK
+    COL: http://publications.europa.eu/resource/authority/country/COL
+    COM: http://publications.europa.eu/resource/authority/country/COM
+    CPT: http://publications.europa.eu/resource/authority/country/CPT
+    CPV: http://publications.europa.eu/resource/authority/country/CPV
+    CRI: http://publications.europa.eu/resource/authority/country/CRI
+    CRQ: http://publications.europa.eu/resource/authority/country/CRQ
+    CSK: http://publications.europa.eu/resource/authority/country/CSK
+    CTE: http://publications.europa.eu/resource/authority/country/CTE
+    CUB: http://publications.europa.eu/resource/authority/country/CUB
+    CUW: http://publications.europa.eu/resource/authority/country/CUW
+    CXR: http://publications.europa.eu/resource/authority/country/CXR
+    CYM: http://publications.europa.eu/resource/authority/country/CYM
+    CYP: http://publications.europa.eu/resource/authority/country/CYP
+    CZE: http://publications.europa.eu/resource/authority/country/CZE
+    DDR: http://publications.europa.eu/resource/authority/country/DDR
+    DEU: http://publications.europa.eu/resource/authority/country/DEU
+    DHY: http://publications.europa.eu/resource/authority/country/DHY
+    DJI: http://publications.europa.eu/resource/authority/country/DJI
+    DMA: http://publications.europa.eu/resource/authority/country/DMA
+    DNK: http://publications.europa.eu/resource/authority/country/DNK
+    DOM: http://publications.europa.eu/resource/authority/country/DOM
+    DZA: http://publications.europa.eu/resource/authority/country/DZA
+    ECU: http://publications.europa.eu/resource/authority/country/ECU
+    EGY: http://publications.europa.eu/resource/authority/country/EGY
+    ERI: http://publications.europa.eu/resource/authority/country/ERI
+    ESH: http://publications.europa.eu/resource/authority/country/ESH
+    ESP: http://publications.europa.eu/resource/authority/country/ESP
+    EST: http://publications.europa.eu/resource/authority/country/EST
+    ETH: http://publications.europa.eu/resource/authority/country/ETH
+    EUR: http://publications.europa.eu/resource/authority/country/EUR
+    FIN: http://publications.europa.eu/resource/authority/country/FIN
+    FJI: http://publications.europa.eu/resource/authority/country/FJI
+    FLK: http://publications.europa.eu/resource/authority/country/FLK
+    FRA: http://publications.europa.eu/resource/authority/country/FRA
+    FRO: http://publications.europa.eu/resource/authority/country/FRO
+    FSM: http://publications.europa.eu/resource/authority/country/FSM
+    FXX: http://publications.europa.eu/resource/authority/country/FXX
+    GAB: http://publications.europa.eu/resource/authority/country/GAB
+    GBR: http://publications.europa.eu/resource/authority/country/GBR
+    GEL: http://publications.europa.eu/resource/authority/country/GEL
+    GEO: http://publications.europa.eu/resource/authority/country/GEO
+    GGY: http://publications.europa.eu/resource/authority/country/GGY
+    GHA: http://publications.europa.eu/resource/authority/country/GHA
+    GIB: http://publications.europa.eu/resource/authority/country/GIB
+    GIN: http://publications.europa.eu/resource/authority/country/GIN
+    GLP: http://publications.europa.eu/resource/authority/country/GLP
+    GMB: http://publications.europa.eu/resource/authority/country/GMB
+    GNB: http://publications.europa.eu/resource/authority/country/GNB
+    GNQ: http://publications.europa.eu/resource/authority/country/GNQ
+    GRC: http://publications.europa.eu/resource/authority/country/GRC
+    GRD: http://publications.europa.eu/resource/authority/country/GRD
+    GRL: http://publications.europa.eu/resource/authority/country/GRL
+    GTM: http://publications.europa.eu/resource/authority/country/GTM
+    GUF: http://publications.europa.eu/resource/authority/country/GUF
+    GUM: http://publications.europa.eu/resource/authority/country/GUM
+    GUY: http://publications.europa.eu/resource/authority/country/GUY
+    HKG: http://publications.europa.eu/resource/authority/country/HKG
+    HMD: http://publications.europa.eu/resource/authority/country/HMD
+    HND: http://publications.europa.eu/resource/authority/country/HND
+    HRV: http://publications.europa.eu/resource/authority/country/HRV
+    HTI: http://publications.europa.eu/resource/authority/country/HTI
+    HUN: http://publications.europa.eu/resource/authority/country/HUN
+    HVO: http://publications.europa.eu/resource/authority/country/HVO
+    IDN: http://publications.europa.eu/resource/authority/country/IDN
+    IMN: http://publications.europa.eu/resource/authority/country/IMN
+    IND: http://publications.europa.eu/resource/authority/country/IND
+    IOT: http://publications.europa.eu/resource/authority/country/IOT
+    IRL: http://publications.europa.eu/resource/authority/country/IRL
+    IRN: http://publications.europa.eu/resource/authority/country/IRN
+    IRQ: http://publications.europa.eu/resource/authority/country/IRQ
+    ISL: http://publications.europa.eu/resource/authority/country/ISL
+    ISR: http://publications.europa.eu/resource/authority/country/ISR
+    ITA: http://publications.europa.eu/resource/authority/country/ITA
+    JAM: http://publications.europa.eu/resource/authority/country/JAM
+    JEY: http://publications.europa.eu/resource/authority/country/JEY
+    JOR: http://publications.europa.eu/resource/authority/country/JOR
+    JPN: http://publications.europa.eu/resource/authority/country/JPN
+    JTN: http://publications.europa.eu/resource/authority/country/JTN
+    KAZ: http://publications.europa.eu/resource/authority/country/KAZ
+    KEN: http://publications.europa.eu/resource/authority/country/KEN
+    KGZ: http://publications.europa.eu/resource/authority/country/KGZ
+    KHM: http://publications.europa.eu/resource/authority/country/KHM
+    KIR: http://publications.europa.eu/resource/authority/country/KIR
+    KNA: http://publications.europa.eu/resource/authority/country/KNA
+    KOR: http://publications.europa.eu/resource/authority/country/KOR
+    KWT: http://publications.europa.eu/resource/authority/country/KWT
+    LAO: http://publications.europa.eu/resource/authority/country/LAO
+    LBN: http://publications.europa.eu/resource/authority/country/LBN
+    LBR: http://publications.europa.eu/resource/authority/country/LBR
+    LBY: http://publications.europa.eu/resource/authority/country/LBY
+    LCA: http://publications.europa.eu/resource/authority/country/LCA
+    LIE: http://publications.europa.eu/resource/authority/country/LIE
+    LKA: http://publications.europa.eu/resource/authority/country/LKA
+    LSO: http://publications.europa.eu/resource/authority/country/LSO
+    LTU: http://publications.europa.eu/resource/authority/country/LTU
+    LUX: http://publications.europa.eu/resource/authority/country/LUX
+    LVA: http://publications.europa.eu/resource/authority/country/LVA
+    MAC: http://publications.europa.eu/resource/authority/country/MAC
+    MAF: http://publications.europa.eu/resource/authority/country/MAF
+    MAR: http://publications.europa.eu/resource/authority/country/MAR
+    MCO: http://publications.europa.eu/resource/authority/country/MCO
+    MDA: http://publications.europa.eu/resource/authority/country/MDA
+    MDG: http://publications.europa.eu/resource/authority/country/MDG
+    MDV: http://publications.europa.eu/resource/authority/country/MDV
+    MEX: http://publications.europa.eu/resource/authority/country/MEX
+    MHL: http://publications.europa.eu/resource/authority/country/MHL
+    MID: http://publications.europa.eu/resource/authority/country/MID
+    MKD: http://publications.europa.eu/resource/authority/country/MKD
+    MLI: http://publications.europa.eu/resource/authority/country/MLI
+    MLT: http://publications.europa.eu/resource/authority/country/MLT
+    MMR: http://publications.europa.eu/resource/authority/country/MMR
+    MNE: http://publications.europa.eu/resource/authority/country/MNE
+    MNG: http://publications.europa.eu/resource/authority/country/MNG
+    MNP: http://publications.europa.eu/resource/authority/country/MNP
+    MOZ: http://publications.europa.eu/resource/authority/country/MOZ
+    MRT: http://publications.europa.eu/resource/authority/country/MRT
+    MSR: http://publications.europa.eu/resource/authority/country/MSR
+    MTQ: http://publications.europa.eu/resource/authority/country/MTQ
+    MUS: http://publications.europa.eu/resource/authority/country/MUS
+    MWI: http://publications.europa.eu/resource/authority/country/MWI
+    MYS: http://publications.europa.eu/resource/authority/country/MYS
+    MYT: http://publications.europa.eu/resource/authority/country/MYT
+    NAM: http://publications.europa.eu/resource/authority/country/NAM
+    NCL: http://publications.europa.eu/resource/authority/country/NCL
+    NER: http://publications.europa.eu/resource/authority/country/NER
+    NFK: http://publications.europa.eu/resource/authority/country/NFK
+    NGA: http://publications.europa.eu/resource/authority/country/NGA
+    NHB: http://publications.europa.eu/resource/authority/country/NHB
+    NIC: http://publications.europa.eu/resource/authority/country/NIC
+    NIU: http://publications.europa.eu/resource/authority/country/NIU
+    NLD: http://publications.europa.eu/resource/authority/country/NLD
+    NOR: http://publications.europa.eu/resource/authority/country/NOR
+    NPL: http://publications.europa.eu/resource/authority/country/NPL
+    NRU: http://publications.europa.eu/resource/authority/country/NRU
+    NTZ: http://publications.europa.eu/resource/authority/country/NTZ
+    NZL: http://publications.europa.eu/resource/authority/country/NZL
+    OMN: http://publications.europa.eu/resource/authority/country/OMN
+    PAK: http://publications.europa.eu/resource/authority/country/PAK
+    PAN: http://publications.europa.eu/resource/authority/country/PAN
+    PCI: http://publications.europa.eu/resource/authority/country/PCI
+    PCN: http://publications.europa.eu/resource/authority/country/PCN
+    PCZ: http://publications.europa.eu/resource/authority/country/PCZ
+    PER: http://publications.europa.eu/resource/authority/country/PER
+    PHL: http://publications.europa.eu/resource/authority/country/PHL
+    PLW: http://publications.europa.eu/resource/authority/country/PLW
+    PNG: http://publications.europa.eu/resource/authority/country/PNG
+    POL: http://publications.europa.eu/resource/authority/country/POL
+    PRI: http://publications.europa.eu/resource/authority/country/PRI
+    PRK: http://publications.europa.eu/resource/authority/country/PRK
+    PRT: http://publications.europa.eu/resource/authority/country/PRT
+    PRY: http://publications.europa.eu/resource/authority/country/PRY
+    PSE: http://publications.europa.eu/resource/authority/country/PSE
+    PUS: http://publications.europa.eu/resource/authority/country/PUS
+    PYF: http://publications.europa.eu/resource/authority/country/PYF
+    QAT: http://publications.europa.eu/resource/authority/country/QAT
+    REU: http://publications.europa.eu/resource/authority/country/REU
+    RHO: http://publications.europa.eu/resource/authority/country/RHO
+    ROU: http://publications.europa.eu/resource/authority/country/ROU
+    RUS: http://publications.europa.eu/resource/authority/country/RUS
+    RWA: http://publications.europa.eu/resource/authority/country/RWA
+    SAU: http://publications.europa.eu/resource/authority/country/SAU
+    SCG: http://publications.europa.eu/resource/authority/country/SCG
+    SDN: http://publications.europa.eu/resource/authority/country/SDN
+    SEN: http://publications.europa.eu/resource/authority/country/SEN
+    SGP: http://publications.europa.eu/resource/authority/country/SGP
+    SGS: http://publications.europa.eu/resource/authority/country/SGS
+    SHN: http://publications.europa.eu/resource/authority/country/SHN
+    SJM: http://publications.europa.eu/resource/authority/country/SJM
+    SKM: http://publications.europa.eu/resource/authority/country/SKM
+    SLB: http://publications.europa.eu/resource/authority/country/SLB
+    SLE: http://publications.europa.eu/resource/authority/country/SLE
+    SLV: http://publications.europa.eu/resource/authority/country/SLV
+    SMR: http://publications.europa.eu/resource/authority/country/SMR
+    SOM: http://publications.europa.eu/resource/authority/country/SOM
+    SPM: http://publications.europa.eu/resource/authority/country/SPM
+    SRB: http://publications.europa.eu/resource/authority/country/SRB
+    SSD: http://publications.europa.eu/resource/authority/country/SSD
+    STP: http://publications.europa.eu/resource/authority/country/STP
+    SUN: http://publications.europa.eu/resource/authority/country/SUN
+    SUR: http://publications.europa.eu/resource/authority/country/SUR
+    SVK: http://publications.europa.eu/resource/authority/country/SVK
+    SVN: http://publications.europa.eu/resource/authority/country/SVN
+    SWE: http://publications.europa.eu/resource/authority/country/SWE
+    SWZ: http://publications.europa.eu/resource/authority/country/SWZ
+    SXM: http://publications.europa.eu/resource/authority/country/SXM
+    SYC: http://publications.europa.eu/resource/authority/country/SYC
+    SYR: http://publications.europa.eu/resource/authority/country/SYR
+    TCA: http://publications.europa.eu/resource/authority/country/TCA
+    TCD: http://publications.europa.eu/resource/authority/country/TCD
+    TGO: http://publications.europa.eu/resource/authority/country/TGO
+    THA: http://publications.europa.eu/resource/authority/country/THA
+    TJK: http://publications.europa.eu/resource/authority/country/TJK
+    TKL: http://publications.europa.eu/resource/authority/country/TKL
+    TKM: http://publications.europa.eu/resource/authority/country/TKM
+    TLS: http://publications.europa.eu/resource/authority/country/TLS
+    TMP: http://publications.europa.eu/resource/authority/country/TMP
+    TON: http://publications.europa.eu/resource/authority/country/TON
+    TTO: http://publications.europa.eu/resource/authority/country/TTO
+    TUN: http://publications.europa.eu/resource/authority/country/TUN
+    TUR: http://publications.europa.eu/resource/authority/country/TUR
+    TUV: http://publications.europa.eu/resource/authority/country/TUV
+    TWN: http://publications.europa.eu/resource/authority/country/TWN
+    TZA: http://publications.europa.eu/resource/authority/country/TZA
+    UGA: http://publications.europa.eu/resource/authority/country/UGA
+    UKR: http://publications.europa.eu/resource/authority/country/UKR
+    UMI: http://publications.europa.eu/resource/authority/country/UMI
+    URY: http://publications.europa.eu/resource/authority/country/URY
+    USA: http://publications.europa.eu/resource/authority/country/USA
+    UZB: http://publications.europa.eu/resource/authority/country/UZB
+    VAT: http://publications.europa.eu/resource/authority/country/VAT
+    VCT: http://publications.europa.eu/resource/authority/country/VCT
+    VDR: http://publications.europa.eu/resource/authority/country/VDR
+    VEN: http://publications.europa.eu/resource/authority/country/VEN
+    VGB: http://publications.europa.eu/resource/authority/country/VGB
+    VIR: http://publications.europa.eu/resource/authority/country/VIR
+    VNM: http://publications.europa.eu/resource/authority/country/VNM
+    VUT: http://publications.europa.eu/resource/authority/country/VUT
+    WAK: http://publications.europa.eu/resource/authority/country/WAK
+    WLF: http://publications.europa.eu/resource/authority/country/WLF
+    WSM: http://publications.europa.eu/resource/authority/country/WSM
+    XAC: http://publications.europa.eu/resource/authority/country/XAC
+    XAD: http://publications.europa.eu/resource/authority/country/XAD
+    XBA: http://publications.europa.eu/resource/authority/country/XBA
+    XBH: http://publications.europa.eu/resource/authority/country/XBH
+    XBI: http://publications.europa.eu/resource/authority/country/XBI
+    XCI: http://publications.europa.eu/resource/authority/country/XCI
+    XDST: http://publications.europa.eu/resource/authority/country/XDST
+    XEU: http://publications.europa.eu/resource/authority/country/XEU
+    XGS: http://publications.europa.eu/resource/authority/country/XGS
+    XHS: http://publications.europa.eu/resource/authority/country/XHS
+    XIC: http://publications.europa.eu/resource/authority/country/XIC
+    XIH: http://publications.europa.eu/resource/authority/country/XIH
+    XIN: http://publications.europa.eu/resource/authority/country/XIN
+    XJM: http://publications.europa.eu/resource/authority/country/XJM
+    XKA: http://publications.europa.eu/resource/authority/country/XKA
+    XKM: http://publications.europa.eu/resource/authority/country/XKM
+    XKX: http://publications.europa.eu/resource/authority/country/XKX
+    XLF: http://publications.europa.eu/resource/authority/country/XLF
+    XLI: http://publications.europa.eu/resource/authority/country/XLI
+    XLL: http://publications.europa.eu/resource/authority/country/XLL
+    XMA: http://publications.europa.eu/resource/authority/country/XMA
+    XMAZ: http://publications.europa.eu/resource/authority/country/XMAZ
+    XME: http://publications.europa.eu/resource/authority/country/XME
+    XNC: http://publications.europa.eu/resource/authority/country/XNC
+    XNY: http://publications.europa.eu/resource/authority/country/XNY
+    XPA: http://publications.europa.eu/resource/authority/country/XPA
+    XPM: http://publications.europa.eu/resource/authority/country/XPM
+    XQP: http://publications.europa.eu/resource/authority/country/XQP
+    XQR: http://publications.europa.eu/resource/authority/country/XQR
+    XSC: http://publications.europa.eu/resource/authority/country/XSC
+    XSG: http://publications.europa.eu/resource/authority/country/XSG
+    XSL: http://publications.europa.eu/resource/authority/country/XSL
+    XSM: http://publications.europa.eu/resource/authority/country/XSM
+    XSV: http://publications.europa.eu/resource/authority/country/XSV
+    XWS: http://publications.europa.eu/resource/authority/country/XWS
+    XXA: http://publications.europa.eu/resource/authority/country/XXA
+    XXB: http://publications.europa.eu/resource/authority/country/XXB
+    XXC: http://publications.europa.eu/resource/authority/country/XXC
+    XXD: http://publications.europa.eu/resource/authority/country/XXD
+    XXE: http://publications.europa.eu/resource/authority/country/XXE
+    XXF: http://publications.europa.eu/resource/authority/country/XXF
+    XXG: http://publications.europa.eu/resource/authority/country/XXG
+    XXH: http://publications.europa.eu/resource/authority/country/XXH
+    XXI: http://publications.europa.eu/resource/authority/country/XXI
+    XXJ: http://publications.europa.eu/resource/authority/country/XXJ
+    XXL: http://publications.europa.eu/resource/authority/country/XXL
+    XXM: http://publications.europa.eu/resource/authority/country/XXM
+    XXN: http://publications.europa.eu/resource/authority/country/XXN
+    XXO: http://publications.europa.eu/resource/authority/country/XXO
+    XXP: http://publications.europa.eu/resource/authority/country/XXP
+    XXU: http://publications.europa.eu/resource/authority/country/XXU
+    XXV: http://publications.europa.eu/resource/authority/country/XXV
+    XXZ: http://publications.europa.eu/resource/authority/country/XXZ
+    YEM: http://publications.europa.eu/resource/authority/country/YEM
+    YMD: http://publications.europa.eu/resource/authority/country/YMD
+    YUG: http://publications.europa.eu/resource/authority/country/YUG
+    ZAF: http://publications.europa.eu/resource/authority/country/ZAF
+    ZAR: http://publications.europa.eu/resource/authority/country/ZAR
+    ZMB: http://publications.europa.eu/resource/authority/country/ZMB
+    ZWE: http://publications.europa.eu/resource/authority/country/ZWE
+    Other: http://publications.europa.eu/resource/authority/country/OTHER
+  en:
+    ABW: Aruba
+    AFG: Afghanistan
+    AFI: French Afar and Issas
+    AGO: Angola
+    AIA: Anguilla
+    ALA: Åland Islands
+    ALB: Albania
+    AND: Andorra
+    ANT: Netherlands Antilles
+    ARE: United Arab Emirates
+    ARG: Argentina
+    ARM: Armenia
+    ASM: American Samoa
+    ATA: Antarctica
+    ATB: British Antarctic Territory
+    ATF: French Southern and Antarctic Lands
+    ATG: Antigua and Barbuda
+    ATN: Dronning Maud Land
+    AUS: Australia
+    AUT: Austria
+    AZE: Azerbaijan
+    BDI: Burundi
+    BEL: Belgium
+    BEN: Benin
+    BES: Bonaire, Sint Eustatius and Saba
+    BFA: Burkina Faso
+    BGD: Bangladesh
+    BGR: Bulgaria
+    BHR: Bahrain
+    BHS: Bahamas
+    BIH: Bosnia and Herzegovina
+    BLM: Saint Barthélemy
+    BLR: Belarus
+    BLZ: Belize
+    BMU: Bermuda
+    BOL: Bolivia
+    BRA: Brazil
+    BRB: Barbados
+    BRN: Brunei
+    BTN: Bhutan
+    BUR: Burma
+    BVT: Bouvet Island
+    BWA: Botswana
+    BYS: Belarus
+    CAF: Central African Republic
+    CAN: Canada
+    CCK: Cocos (Keeling) Islands
+    CHE: Switzerland
+    CHL: Chile
+    CHN: China
+    CIV: Côte d'Ivoire
+    CMR: Cameroon
+    COD: Democratic Republic of the Congo
+    COG: Congo
+    COK: Cook Islands
+    COL: Colombia
+    COM: Comoros
+    CPT: Clipperton
+    CPV: Cabo Verde
+    CRI: Costa Rica
+    CRQ: Sark
+    CSK: Czechoslovakia
+    CTE: Canton and Enderbury Islands
+    CUB: Cuba
+    CUW: Curaçao
+    CXR: Christmas Island
+    CYM: Cayman Islands
+    CYP: Cyprus
+    CZE: Czechia
+    DDR: German Democratic Republic
+    DEU: Germany
+    DHY: Dahomey
+    DJI: Djibouti
+    DMA: Dominica
+    DNK: Denmark
+    DOM: Dominican Republic
+    DZA: Algeria
+    ECU: Ecuador
+    EGY: Egypt
+    ERI: Eritrea
+    ESH: Western Sahara
+    ESP: Spain
+    EST: Estonia
+    ETH: Ethiopia
+    EUR: European Union
+    FIN: Finland
+    FJI: Fiji
+    FLK: Falkland Islands
+    FRA: France
+    FRO: Faroes
+    FSM: Micronesia
+    FXX: Metropolitan France
+    GAB: Gabon
+    GBR: United Kingdom
+    GEL: Gilbert and Ellice Islands
+    GEO: Georgia
+    GGY: Guernsey
+    GHA: Ghana
+    GIB: Gibraltar
+    GIN: Guinea
+    GLP: Guadeloupe
+    GMB: The Gambia
+    GNB: Guinea-Bissau
+    GNQ: Equatorial Guinea
+    GRC: Greece
+    GRD: Grenada
+    GRL: Greenland
+    GTM: Guatemala
+    GUF: French Guiana
+    GUM: Guam
+    GUY: Guyana
+    HKG: Hong Kong
+    HMD: Heard Island and McDonald Islands
+    HND: Honduras
+    HRV: Croatia
+    HTI: Haiti
+    HUN: Hungary
+    HVO: Upper Volta
+    IDN: Indonesia
+    IMN: Isle of Man
+    IND: India
+    IOT: British Indian Ocean Territory
+    IRL: Ireland
+    IRN: Iran
+    IRQ: Iraq
+    ISL: Iceland
+    ISR: Israel
+    ITA: Italy
+    JAM: Jamaica
+    JEY: Jersey
+    JOR: Jordan
+    JPN: Japan
+    JTN: Johnston Island
+    KAZ: Kazakhstan
+    KEN: Kenya
+    KGZ: Kyrgyzstan
+    KHM: Cambodia
+    KIR: Kiribati
+    KNA: Saint Kitts and Nevis
+    KOR: South Korea
+    KWT: Kuwait
+    LAO: Laos
+    LBN: Lebanon
+    LBR: Liberia
+    LBY: Libya
+    LCA: Saint Lucia
+    LIE: Liechtenstein
+    LKA: Sri Lanka
+    LSO: Lesotho
+    LTU: Lithuania
+    LUX: Luxembourg
+    LVA: Latvia
+    MAC: Macao
+    MAF: Saint Martin
+    MAR: Morocco
+    MCO: Monaco
+    MDA: Moldova
+    MDG: Madagascar
+    MDV: Maldives
+    MEX: Mexico
+    MHL: Marshall Islands
+    MID: Midway Islands
+    MKD: North Macedonia
+    MLI: Mali
+    MLT: Malta
+    MMR: Myanmar/Burma
+    MNE: Montenegro
+    MNG: Mongolia
+    MNP: Northern Mariana Islands
+    MOZ: Mozambique
+    MRT: Mauritania
+    MSR: Montserrat
+    MTQ: Martinique
+    MUS: Mauritius
+    MWI: Malawi
+    MYS: Malaysia
+    MYT: Mayotte
+    NAM: Namibia
+    NCL: New Caledonia
+    NER: Niger
+    NFK: Norfolk Island
+    NGA: Nigeria
+    NHB: New Hebrides
+    NIC: Nicaragua
+    NIU: Niue
+    NLD: Netherlands
+    NOR: Norway
+    NPL: Nepal
+    NRU: Nauru
+    NTZ: Neutral Zone
+    NZL: New Zealand
+    OMN: Oman
+    PAK: Pakistan
+    PAN: Panama
+    PCI: Trust Territory of the Pacific Islands
+    PCN: Pitcairn Islands
+    PCZ: Panama Canal Zone
+    PER: Peru
+    PHL: Philippines
+    PLW: Palau
+    PNG: Papua New Guinea
+    POL: Poland
+    PRI: Puerto Rico
+    PRK: North Korea
+    PRT: Portugal
+    PRY: Paraguay
+    PSE: Palestine*
+    PUS: US Miscellaneous Pacific Islands
+    PYF: French Polynesia
+    QAT: Qatar
+    REU: Réunion
+    RHO: Southern Rhodesia
+    ROU: Romania
+    RUS: Russia
+    RWA: Rwanda
+    SAU: Saudi Arabia
+    SCG: Serbia and Montenegro
+    SDN: Sudan
+    SEN: Senegal
+    SGP: Singapore
+    SGS: South Georgia and the South Sandwich Islands
+    SHN: Saint Helena, Ascension and Tristan da Cunha
+    SJM: Svalbard and Jan Mayen
+    SKM: Sikkim
+    SLB: Solomon Islands
+    SLE: Sierra Leone
+    SLV: El Salvador
+    SMR: San Marino
+    SOM: Somalia
+    SPM: Saint Pierre and Miquelon
+    SRB: Serbia
+    SSD: South Sudan
+    STP: São Tomé and Príncipe
+    SUN: Soviet Union
+    SUR: Suriname
+    SVK: Slovakia
+    SVN: Slovenia
+    SWE: Sweden
+    SWZ: Eswatini
+    SXM: Sint Maarten
+    SYC: Seychelles
+    SYR: Syria
+    TCA: Turks and Caicos Islands
+    TCD: Chad
+    TGO: Togo
+    THA: Thailand
+    TJK: Tajikistan
+    TKL: Tokelau
+    TKM: Turkmenistan
+    TLS: Timor-Leste
+    TMP: East Timor
+    TON: Tonga
+    TTO: Trinidad and Tobago
+    TUN: Tunisia
+    TUR: Türkiye
+    TUV: Tuvalu
+    TWN: Taiwan
+    TZA: Tanzania
+    UGA: Uganda
+    UKR: Ukraine
+    UMI: United States Minor Outlying Islands
+    URY: Uruguay
+    USA: United States
+    UZB: Uzbekistan
+    VAT: Holy See
+    VCT: Saint Vincent and the Grenadines
+    VDR: Democratic Republic of Vietnam
+    VEN: Venezuela
+    VGB: British Virgin Islands
+    VIR: US Virgin Islands
+    VNM: Viet Nam
+    VUT: Vanuatu
+    WAK: Wake Island
+    WLF: Wallis and Futuna
+    WSM: Samoa
+    XAC: Ashmore and Cartier Islands
+    XAD: UK Sovereign Base Areas of Akrotiri and Dhekelia
+    XBA: Basutoland
+    XBH: Büsingen am Hochrhein
+    XBI: Biafra
+    XCI: Campione d'Italia
+    XDST: Disputed region
+    XEU: EU Waters
+    XGS: Gaza Strip
+    XHS: High seas
+    XIC: Canary Islands
+    XIH: Heligoland
+    XIN: International Waters
+    XJM: Fisheries zone around Jan Mayen
+    XKA: Democratic Kampuchea
+    XKM: People's Republic of Kampuchea
+    XKX: Kosovo*
+    XLF: Fezzan (Libya)
+    XLI: Livigno
+    XLL: Italian waters of Lake Lugano
+    XMA: Mount Athos
+    XMAZ: Marine zone
+    XME: Melanesia
+    XNC: areas of the Republic of Cyprus in which the Government of the Republic of
+      Cyprus does not exercise effective control
+    XNY: Nyasaland
+    XPA: Azores
+    XPM: Madeira
+    XQP: Colombia/Jamaica (joint regime)
+    XQR: Japan/South Korea (joint regime)
+    XSC: Ceuta
+    XSG: Joint area between Senegal and Guinea-Bissau
+    XSL: Somaliland
+    XSM: Melilla
+    XSV: Fisheries Protection Zone around Svalbard
+    XWS: Western Samoa
+    XXA: Paracel Islands (disputed territory)
+    XXB: Spratly Islands (disputed territory)
+    XXC: Aksai Chin (disputed territory)
+    XXD: Arunashal Pradesh (disputed territory)
+    XXE: China/India (disputed territory)
+    XXF: Hala'Ib Triangle (disputed territory)
+    XXG: Ilemi Triangle (disputed territory)
+    XXH: Jammu Kashmir (disputed territory)
+    XXI: Northern Ireland
+    XXJ: Liancourt Rock (disputed territory)
+    XXL: Navassa Island (disputed territory)
+    XXM: Scarborough Reef (disputed territory)
+    XXN: Senkaku Islands (disputed territory)
+    XXO: Juan de Nova, Glorioso, Europa, Tromelin, Bassas da India
+    XXP: China/Philippines/Viet Nam/Taiwan/Malaysia (disputed territory)
+    XXU: Abyei Region (disputed territory)
+    XXV: Bir Tawil (disputed territory)
+    XXZ: Kuril Islands (disputed territory)
+    YEM: Yemen
+    YMD: North Yemen
+    YUG: Yugoslavia
+    ZAF: South Africa
+    ZAR: Zaire
+    ZMB: Zambia
+    ZWE: Zimbabwe
+    Other: Other
+  fr:
+    ABW: Aruba
+    AFG: Afghanistan
+    AFI: Afars et Issas français
+    AGO: Angola
+    AIA: Anguilla
+    ALA: Îles Åland
+    ALB: Albanie
+    AND: Andorre
+    ANT: Antilles néerlandaises
+    ARE: Émirats arabes unis
+    ARG: Argentine
+    ARM: Arménie
+    ASM: Samoa américaines
+    ATA: Antarctique
+    ATB: Territoire antarctique britannique
+    ATF: Terres australes et antarctiques françaises
+    ATG: Antigua-et-Barbuda
+    ATN: Terre de la Reine-Maud
+    AUS: Australie
+    AUT: Autriche
+    AZE: Azerbaïdjan
+    BDI: Burundi
+    BEL: Belgique
+    BEN: Bénin
+    BES: Bonaire, Saint-Eustache et Saba
+    BFA: Burkina Faso
+    BGD: Bangladesh
+    BGR: Bulgarie
+    BHR: Bahreïn
+    BHS: Bahamas
+    BIH: Bosnie-Herzégovine
+    BLM: Saint-Barthélemy
+    BLR: Bélarus
+    BLZ: Belize
+    BMU: Bermudes
+    BOL: Bolivie
+    BRA: Brésil
+    BRB: Barbade
+    BRN: Brunei
+    BTN: Bhoutan
+    BUR: Birmanie
+    BVT: Île Bouvet
+    BWA: Botswana
+    BYS: Bélarus
+    CAF: République centrafricaine
+    CAN: Canada
+    CCK: Îles Cocos
+    CHE: Suisse
+    CHL: Chili
+    CHN: Chine
+    CIV: Côte d'Ivoire
+    CMR: Cameroun
+    COD: République démocratique du Congo
+    COG: Congo
+    COK: Îles Cook
+    COL: Colombie
+    COM: Comores
+    CPT: Clipperton
+    CPV: Cap-Vert
+    CRI: Costa Rica
+    CRQ: Sercq
+    CSK: Tchécoslovaquie
+    CTE: Îles Canton et Enderbury
+    CUB: Cuba
+    CUW: Curaçao
+    CXR: Île Christmas
+    CYM: Îles Caïmans
+    CYP: Chypre
+    CZE: Tchéquie
+    DDR: République démocratique allemande
+    DEU: Allemagne
+    DHY: Dahomey
+    DJI: Djibouti
+    DMA: Dominique
+    DNK: Danemark
+    DOM: République dominicaine
+    DZA: Algérie
+    ECU: Équateur
+    EGY: Égypte
+    ERI: Érythrée
+    ESH: Sahara occidental
+    ESP: Espagne
+    EST: Estonie
+    ETH: Éthiopie
+    EUR: Union européenne
+    FIN: Finlande
+    FJI: Fidji
+    FLK: Îles Falkland
+    FRA: France
+    FRO: Îles Féroé
+    FSM: Micronésie
+    FXX: France métropolitaine
+    GAB: Gabon
+    GBR: Royaume-Uni
+    GEL: Îles Gilbert et Ellice
+    GEO: Géorgie
+    GGY: Guernesey
+    GHA: Ghana
+    GIB: Gibraltar
+    GIN: Guinée
+    GLP: Guadeloupe
+    GMB: Gambie
+    GNB: Guinée-Bissau
+    GNQ: Guinée équatoriale
+    GRC: Grèce
+    GRD: Grenade
+    GRL: Groenland
+    GTM: Guatemala
+    GUF: Guyane française
+    GUM: Guam
+    GUY: Guyana
+    HKG: Hong Kong
+    HMD: Îles Heard-et-MacDonald
+    HND: Honduras
+    HRV: Croatie
+    HTI: Haïti
+    HUN: Hongrie
+    HVO: Haute-Volta
+    IDN: Indonésie
+    IMN: Île de Man
+    IND: Inde
+    IOT: Territoire britannique de l'océan Indien
+    IRL: Irlande
+    IRN: Iran
+    IRQ: Irak
+    ISL: Islande
+    ISR: Israël
+    ITA: Italie
+    JAM: Jamaïque
+    JEY: Jersey
+    JOR: Jordanie
+    JPN: Japon
+    JTN: Île Johnston
+    KAZ: Kazakhstan
+    KEN: Kenya
+    KGZ: Kirghizistan
+    KHM: Cambodge
+    KIR: Kiribati
+    KNA: Saint-Christophe-et-Niévès
+    KOR: Corée du Sud
+    KWT: Koweït
+    LAO: Laos
+    LBN: Liban
+    LBR: Libéria
+    LBY: Libye
+    LCA: Sainte-Lucie
+    LIE: Liechtenstein
+    LKA: Sri Lanka
+    LSO: Lesotho
+    LTU: Lituanie
+    LUX: Luxembourg
+    LVA: Lettonie
+    MAC: Macao
+    MAF: Saint-Martin
+    MAR: Maroc
+    MCO: Monaco
+    MDA: Moldavie
+    MDG: Madagascar
+    MDV: Maldives
+    MEX: Mexique
+    MHL: Îles Marshall
+    MID: Îles Midway
+    MKD: Macédoine du Nord
+    MLI: Mali
+    MLT: Malte
+    MMR: Myanmar
+    MNE: Monténégro
+    MNG: Mongolie
+    MNP: Îles Mariannes du Nord
+    MOZ: Mozambique
+    MRT: Mauritanie
+    MSR: Montserrat
+    MTQ: Martinique
+    MUS: Maurice
+    MWI: Malawi
+    MYS: Malaisie
+    MYT: Mayotte
+    NAM: Namibie
+    NCL: Nouvelle-Calédonie
+    NER: Niger
+    NFK: Île Norfolk
+    NGA: Nigéria
+    NHB: Nouvelles-Hébrides
+    NIC: Nicaragua
+    NIU: Niue
+    NLD: Pays-Bas
+    NOR: Norvège
+    NPL: Népal
+    NRU: Nauru
+    NTZ: Zone neutre
+    NZL: Nouvelle-Zélande
+    OMN: Oman
+    PAK: Pakistan
+    PAN: Panama
+    PCI: Territoire sous tutelle des îles du Pacifique
+    PCN: Îles Pitcairn
+    PCZ: Zone du canal de Panama
+    PER: Pérou
+    PHL: Philippines
+    PLW: Palaos
+    PNG: Papouasie-Nouvelle-Guinée
+    POL: Pologne
+    PRI: Porto Rico
+    PRK: Corée du Nord
+    PRT: Portugal
+    PRY: Paraguay
+    PSE: Palestine
+    PUS: Îles mineures éloignées des États-Unis
+    PYF: Polynésie française
+    QAT: Qatar
+    REU: La Réunion
+    RHO: Rhodésie du Sud
+    ROU: Roumanie
+    RUS: Russie
+    RWA: Rwanda
+    SAU: Arabie saoudite
+    SCG: Serbie-et-Monténégro
+    SDN: Soudan
+    SEN: Sénégal
+    SGP: Singapour
+    SGS: Géorgie du Sud-et-les Îles Sandwich du Sud
+    SHN: Sainte-Hélène, Ascension et Tristan da Cunha
+    SJM: Svalbard et Jan Mayen
+    SKM: Sikkim
+    SLB: Îles Salomon
+    SLE: Sierra Leone
+    SLV: El Salvador
+    SMR: Saint-Marin
+    SOM: Somalie
+    SPM: Saint-Pierre-et-Miquelon
+    SRB: Serbie
+    SSD: Soudan du Sud
+    STP: Sao Tomé-et-Principe
+    SUN: Union soviétique
+    SUR: Suriname
+    SVK: Slovaquie
+    SVN: Slovénie
+    SWE: Suède
+    SWZ: Eswatini
+    SXM: Saint-Martin
+    SYC: Seychelles
+    SYR: Syrie
+    TCA: Îles Turques-et-Caïques
+    TCD: Tchad
+    TGO: Togo
+    THA: Thaïlande
+    TJK: Tadjikistan
+    TKL: Tokelau
+    TKM: Turkménistan
+    TLS: Timor oriental
+    TMP: Timor oriental
+    TON: Tonga
+    TTO: Trinité-et-Tobago
+    TUN: Tunisie
+    TUR: Turquie
+    TUV: Tuvalu
+    TWN: Taïwan
+    TZA: Tanzanie
+    UGA: Ouganda
+    UKR: Ukraine
+    UMI: Îles mineures éloignées des États-Unis
+    URY: Uruguay
+    USA: États-Unis
+    UZB: Ouzbékistan
+    VAT: Saint-Siège
+    VCT: Saint-Vincent-et-les-Grenadines
+    VDR: République démocratique du Viêt Nam
+    VEN: Venezuela
+    VGB: Îles Vierges britanniques
+    VIR: Îles Vierges américaines
+    VNM: Viêt Nam
+    VUT: Vanuatu
+    WAK: Île Wake
+    WLF: Wallis-et-Futuna
+    WSM: Samoa
+    XAC: Îles Ashmore-et-Cartier
+    XAD: Zones de souveraineté britannique d'Akrotiri et Dhekelia
+    XBA: Basutoland
+    XBH: Büsingen am Hochrhein
+    XBI: Biafra
+    XCI: Campione d'Italia
+    XDST: Région disputée
+    XEU: Eaux de l'UE
+    XGS: Bande de Gaza
+    XHS: Haute mer
+    XIC: Îles Canaries
+    XIH: Heligoland
+    XIN: Eaux internationales
+    XJM: Zone de pêche autour de Jan Mayen
+    XKA: Kampuchea démocratique
+    XKM: République populaire du Kampuchea
+    XKX: Kosovo
+    XLF: Fezzan (Libye)
+    XLI: Livigno
+    XLL: Eaux italiennes du lac de Lugano
+    XMA: Mont Athos
+    XMAZ: Zone marine
+    XME: Mélanésie
+    XNC: Zones de la République de Chypre où le gouvernement de la République de Chypre
+      n'exerce pas de contrôle effectif
+    XNY: Nyasaland
+    XPA: Açores
+    XPM: Madère
+    XQP: Colombie/Jamaïque (régime conjoint)
+    XQR: Japon/Corée du Sud (régime conjoint)
+    XSC: Ceuta
+    XSG: Zone conjointe entre le Sénégal et la Guinée-Bissau
+    XSL: Somaliland
+    XSM: Melilla
+    XSV: Zone de protection des pêches autour du Svalbard
+    XWS: Samoa occidental
+    XXA: Îles Paracels (territoire disputé)
+    XXB: Îles Spratleys (territoire disputé)
+    XXC: Aksai Chin (territoire disputé)
+    XXD: Arunachal Pradesh (territoire disputé)
+    XXE: Chine/Inde (territoire disputé)
+    XXF: Triangle de Hala'ib (territoire disputé)
+    XXG: Triangle d'Ilemi (territoire disputé)
+    XXH: Jammu-et-Cachemire (territoire disputé)
+    XXI: Irlande du Nord
+    XXJ: Rochers Liancourt (territoire disputé)
+    XXL: Île Navassa (territoire disputé)
+    XXM: Récif Scarborough (territoire disputé)
+    XXN: Îles Senkaku (territoire disputé)
+    XXO: Juan de Nova, Glorieuses, Europa, Tromelin, Bassas da India
+    XXP: Chine/Philippines/Viêt Nam/Taïwan/Malaisie (territoire disputé)
+    XXU: Région d'Abyei (territoire disputé)
+    XXV: Bir Tawil (territoire disputé)
+    XXZ: Îles Kouriles (territoire disputé)
+    YEM: Yémen
+    YMD: Yémen du Nord
+    YUG: Yougoslavie
+    ZAF: Afrique du Sud
+    ZAR: Zaïre
+    ZMB: Zambie
+    ZWE: Zimbabwe
+    Other: Autre

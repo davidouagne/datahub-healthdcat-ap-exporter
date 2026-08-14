@@ -1,0 +1,95 @@
+PublicationsEuropAuthorityLanguage:
+  col: A
+  vocabulary_list:
+    BOS: http://publications.europa.eu/resource/authority/language/BOS
+    BUL: http://publications.europa.eu/resource/authority/language/BUL
+    CES: http://publications.europa.eu/resource/authority/language/CES
+    DAN: http://publications.europa.eu/resource/authority/language/DAN
+    DEU: http://publications.europa.eu/resource/authority/language/DEU
+    ELL: http://publications.europa.eu/resource/authority/language/ELL
+    ENG: http://publications.europa.eu/resource/authority/language/ENG
+    EST: http://publications.europa.eu/resource/authority/language/EST
+    FIN: http://publications.europa.eu/resource/authority/language/FIN
+    FRA: http://publications.europa.eu/resource/authority/language/FRA
+    GLE: http://publications.europa.eu/resource/authority/language/GLE
+    HRV: http://publications.europa.eu/resource/authority/language/HRV
+    HUN: http://publications.europa.eu/resource/authority/language/HUN
+    HYE: http://publications.europa.eu/resource/authority/language/HYE
+    ISL: http://publications.europa.eu/resource/authority/language/ISL
+    ITA: http://publications.europa.eu/resource/authority/language/ITA
+    LAV: http://publications.europa.eu/resource/authority/language/LAV
+    LIT: http://publications.europa.eu/resource/authority/language/LIT
+    MLT: http://publications.europa.eu/resource/authority/language/MLT
+    NLD: http://publications.europa.eu/resource/authority/language/NLD
+    NOR: http://publications.europa.eu/resource/authority/language/NOR
+    POL: http://publications.europa.eu/resource/authority/language/POL
+    POR: http://publications.europa.eu/resource/authority/language/POR
+    RON: http://publications.europa.eu/resource/authority/language/RON
+    RUS: http://publications.europa.eu/resource/authority/language/RUS
+    SLK: http://publications.europa.eu/resource/authority/language/SLK
+    SLV: http://publications.europa.eu/resource/authority/language/SLV
+    SPA: http://publications.europa.eu/resource/authority/language/SPA
+    SRP: http://publications.europa.eu/resource/authority/language/SRP
+    SWE: http://publications.europa.eu/resource/authority/language/SWE
+  en:
+    BOS: BOS (Bosnian)
+    BUL: BUL (Bulgarian)
+    CES: CES (Czech)
+    DAN: DAN (Danish)
+    DEU: DEU (German)
+    ELL: ELL (Greek)
+    ENG: ENG (English)
+    EST: EST (Estonian)
+    FIN: FIN (Finnish)
+    FRA: FRA (French)
+    GLE: GLE (Irish)
+    HRV: HRV (Croatian)
+    HUN: HUN (Hungarian)
+    HYE: HYE (Armenian)
+    ISL: ISL (Icelandic)
+    ITA: ITA (Italian)
+    LAV: LAV (Latvian)
+    LIT: LIT (Lithuanian)
+    MLT: MLT (Maltese)
+    NLD: NLD (Dutch)
+    NOR: NOR (Norwegian)
+    POL: POL (Polish)
+    POR: POR (Portuguese)
+    RON: RON (Romanian)
+    RUS: RUS (Russian)
+    SLK: SLK (Slovak)
+    SLV: SLV (Slovenian)
+    SPA: SPA (Spanish)
+    SRP: SRP (Serbian)
+    SWE: SWE (Swedish)
+  fr:
+    BOS: BOS (Bosniaque)
+    BUL: BUL (Bulgare)
+    CES: CES (Tchèque)
+    DAN: DAN (Danois)
+    DEU: DEU (Allemand)
+    ELL: ELL (Grec)
+    ENG: ENG (Anglais)
+    EST: EST (Estonien)
+    FIN: FIN (Finnois)
+    FRA: FRA (Français)
+    GLE: GLE (Irlandais)
+    HRV: HRV (Croate)
+    HUN: HUN (Hongrois)
+    HYE: HYE (Arménien)
+    ISL: ISL (Islandais)
+    ITA: ITA (Italien)
+    LAV: LAV (Letton)
+    LIT: LIT (Lituanien)
+    MLT: MLT (Maltais)
+    NLD: NLD (Néerlandais)
+    NOR: NOR (Norvégien)
+    POL: POL (Polonais)
+    POR: POR (Portugais)
+    RON: RON (Roumain)
+    RUS: RUS (Russe)
+    SLK: SLK (Slovaque)
+    SLV: SLV (Slovène)
+    SPA: SPA (Espagnol)
+    SRP: SRP (Serbe)
+    SWE: SWE (Suédois)
