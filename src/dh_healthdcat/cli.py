@@ -26,9 +26,11 @@ def _echo_issues(dataset: HealthDataset) -> None:
 @app.command("export-file")
 def export_file(
     output: Path = typer.Option(..., "--output", "-o", help="Fichier ou dossier de sortie (voir --split-per-dataset)"),
-    urn: list[str] = typer.Option([], "--urn", help="URN de DataProduct à exporter (répétable). Sans valeur : tout le catalogue."),
+    urn: list[str] = typer.Option([], "--urn", help="URN de DataProduct à exporter (répétable). Sans valeur : tout le catalogue. Prioritaire sur --domain/--tag/--exclude-tag."),
     domain: list[str] = typer.Option([], "--domain", help="Filtre par domaine (urn ou id, répétable)"),
     tag: list[str] = typer.Option([], "--tag", help="Filtre par tag (urn ou nom, répétable)"),
+    tag_mode: str = typer.Option("any", "--tag-mode", help="any (au moins un des --tag, défaut) | all (tous les --tag)"),
+    exclude_tag: list[str] = typer.Option([], "--exclude-tag", help="Exclut les DataProducts portant ce tag (urn ou nom, répétable)"),
     fmt: str = typer.Option("turtle", "--format", help="turtle | json-ld | n-triples"),
     split_per_dataset: bool = typer.Option(False, "--split-per-dataset", help="Un fichier par DataProduct dans --output (dossier)"),
     base_uri: str = typer.Option(DEFAULT_BASE_URI, "--base-uri", help="Base pour dct:identifier"),
@@ -39,7 +41,19 @@ def export_file(
     from dh_healthdcat.emit.turtle import write_graph
 
     ctx = from_env()
-    selected = select_data_product_urns(ctx, urns=urn, domains=domain, tags=tag)
+    try:
+        selected = select_data_product_urns(
+            ctx,
+            urns=urn,
+            domains=domain,
+            tags=tag,
+            tag_mode=tag_mode,
+            exclude_tags=exclude_tag,
+            on_warning=lambda m: typer.secho(m, fg=typer.colors.YELLOW, err=True),
+        )
+    except ValueError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=2) from exc
 
     if not selected:
         typer.secho("Aucun DataProduct ne correspond aux filtres.", fg=typer.colors.YELLOW, err=True)
@@ -136,9 +150,11 @@ def push_hdh(
     hdh_url: str = typer.Option(..., "--hdh-url", help="Base URL du catalogue HDH (ex: https://catalogue.health-data-hub.fr)"),
     api_key: str | None = typer.Option(None, "--api-key", help="Clé mdc_... (sinon lue depuis --api-key-env)"),
     api_key_env: str = typer.Option("HDH_API_KEY", "--api-key-env", help="Variable d'environnement portant la clé API"),
-    urn: list[str] = typer.Option([], "--urn", help="URN de DataProduct à pousser (répétable). Sans valeur : tout le catalogue."),
+    urn: list[str] = typer.Option([], "--urn", help="URN de DataProduct à pousser (répétable). Sans valeur : tout le catalogue. Prioritaire sur --domain/--tag/--exclude-tag."),
     domain: list[str] = typer.Option([], "--domain", help="Filtre par domaine (urn ou id, répétable)"),
     tag: list[str] = typer.Option([], "--tag", help="Filtre par tag (urn ou nom, répétable)"),
+    tag_mode: str = typer.Option("any", "--tag-mode", help="any (au moins un des --tag, défaut) | all (tous les --tag)"),
+    exclude_tag: list[str] = typer.Option([], "--exclude-tag", help="Exclut les DataProducts portant ce tag (urn ou nom, répétable)"),
     base_uri: str = typer.Option(DEFAULT_BASE_URI, "--base-uri", help="Base pour dct:identifier"),
     state_file: Path | None = typer.Option(None, "--state-file", help="Fichier de correspondance URN->id HDH (défaut : .dh-healthdcat-state.json)"),
     dry_run: bool = typer.Option(False, "--dry-run", help="Valide et affiche ce qui serait envoyé, sans appel réseau d'écriture"),
@@ -164,7 +180,19 @@ def push_hdh(
     typer.echo(f"Connecté au HDH ({who}).")
 
     ctx = from_env()
-    selected = select_data_product_urns(ctx, urns=urn, domains=domain, tags=tag)
+    try:
+        selected = select_data_product_urns(
+            ctx,
+            urns=urn,
+            domains=domain,
+            tags=tag,
+            tag_mode=tag_mode,
+            exclude_tags=exclude_tag,
+            on_warning=lambda m: typer.secho(m, fg=typer.colors.YELLOW, err=True),
+        )
+    except ValueError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=2) from exc
     if not selected:
         typer.secho("Aucun DataProduct ne correspond aux filtres.", fg=typer.colors.YELLOW, err=True)
         raise typer.Exit(code=1)

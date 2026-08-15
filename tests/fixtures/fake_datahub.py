@@ -107,15 +107,25 @@ _PROFILES = {ASSET_URN: NS(sizeInBytes=123456)}
 
 class FakeGraph:
     """Substitut minimal de `DataHubGraph` : `get_entity_semityped` et
-    `get_latest_timeseries_value` sont ce que `ReadContext` utilise."""
+    `get_latest_timeseries_value` sont ce que `ReadContext` utilise.
+
+    `get_entity_semityped_calls` et `last_extra_or_filters` instrumentent le
+    double pour tests/unit/test_selection.py : ils permettent de prouver que
+    `select_data_product_urns` ne fait plus d'appel par entité (N+1, voir
+    spec/spec-feature-tag-filtering.md) et de vérifier quel filtre a
+    effectivement été transmis à `get_urns_by_filter`."""
 
     def __init__(self) -> None:
         self._entities = _entities()
+        self.get_entity_semityped_calls: list[str] = []
+        self.last_extra_or_filters: object = None
 
     def get_entity_semityped(self, urn: str, aspects: list[str] | None = None) -> dict:
+        self.get_entity_semityped_calls.append(urn)
         return self._entities[urn]
 
-    def get_urns_by_filter(self, *, entity_types=None, **kwargs):  # noqa: ANN001, ANN003
+    def get_urns_by_filter(self, *, entity_types=None, extra_or_filters=None, **kwargs):  # noqa: ANN001, ANN003
+        self.last_extra_or_filters = extra_or_filters
         if entity_types == ["dataProduct"]:
             return [DATAPRODUCT_URN]
         return []
