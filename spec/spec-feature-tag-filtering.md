@@ -111,7 +111,6 @@ domaine).
 
 - `--glossary-term` comme axe de filtrage supplémentaire (le `FilterDsl`
   sous-jacent le supporte déjà — `glossary_term`).
-- Filtrage au niveau Dataset (au sein d'un DataProduct déjà sélectionné).
 
 ## Success Metrics
 
@@ -130,16 +129,19 @@ domaine).
 
 ## Open Questions
 
-- **Défaut de `--tag-mode`** (engineering) : `any` préserve la rétrocompatibilité
-  avec le comportement actuel (OU implicite) — à confirmer que c'est bien le
-  défaut souhaité plutôt que `all`.
-- **Interaction `--urn` explicite + `--tag`** (engineering) : aujourd'hui,
-  `discover_urns` (`selection.py:10-13`) court-circuite la découverte quand
-  `--urn` est fourni, mais `select_data_product_urns` applique quand même les
-  filtres `--tag`/`--domain` sur cette liste explicite (`selection.py:47-52`).
-  Faut-il conserver ce comportement (les filtres restreignent une liste
-  explicite) ou considérer que `--urn` doit être prioritaire et ignorer les
-  filtres tag/domaine ? Le comportement actuel n'est documenté nulle part.
+Les deux questions ci-dessous étaient ouvertes à la rédaction de cette spec ;
+tranchées le 2026-08-15 avant implémentation du lot P0, décisions reportées
+dans le tableau des exigences et le README.
+
+- ~~**Défaut de `--tag-mode`**~~ — **Tranché : `any`.** Préserve la
+  rétrocompatibilité avec le comportement actuel (OU implicite) : aucun export
+  existant ne change de résultat après mise à jour.
+- ~~**Interaction `--urn` explicite + `--tag`**~~ — **Tranché : `--urn` est
+  prioritaire, les filtres sont ignorés** (avec avertissement explicite s'ils
+  sont fournis en même temps). C'est un changement de comportement assumé par
+  rapport au v0, où `select_data_product_urns` appliquait quand même les
+  filtres `--tag`/`--domain` à la liste explicite (`selection.py:47-52` avant
+  implémentation du lot P0) — comportement qui n'était documenté nulle part.
 
 ## Timeline Considerations
 

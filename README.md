@@ -58,6 +58,7 @@ Ne pas confondre avec la configuration du **HDH** (`--hdh-url`/`--api-key` de `p
 dh-healthdcat export-file --output catalogue.ttl
 dh-healthdcat export-file --urn urn:li:dataProduct:b78435bfad26dab4c11e6e41c2a72b53 --output un-jeu.ttl
 dh-healthdcat export-file --domain "Biologie" --tag eds --format json-ld --split-per-dataset out/
+dh-healthdcat export-file --tag eds --tag urgences --tag-mode all --exclude-tag dcat:sample --output prod.ttl
 ```
 
 Chaque export valide le graphe contre les shapes SHACL du HDH (`shapes/ehds/`) avant d'écrire quoi que ce soit (`--no-strict` pour forcer l'écriture malgré des erreurs, utile en exploration). Un jeu incomplet produit un message explicite :
@@ -65,6 +66,14 @@ Chaque export valide le graphe contre les shapes SHACL du HDH (`shapes/ehds/`) a
 ```
 ERREUR: DataProduct "Imagerie médicale" : healthdcatap:healthTheme manquant → renseigner fr.aphp.healthdcat.healthTheme
 ```
+
+**Sémantique de sélection** (`--domain`/`--tag`/`--tag-mode`/`--exclude-tag`, partagée par `export-file` et `push-hdh`, évaluée côté serveur en une seule requête de recherche — voir `spec/spec-feature-tag-filtering.md`) :
+
+- Plusieurs `--domain` sont combinés en OU (au moins un des domaines).
+- Plusieurs `--tag` sont combinés en OU par défaut (`--tag-mode any`) ; `--tag-mode all` exige la présence de tous les tags donnés.
+- `--exclude-tag` (répétable) retire tout DataProduct portant l'un des tags exclus, quels que soient les autres critères.
+- `--domain` et `--tag`/`--exclude-tag` entre eux sont combinés en ET.
+- `--urn` est **prioritaire** : s'il est fourni, les DataProducts nommés sont traités tels quels et `--domain`/`--tag`/`--exclude-tag` sont ignorés (un avertissement est émis s'ils sont fournis en même temps).
 
 ### Valider un fichier RDF isolé
 
