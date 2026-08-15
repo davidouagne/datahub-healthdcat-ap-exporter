@@ -62,6 +62,7 @@ def export_file(
     graphs: list[Graph] = []
     any_error = False
     any_shacl_violation = False
+    excluded = 0
 
     for dp_urn in selected:
         try:
@@ -69,6 +70,7 @@ def export_file(
         except ValueError as exc:
             typer.secho(f"IGNORÉ {dp_urn} : {exc}", fg=typer.colors.RED, err=True)
             any_error = True
+            excluded += 1
             continue
 
         graph = dataset_to_graph(dataset)
@@ -83,30 +85,39 @@ def export_file(
             typer.secho(f'DataProduct "{dataset.title}" : non conforme SHACL', fg=typer.colors.RED, err=True)
             typer.echo(result.report_text, err=True)
 
+        # Un DataProduct invalide est exclu de l'export, pas le lot entier :
+        # les autres jeux sélectionnés ne doivent pas payer pour celui-ci
+        # (voir investigation --tag aphp:access, qui a fait échouer un export
+        # entier à cause de DataProducts de production sans rapport avec le
+        # filtre, jamais peuplés en propriétés HealthDCAT-AP).
+        if strict and (dataset.has_errors or not result.conforms):
+            typer.secho(f'  -> "{dataset.title}" exclu de l\'export : erreurs ci-dessus (--no-strict pour forcer)', fg=typer.colors.YELLOW, err=True)
+            excluded += 1
+            continue
+
         graphs.append(graph)
 
         if split_per_dataset:
             from dh_healthdcat.emit.turtle import FORMAT_TO_EXTENSION
 
             out_path = output / f"{dataset.dataset_id}{FORMAT_TO_EXTENSION[fmt]}"
-            if strict and (dataset.has_errors or not result.conforms):
-                typer.secho(f"  -> non écrit ({out_path.name}) : erreurs ci-dessus (--no-strict pour forcer)", fg=typer.colors.YELLOW, err=True)
-            else:
-                write_graph(graph, out_path, fmt=fmt)
-                typer.echo(f"  -> {out_path}")
+            write_graph(graph, out_path, fmt=fmt)
+            typer.echo(f"  -> {out_path}")
 
     if not split_per_dataset:
+        if not graphs:
+            typer.secho("Export non écrit : aucun DataProduct valide dans la sélection (--no-strict pour forcer).", fg=typer.colors.RED, err=True)
+            raise typer.Exit(code=1)
+
         merged = Graph()
         for g in graphs:
             merged += g
         from dh_healthdcat.mapping.namespaces import bind_prefixes
 
         bind_prefixes(merged)
-        if strict and (any_error or any_shacl_violation):
-            typer.secho("Export non écrit : erreurs ci-dessus (--no-strict pour forcer).", fg=typer.colors.RED, err=True)
-            raise typer.Exit(code=1)
         write_graph(merged, output, fmt=fmt)
-        typer.echo(f"Écrit : {output} ({len(merged)} triplets, {len(selected)} jeu(x))")
+        suffix = f", {excluded} exclu(s)" if excluded else ""
+        typer.echo(f"Écrit : {output} ({len(merged)} triplets, {len(graphs)}/{len(selected)} jeu(x){suffix})")
 
     if strict and (any_error or any_shacl_violation):
         raise typer.Exit(code=1)

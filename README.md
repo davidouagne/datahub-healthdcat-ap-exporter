@@ -61,10 +61,11 @@ dh-healthdcat export-file --domain "Biologie" --tag eds --format json-ld --split
 dh-healthdcat export-file --tag eds --tag urgences --tag-mode all --exclude-tag dcat:sample --output prod.ttl
 ```
 
-Chaque export valide le graphe contre les shapes SHACL du HDH (`shapes/ehds/`) avant d'écrire quoi que ce soit (`--no-strict` pour forcer l'écriture malgré des erreurs, utile en exploration). Un jeu incomplet produit un message explicite :
+Chaque DataProduct est validé individuellement contre les shapes SHACL du HDH (`shapes/ehds/`) ; un jeu invalide (champ obligatoire manquant ou violation SHACL) est **exclu de l'export, pas l'export entier** — les autres DataProducts sélectionnés sont écrits normalement (`--no-strict` pour l'inclure quand même malgré ses erreurs, utile en exploration). Le code de sortie reste non nul dès qu'au moins un jeu a été exclu, même si le fichier produit contient les autres. Un jeu invalide produit un message explicite :
 
 ```
 ERREUR: DataProduct "Imagerie médicale" : healthdcatap:healthTheme manquant → renseigner fr.aphp.healthdcat.healthTheme
+  -> "Imagerie médicale" exclu de l'export : erreurs ci-dessus (--no-strict pour forcer)
 ```
 
 **Sémantique de sélection** (`--domain`/`--tag`/`--tag-mode`/`--exclude-tag`, partagée par `export-file` et `push-hdh`, évaluée côté serveur en une seule requête de recherche — voir `spec/spec-feature-tag-filtering.md`) :
