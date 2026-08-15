@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: ${{ matrix.python-version }}
+
+      - name: Installer le projet (mode éditable + extra dev)
+        run: uv pip install -e ".[dev]"
+
+      - name: Lancer la suite de tests
+        run: uv run pytest
+
+  build:
+    name: Construction du wheel et fumée sur installation non-éditable
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.12"
+
+      - name: Construire le wheel
+        run: uv build
+
+      - name: Installer le wheel dans un venv neuf (non-éditable)
+        run: |
+          uv venv .venv-wheel
+          uv pip install --python .venv-wheel dist/*.whl
+
+      - name: Fumée CLI (dh-healthdcat --help)
+        run: .venv-wheel/bin/dh-healthdcat --help
+
+      - name: Fumée données embarquées (vocabulaires + shapes SHACL)
+        run: |
+          .venv-wheel/bin/python -c "
+          from rdflib import Graph
+          from dh_healthdcat.mapping.vocabularies import ACCESS_RIGHTS
+          from dh_healthdcat.validate.shacl import validate_graph
+
+          # Échoue si mapping/vocab/AccessRights.yml n'a pas été empaqueté.
+          assert ACCESS_RIGHTS.resolve('PUBLIC').startswith('http://publications.europa.eu/')
+
+          # Échoue si validate/shapes/hdap-validator-sensitivity-shape.ttl
+          # n'a pas été empaqueté (pyshacl ne trouverait aucune shape à charger).
+          result = validate_graph(Graph())
+          assert result.conforms
+          print('Données embarquées (vocab + shapes SHACL) chargées avec succès.')
+          "
