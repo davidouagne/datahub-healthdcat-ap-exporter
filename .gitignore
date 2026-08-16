@@ -10,3 +10,5 @@ build/
 htmlcov/
 *.ttl.out
 .dh-healthdcat-state.json
+.claude/
+spec/

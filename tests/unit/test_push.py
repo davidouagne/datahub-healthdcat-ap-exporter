@@ -22,7 +22,7 @@ from tests.fixtures.fake_hdh import InMemoryHdhCatalog
 def test_new_dataproduct_is_created_and_id_recorded(tmp_path):
     ctx = build_context()
     target = InMemoryHdhCatalog()
-    state = PushState.open(tmp_path / "state.json")
+    state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
 
     [outcome] = list(push(ctx, [DATAPRODUCT_URN], target=target, state=state))
 
@@ -36,7 +36,7 @@ def test_new_dataproduct_is_created_and_id_recorded(tmp_path):
 def test_already_known_dataproduct_is_updated_not_recreated(tmp_path):
     ctx = build_context()
     target = InMemoryHdhCatalog()
-    state = PushState.open(tmp_path / "state.json")
+    state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
     state.record(DATAPRODUCT_URN, "existing-hdh-id")
 
     [outcome] = list(push(ctx, [DATAPRODUCT_URN], target=target, state=state))
@@ -56,11 +56,11 @@ def test_each_push_is_durable_without_waiting_for_the_batch_to_finish(tmp_path):
     ctx = build_context()
     target = InMemoryHdhCatalog()
     path = tmp_path / "state.json"
-    state = PushState.open(path)
+    state = PushState.open(path, instance="https://hdh.test")
 
     [outcome] = list(push(ctx, [DATAPRODUCT_URN], target=target, state=state))
 
-    reopened = PushState.open(path)
+    reopened = PushState.open(path, instance="https://hdh.test")
     assert reopened.hdh_id_for(DATAPRODUCT_URN) == outcome.hdh_id
 
 
@@ -70,7 +70,7 @@ def test_invalid_dataproduct_produces_no_write_call(tmp_path):
 
     ctx = build_context()
     target = InMemoryHdhCatalog()
-    state = PushState.open(tmp_path / "state.json")
+    state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
 
     [outcome] = list(push(ctx, [NONCONFORMING_DATAPRODUCT_URN], target=target, state=state))
 
@@ -82,7 +82,7 @@ def test_invalid_dataproduct_produces_no_write_call(tmp_path):
 def test_unreadable_dataproduct_is_relayed_with_no_write_call(tmp_path):
     ctx = build_context()
     target = InMemoryHdhCatalog()
-    state = PushState.open(tmp_path / "state.json")
+    state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
 
     [outcome] = list(push(ctx, [UNREADABLE_DATAPRODUCT_URN], target=target, state=state))
 
@@ -94,7 +94,7 @@ def test_unreadable_dataproduct_is_relayed_with_no_write_call(tmp_path):
 def test_dry_run_plans_without_any_write_call_or_state_mutation(tmp_path):
     ctx = build_context()
     target = InMemoryHdhCatalog()
-    state = PushState.open(tmp_path / "state.json")
+    state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
 
     [outcome] = list(push(ctx, [DATAPRODUCT_URN], target=target, state=state, dry_run=True))
 
@@ -110,7 +110,7 @@ def test_dry_run_plans_without_any_write_call_or_state_mutation(tmp_path):
 def test_dry_run_plans_an_update_when_a_known_id_exists(tmp_path):
     ctx = build_context()
     target = InMemoryHdhCatalog()
-    state = PushState.open(tmp_path / "state.json")
+    state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
     state.record(DATAPRODUCT_URN, "existing-hdh-id")
 
     [outcome] = list(push(ctx, [DATAPRODUCT_URN], target=target, state=state, dry_run=True))
@@ -128,7 +128,7 @@ def test_a_failed_push_does_not_prevent_the_next_dataproduct(tmp_path):
 
     ctx = build_context()
     target = InMemoryHdhCatalog(fail_next_creates=1)
-    state = PushState.open(tmp_path / "state.json")
+    state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
 
     outcomes = list(push(ctx, [DATAPRODUCT_URN, DATAPRODUCT_URN], target=target, state=state))
 

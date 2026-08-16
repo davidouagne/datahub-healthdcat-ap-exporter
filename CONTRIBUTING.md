@@ -1,4 +1,4 @@
-# Contribuer à dh-healthdcat
+# Contribuer à datahub-healthdcat-ap-exporter
 
 ## Mise en place de l'environnement
 
@@ -21,7 +21,7 @@ pip install -e ".[dev]"
 uv run pytest
 ```
 
-Aucun test ne nécessite d'instance DataHub ou HDH réelle : le `reader` est
+Aucun test ne nécessite d'instance [DataHub](https://datahubproject.io/) ou [Catalogue de métadonnées de la Plateforme des Données de Santé](https://catalogue-metadonnees.health-data-hub.fr/) réelle : le `reader` est
 testé contre un double (`tests/fixtures/fake_datahub.py`), le `mapping` et la
 validation SHACL contre des graphes construits à la main. Toute contribution
 touchant à la lecture DataHub ou au mapping RDF doit rester testable hors
@@ -30,8 +30,7 @@ ligne de la même façon.
 ## Structure du projet
 
 Le pipeline est linéaire, orchestré par `pipeline.py` (pas par `cli.py`, qui
-ne fait que traduire ses outcomes en présentation terminal — voir
-[`spec/spec-feature-export-pipeline.md`](spec/spec-feature-export-pipeline.md)) :
+ne fait que traduire ses outcomes en présentation terminal :
 
 ```
 reader/  →  mapping/  →  validate/  →  emit/
@@ -48,7 +47,13 @@ reader/  →  mapping/  →  validate/  →  emit/
   réelles du HDH (`shapes/ehds/`).
 - **`emit/`** — sérialise le graphe vers un fichier (Turtle, JSON-LD,
   N-Triples), pousse vers `/ingest/datasets` du HDH (`hdh_client.py`), et
-  porte l'état de poussée durable (`state.py::PushState`).
+  porte l'état de poussée durable (`state.py::PushState`), cloisonné par
+  instance.
+- **`config.py`** — résout l'instance de destination de `push-hdh` (URL, clé)
+  par profils nommés déclarés dans `.dh-healthdcat.yml`. Séparé en deux :
+  chargement (I/O sur le fichier YAML) et résolution (fonction pure,
+  `resolve_target`, sans accès à `os.environ` — l'environnement lui est
+  injecté), pour rester testable hors ligne sans `monkeypatch`.
 - **`pipeline.py`** — orchestre les quatre étapes ci-dessus et produit une
   séquence d'outcomes typés (`Prepared`/`Unreadable`/`Rejected` pour
   `prepare()`, plus `Pushed`/`Planned`/`PushFailed` pour `push()`) : c'est le

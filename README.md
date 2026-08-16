@@ -1,6 +1,6 @@
 # datahub-healthdcat-ap-exporter
 
-Exporte les métadonnées de l'Entrepôt de Données de Santé (EDS) AP-HP, cataloguées dans [DataHub](https://datahubproject.io/), vers le standard [HealthDCAT-AP](https://healthdcat-ap.github.io/) — en fichier Turtle ou directement vers l'API du [catalogue de métadonnées du Health Data Hub](https://health-data-hub.fr/).
+Exporte les métadonnées de l'Entrepôt de Données de Santé (EDS) AP-HP, cataloguées dans [DataHub](https://datahubproject.io/), vers le standard [HealthDCAT-AP](https://healthdcat-ap.github.io/) — en fichier Turtle ou directement vers l'API du [Catalogue de métadonnées de la Plateforme des Données de Santé](https://catalogue-metadonnees.health-data-hub.fr/).
 
 ## Principe
 
@@ -48,7 +48,7 @@ Deux façons de configurer la connexion, par ordre de priorité :
 
 Référence officielle : [DataHub CLI — docs.datahub.com/docs/cli](https://docs.datahub.com/docs/cli).
 
-Ne pas confondre avec la configuration du **HDH** (`--hdh-url`/`--api-key` de `push-hdh`, voir plus bas) : DataHub est la source lue, le HDH est la destination poussée.
+Ne pas confondre avec la configuration du **Catalogue de métadonnées de la PDS** (`--hdh-url`/`--api-key` de `push-hdh`, voir plus bas) : DataHub est la source lue, le Catalogue de métadonnées est la destination poussée.
 
 ## Usage
 
@@ -68,7 +68,7 @@ ERREUR: DataProduct "Imagerie médicale" : healthdcatap:healthTheme manquant →
   -> "Imagerie médicale" exclu de l'export : erreurs ci-dessus (--no-strict pour forcer)
 ```
 
-**Sémantique de sélection** (`--domain`/`--tag`/`--tag-mode`/`--exclude-tag`, partagée par `export-file` et `push-hdh`, évaluée côté serveur en une seule requête de recherche — voir `spec/spec-feature-tag-filtering.md`) :
+**Sémantique de sélection** (`--domain`/`--tag`/`--tag-mode`/`--exclude-tag`, partagée par `export-file` et `push-hdh`, évaluée côté serveur en une seule requête de recherche) :
 
 - Plusieurs `--domain` sont combinés en OU (au moins un des domaines).
 - Plusieurs `--tag` sont combinés en OU par défaut (`--tag-mode any`) ; `--tag-mode all` exige la présence de tous les tags donnés.
@@ -95,23 +95,58 @@ dh-healthdcat push-hdh --hdh-url https://catalogue.health-data-hub.fr
 
 Idempotent : une correspondance URN DataHub → id HDH est conservée (`.dh-healthdcat-state.json` par défaut) pour mettre à jour un jeu déjà poussé plutôt que d'en créer un doublon. Aucune requête réseau n'est émise pour un jeu qui ne passe pas la validation SHACL.
 
-L'état est écrit sur disque immédiatement après chaque jeu poussé avec succès (écriture atomique), pas seulement à la fin du lot : une poussée interrompue (Ctrl-C, coupure réseau) reprend sans dupliquer les jeux déjà envoyés.
+L'état est écrit sur disque immédiatement après chaque jeu poussé avec succès (écriture atomique), pas seulement à la fin du lot : une poussée interrompue (Ctrl-C, coupure réseau) reprend sans dupliquer les jeux déjà envoyés. L'état est cloisonné par instance (par URL normalisée) : pousser vers deux instances avec le même `--state-file` ne mélange jamais leurs ids.
+
+#### Configuration de l'instance (profils)
+
+Plutôt que de retaper `--hdh-url` à chaque appel, déclarer une fois ses instances dans `.dh-healthdcat.yml` (répertoire courant ou `~`, committable — **aucun secret n'y figure**) :
+
+```yaml
+default_profile: dev
+profiles:
+  dev:
+    url: https://dev.catalogue.health-data-hub.fr
+  preprod:
+    url: https://preprod.catalogue.health-data-hub.fr
+    api_key_env: HDH_API_KEY_PREPROD   # variable dédiée, optionnel (sinon HDH_API_KEY)
+  prod:
+    url: https://catalogue.health-data-hub.fr
+```
+
+```bash
+dh-healthdcat push-hdh --profile preprod --dry-run
+dh-healthdcat push-hdh --profile prod
+```
+
+Un nom de profil inconnu est toujours une erreur qui liste les profils déclarés (code de sortie 2) — jamais un repli silencieux sur un défaut, pour qu'une faute de frappe ne puisse jamais viser la production. Le fichier lui-même rejette toute clé `api_key:` en clair : un profil ne déclare qu'un *nom* de variable d'environnement (`api_key_env`).
+
+Résolution par champ, chacun indépendamment, du plus prioritaire au moins prioritaire :
+
+| Champ | Précédence |
+|---|---|
+| URL | `--hdh-url` `>` `$HDH_URL` `>` `url` du profil sélectionné |
+| Profil | `--profile` `>` `$HDH_PROFILE` `>` `default_profile` du fichier `>` l'unique profil s'il n'y en a qu'un |
+| Fichier de config | `--config` `>` `$HDH_CONFIG` `>` `./.dh-healthdcat.yml` `>` `~/.dh-healthdcat.yml` (premier trouvé, pas de fusion) |
+| Variable de clé API | `--api-key-env` `>` `api_key_env` du profil `>` `HDH_API_KEY` |
+
+Aucune invocation existante (`--hdh-url` seule, `$HDH_API_KEY`) ne change de comportement : sans fichier de configuration ni nouvelle variable, `push-hdh` se comporte exactement comme avant.
 
 ## Structure du dépôt
 
 ```
 src/dh_healthdcat/
-  cli.py                  # commandes export-file / validate / push-hdh (Typer), présentation seulement
+  cli.py                   # commandes export-file / validate / push-hdh (Typer), présentation seulement
   pipeline.py              # orchestration lecture→mapping→validation→décision, outcomes typés
-  model.py                # modèle pivot (HealthDataset, Distribution, Agent...)
-  selection.py            # filtres --urn/--domain/--tag, partagés par les deux commandes
+  model.py                 # modèle pivot (HealthDataset, Distribution, Agent...)
+  selection.py             # filtres --urn/--domain/--tag, partagés par les deux commandes
+  config.py                # résolution de l'instance du Catalogue de métadonnées (profils)
   reader/                  # DataHub → modèle pivot
   mapping/                 # modèle pivot → triples RDF, vocabulaires contrôlés
   emit/                    # sérialisation fichier, client API HDH, état de poussée durable
   validate/                # validation SHACL (shapes empaquetées)
-shapes/ehds/                # copie de référence des shapes SHACL du HDH
-tests/                      # tests unitaires, fixtures sans dépendance réseau
-docs/mapping.md              # documentation vivante du mapping
+shapes/ehds/               # copie de référence des shapes SHACL du HDH
+tests/                     # tests unitaires, fixtures sans dépendance réseau
+docs/mapping.md            # documentation vivante du mapping
 ```
 
 ## Tests
@@ -120,7 +155,7 @@ docs/mapping.md              # documentation vivante du mapping
 uv run pytest
 ```
 
-Aucun test ne nécessite d'instance DataHub ou HDH : le reader est testé contre un double (`tests/fixtures/fake_datahub.py`), le mapping et la validation SHACL contre des graphes construits à la main.
+Aucun test ne nécessite d'instance DataHub ou d'instance Catalogue de métadonnées de la PDS : le reader est testé contre un double (`tests/fixtures/fake_datahub.py`), le mapping et la validation SHACL contre des graphes construits à la main.
 
 ## Statut
 

@@ -35,6 +35,24 @@ def _echo_shacl_violation(dataset: HealthDataset, shacl: ShaclResult) -> None:
         typer.echo(shacl.report_text, err=True)
 
 
+def _resolve_target_or_exit(
+    *, cli_url: str | None, cli_profile: str | None, cli_config: Path | None, cli_api_key_env: str | None
+):
+    import os
+
+    from dh_healthdcat import config as config_module
+
+    try:
+        config_path = config_module.find_config_file(explicit=cli_config, env=os.environ, cwd=Path.cwd(), home=Path.home())
+        cfg = config_module.load_config(config_path) if config_path else None
+        return config_module.resolve_target(
+            config=cfg, env=os.environ, cli_url=cli_url, cli_profile=cli_profile, cli_api_key_env=cli_api_key_env
+        )
+    except config_module.ConfigError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=2) from exc
+
+
 def _select_or_exit(
     ctx: ReadContext, *, urn: list[str], domain: list[str], tag: list[str], tag_mode: str, exclude_tag: list[str]
 ) -> list[str]:
@@ -172,9 +190,11 @@ def validate(
 
 @app.command("push-hdh")
 def push_hdh(
-    hdh_url: str = typer.Option(..., "--hdh-url", help="Base URL du catalogue HDH (ex: https://catalogue.health-data-hub.fr)"),
-    api_key: str | None = typer.Option(None, "--api-key", help="Clé mdc_... (sinon lue depuis --api-key-env)"),
-    api_key_env: str = typer.Option("HDH_API_KEY", "--api-key-env", help="Variable d'environnement portant la clé API"),
+    hdh_url: str | None = typer.Option(None, "--hdh-url", help="Base URL du catalogue (prioritaire sur $HDH_URL et le profil sélectionné)"),
+    profile: str | None = typer.Option(None, "--profile", help="Profil déclaré dans le fichier de configuration (sinon $HDH_PROFILE, default_profile, ou l'unique profil)"),
+    config: Path | None = typer.Option(None, "--config", help="Fichier de configuration (sinon $HDH_CONFIG, ./.dh-healthdcat.yml, ~/.dh-healthdcat.yml)"),
+    api_key: str | None = typer.Option(None, "--api-key", help="Clé mdc_... (sinon lue depuis la variable résolue par --api-key-env)"),
+    api_key_env: str | None = typer.Option(None, "--api-key-env", help="Variable d'environnement portant la clé API (sinon celle du profil, sinon HDH_API_KEY)"),
     urn: list[str] = typer.Option([], "--urn", help="URN de DataProduct à pousser (répétable). Sans valeur : tout le catalogue. Prioritaire sur --domain/--tag/--exclude-tag."),
     domain: list[str] = typer.Option([], "--domain", help="Filtre par domaine (urn ou id, répétable)"),
     tag: list[str] = typer.Option([], "--tag", help="Filtre par tag (urn ou nom, répétable)"),
@@ -195,24 +215,29 @@ def push_hdh(
     from dh_healthdcat.emit import state as state_module
     from dh_healthdcat.emit.hdh_client import HdhClient, HdhClientError
 
-    resolved_key = api_key or os.environ.get(api_key_env)
+    resolved = _resolve_target_or_exit(cli_url=hdh_url, cli_profile=profile, cli_config=config, cli_api_key_env=api_key_env)
+
+    resolved_key = api_key or os.environ.get(resolved.api_key_env)
     if not resolved_key:
-        typer.secho(f"Aucune clé API : passez --api-key ou définissez ${api_key_env}.", fg=typer.colors.RED, err=True)
+        typer.secho(f"Aucune clé API : passez --api-key ou définissez ${resolved.api_key_env}.", fg=typer.colors.RED, err=True)
         raise typer.Exit(code=1)
 
-    client = HdhClient(base_url=hdh_url.rstrip("/"), api_key=resolved_key)
+    client = HdhClient(base_url=resolved.url, api_key=resolved_key)
     try:
         who = client.whoami()
     except HdhClientError as exc:
         typer.secho(f"Clé API invalide ou rôle data-provider manquant : {exc}", fg=typer.colors.RED, err=True)
         raise typer.Exit(code=1) from exc
-    typer.echo(f"Connecté au HDH ({who}).")
+    profile_label = f" (profil {resolved.profile_name})" if resolved.profile_name else ""
+    typer.echo(f"Connecté à {resolved.url}{profile_label} ({who}).")
 
     ctx = from_env()
     selected = _select_or_exit(ctx, urn=urn, domain=domain, tag=tag, tag_mode=tag_mode, exclude_tag=exclude_tag)
 
     state_path = state_file or state_module.DEFAULT_STATE_PATH
-    state = state_module.PushState.open(state_path)
+    state = state_module.PushState.open(
+        state_path, instance=resolved.url, on_warning=lambda m: typer.secho(m, fg=typer.colors.YELLOW, err=True)
+    )
     any_failure = False
 
     for outcome in pipeline.push(ctx, selected, target=client, state=state, base_uri=base_uri, dry_run=dry_run):
