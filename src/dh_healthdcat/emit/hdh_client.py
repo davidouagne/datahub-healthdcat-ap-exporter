@@ -24,6 +24,7 @@ enchaînement des trois verbes.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Callable, Protocol
 
 import httpx
 
@@ -45,6 +46,25 @@ class HdhNotFoundError(HdhClientError):
     """404 — jeu non ingéré via /ingest (PUT/DELETE sur un id inconnu)."""
 
 
+class HdhTransportError(HdhClientError):
+    """Échec de transport (connexion, timeout...) avant toute réponse HTTP —
+    distinct d'un statut d'erreur renvoyé par le HDH. Un jeu en échec réseau
+    ne doit pas faire échouer les jeux suivants du lot (story 13)."""
+
+    def __init__(self, detail: str) -> None:
+        super().__init__(status_code=0, detail=detail)
+
+
+class HdhTarget(Protocol):
+    """Le seam que `pipeline.push()` traverse : créer ou mettre à jour un
+    jeu. Satisfait structurellement par `HdhClient` (production) et par
+    `tests/fixtures/fake_hdh.py::InMemoryHdhCatalog` (tests, hors ligne)."""
+
+    def create_dataset(self, turtle: str) -> str: ...
+
+    def update_dataset(self, original_id: str, turtle: str) -> str: ...
+
+
 @dataclass(frozen=True, slots=True)
 class HdhClient:
     base_url: str
@@ -54,44 +74,63 @@ class HdhClient:
     def _headers(self) -> dict[str, str]:
         return {"X-API-Key": self.api_key, "Content-Type": "text/turtle"}
 
+    @staticmethod
+    def _send(request: Callable[[], httpx.Response]) -> httpx.Response:
+        """Enveloppe les échecs de transport (connexion, timeout...) avant
+        toute réponse HTTP — sans quoi ils échappent à `except HdhClientError`
+        côté appelant et avortent tout un lot de poussée (story 13)."""
+
+        try:
+            return request()
+        except httpx.HTTPError as exc:
+            raise HdhTransportError(str(exc)) from exc
+
     def whoami(self) -> dict:
         """Vérifie la clé avant toute boucle d'envoi (P0-9) — endpoint de
         test documenté côté HDH pour une clé fraîchement générée."""
 
-        response = httpx.get(
-            f"{self.base_url}/api-keys/whoami",
-            headers={"X-API-Key": self.api_key},
-            timeout=self.timeout,
+        response = self._send(
+            lambda: httpx.get(
+                f"{self.base_url}/api-keys/whoami",
+                headers={"X-API-Key": self.api_key},
+                timeout=self.timeout,
+            )
         )
         self._raise_for_status(response)
         return response.json()
 
     def create_dataset(self, turtle: str) -> str:
-        response = httpx.post(
-            f"{self.base_url}/ingest/datasets",
-            headers=self._headers(),
-            content=turtle.encode("utf-8"),
-            timeout=self.timeout,
+        response = self._send(
+            lambda: httpx.post(
+                f"{self.base_url}/ingest/datasets",
+                headers=self._headers(),
+                content=turtle.encode("utf-8"),
+                timeout=self.timeout,
+            )
         )
         self._raise_for_status(response)
         return response.json()["id"]
 
     def update_dataset(self, original_id: str, turtle: str) -> str:
-        response = httpx.put(
-            f"{self.base_url}/ingest/datasets/origin",
-            params={"originalId": original_id},
-            headers=self._headers(),
-            content=turtle.encode("utf-8"),
-            timeout=self.timeout,
+        response = self._send(
+            lambda: httpx.put(
+                f"{self.base_url}/ingest/datasets/origin",
+                params={"originalId": original_id},
+                headers=self._headers(),
+                content=turtle.encode("utf-8"),
+                timeout=self.timeout,
+            )
         )
         self._raise_for_status(response)
         return response.json()["id"]
 
     def delete_dataset(self, dataset_id: str) -> None:
-        response = httpx.delete(
-            f"{self.base_url}/ingest/datasets/{dataset_id}",
-            headers={"X-API-Key": self.api_key},
-            timeout=self.timeout,
+        response = self._send(
+            lambda: httpx.delete(
+                f"{self.base_url}/ingest/datasets/{dataset_id}",
+                headers={"X-API-Key": self.api_key},
+                timeout=self.timeout,
+            )
         )
         self._raise_for_status(response)
 

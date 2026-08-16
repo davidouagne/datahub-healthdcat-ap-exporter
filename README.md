@@ -95,16 +95,19 @@ dh-healthdcat push-hdh --hdh-url https://catalogue.health-data-hub.fr
 
 Idempotent : une correspondance URN DataHub → id HDH est conservée (`.dh-healthdcat-state.json` par défaut) pour mettre à jour un jeu déjà poussé plutôt que d'en créer un doublon. Aucune requête réseau n'est émise pour un jeu qui ne passe pas la validation SHACL.
 
+L'état est écrit sur disque immédiatement après chaque jeu poussé avec succès (écriture atomique), pas seulement à la fin du lot : une poussée interrompue (Ctrl-C, coupure réseau) reprend sans dupliquer les jeux déjà envoyés.
+
 ## Structure du dépôt
 
 ```
 src/dh_healthdcat/
-  cli.py                  # commandes export-file / validate / push-hdh (Typer)
+  cli.py                  # commandes export-file / validate / push-hdh (Typer), présentation seulement
+  pipeline.py              # orchestration lecture→mapping→validation→décision, outcomes typés
   model.py                # modèle pivot (HealthDataset, Distribution, Agent...)
   selection.py            # filtres --urn/--domain/--tag, partagés par les deux commandes
   reader/                  # DataHub → modèle pivot
   mapping/                 # modèle pivot → triples RDF, vocabulaires contrôlés
-  emit/                    # sérialisation fichier + client API HDH
+  emit/                    # sérialisation fichier, client API HDH, état de poussée durable
   validate/                # validation SHACL (shapes empaquetées)
 shapes/ehds/                # copie de référence des shapes SHACL du HDH
 tests/                      # tests unitaires, fixtures sans dépendance réseau

@@ -1,4 +1,10 @@
-"""CLI `dh-healthdcat` — export-file (Lot 2) et push-hdh (Lot 3)."""
+"""CLI `dh-healthdcat` — export-file (Lot 2), validate et push-hdh (Lot 3).
+
+Ne prend plus aucune décision d'inclusion/exclusion : `pipeline.py` orchestre
+lecture -> mapping -> validation SHACL -> décision et produit une séquence
+d'outcomes typés (spec-feature-export-pipeline.md). Ce module se contente de
+traduire chaque outcome en couleur de sortie, en compteur agrégé et en code de
+sortie du processus."""
 
 from __future__ import annotations
 
@@ -7,12 +13,12 @@ from pathlib import Path
 import typer
 from rdflib import Graph
 
-from dh_healthdcat.mapping.dataset import dataset_to_graph
+from dh_healthdcat import pipeline
 from dh_healthdcat.model import HealthDataset, Severity
-from dh_healthdcat.reader.dataproduct import DEFAULT_BASE_URI, read_data_product
-from dh_healthdcat.reader.graph import from_env
+from dh_healthdcat.reader.dataproduct import DEFAULT_BASE_URI
+from dh_healthdcat.reader.graph import ReadContext, from_env
 from dh_healthdcat.selection import select_data_product_urns
-from dh_healthdcat.validate.shacl import validate_graph
+from dh_healthdcat.validate.shacl import ShaclResult, validate_graph
 
 app = typer.Typer(add_completion=False, help="Exporteur DataHub -> HealthDCAT-AP")
 
@@ -21,6 +27,36 @@ def _echo_issues(dataset: HealthDataset) -> None:
     for issue in dataset.issues:
         color = typer.colors.RED if issue.severity is Severity.ERROR else typer.colors.YELLOW
         typer.secho(str(issue), fg=color, err=True)
+
+
+def _echo_shacl_violation(dataset: HealthDataset, shacl: ShaclResult) -> None:
+    if not shacl.conforms:
+        typer.secho(f'DataProduct "{dataset.title}" : non conforme SHACL', fg=typer.colors.RED, err=True)
+        typer.echo(shacl.report_text, err=True)
+
+
+def _select_or_exit(
+    ctx: ReadContext, *, urn: list[str], domain: list[str], tag: list[str], tag_mode: str, exclude_tag: list[str]
+) -> list[str]:
+    try:
+        selected = select_data_product_urns(
+            ctx,
+            urns=urn,
+            domains=domain,
+            tags=tag,
+            tag_mode=tag_mode,
+            exclude_tags=exclude_tag,
+            on_warning=lambda m: typer.secho(m, fg=typer.colors.YELLOW, err=True),
+        )
+    except ValueError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=2) from exc
+
+    if not selected:
+        typer.secho("Aucun DataProduct ne correspond aux filtres.", fg=typer.colors.YELLOW, err=True)
+        raise typer.Exit(code=1)
+
+    return selected
 
 
 @app.command("export-file")
@@ -41,60 +77,35 @@ def export_file(
     from dh_healthdcat.emit.turtle import write_graph
 
     ctx = from_env()
-    try:
-        selected = select_data_product_urns(
-            ctx,
-            urns=urn,
-            domains=domain,
-            tags=tag,
-            tag_mode=tag_mode,
-            exclude_tags=exclude_tag,
-            on_warning=lambda m: typer.secho(m, fg=typer.colors.YELLOW, err=True),
-        )
-    except ValueError as exc:
-        typer.secho(str(exc), fg=typer.colors.RED, err=True)
-        raise typer.Exit(code=2) from exc
-
-    if not selected:
-        typer.secho("Aucun DataProduct ne correspond aux filtres.", fg=typer.colors.YELLOW, err=True)
-        raise typer.Exit(code=1)
+    selected = _select_or_exit(ctx, urn=urn, domain=domain, tag=tag, tag_mode=tag_mode, exclude_tag=exclude_tag)
 
     graphs: list[Graph] = []
     any_error = False
     any_shacl_violation = False
     excluded = 0
 
-    for dp_urn in selected:
-        try:
-            dataset = read_data_product(ctx, dp_urn, base_uri=base_uri)
-        except ValueError as exc:
-            typer.secho(f"IGNORÉ {dp_urn} : {exc}", fg=typer.colors.RED, err=True)
+    for outcome in pipeline.prepare(ctx, selected, base_uri=base_uri, strict=strict):
+        if isinstance(outcome, pipeline.Unreadable):
+            typer.secho(f"IGNORÉ {outcome.urn} : {outcome.reason}", fg=typer.colors.RED, err=True)
             any_error = True
             excluded += 1
             continue
 
-        graph = dataset_to_graph(dataset)
+        dataset = outcome.dataset
         _echo_issues(dataset)
 
         if dataset.has_errors:
             any_error = True
-
-        result = validate_graph(graph)
-        if not result.conforms:
+        if not outcome.shacl.conforms:
             any_shacl_violation = True
-            typer.secho(f'DataProduct "{dataset.title}" : non conforme SHACL', fg=typer.colors.RED, err=True)
-            typer.echo(result.report_text, err=True)
+        _echo_shacl_violation(dataset, outcome.shacl)
 
-        # Un DataProduct invalide est exclu de l'export, pas le lot entier :
-        # les autres jeux sélectionnés ne doivent pas payer pour celui-ci
-        # (voir investigation --tag aphp:access, qui a fait échouer un export
-        # entier à cause de DataProducts de production sans rapport avec le
-        # filtre, jamais peuplés en propriétés HealthDCAT-AP).
-        if strict and (dataset.has_errors or not result.conforms):
+        if isinstance(outcome, pipeline.Rejected):
             typer.secho(f'  -> "{dataset.title}" exclu de l\'export : erreurs ci-dessus (--no-strict pour forcer)', fg=typer.colors.YELLOW, err=True)
             excluded += 1
             continue
 
+        graph = outcome.graph
         graphs.append(graph)
 
         if split_per_dataset:
@@ -104,7 +115,11 @@ def export_file(
             write_graph(graph, out_path, fmt=fmt)
             typer.echo(f"  -> {out_path}")
 
-    if not split_per_dataset:
+    suffix = f", {excluded} exclu(s)" if excluded else ""
+
+    if split_per_dataset:
+        typer.echo(f"{len(graphs)}/{len(selected)} jeu(x) écrit(s) dans {output}{suffix}")
+    else:
         if not graphs:
             typer.secho("Export non écrit : aucun DataProduct valide dans la sélection (--no-strict pour forcer).", fg=typer.colors.RED, err=True)
             raise typer.Exit(code=1)
@@ -116,7 +131,6 @@ def export_file(
 
         bind_prefixes(merged)
         write_graph(merged, output, fmt=fmt)
-        suffix = f", {excluded} exclu(s)" if excluded else ""
         typer.echo(f"Écrit : {output} ({len(merged)} triplets, {len(graphs)}/{len(selected)} jeu(x){suffix})")
 
     if strict and (any_error or any_shacl_violation):
@@ -170,7 +184,11 @@ def push_hdh(
     state_file: Path | None = typer.Option(None, "--state-file", help="Fichier de correspondance URN->id HDH (défaut : .dh-healthdcat-state.json)"),
     dry_run: bool = typer.Option(False, "--dry-run", help="Valide et affiche ce qui serait envoyé, sans appel réseau d'écriture"),
 ) -> None:
-    """Pousse le catalogue DataHub (DataProducts) vers /ingest/datasets du HDH."""
+    """Pousse le catalogue DataHub (DataProducts) vers /ingest/datasets du HDH.
+
+    Politique d'exclusion fixée à "strict" — voir `pipeline.push()` — sans
+    `--no-strict` : ne jamais envoyer de données invalides au HDH est une
+    propriété de sûreté, pas une préférence configurable."""
 
     import os
 
@@ -191,70 +209,41 @@ def push_hdh(
     typer.echo(f"Connecté au HDH ({who}).")
 
     ctx = from_env()
-    try:
-        selected = select_data_product_urns(
-            ctx,
-            urns=urn,
-            domains=domain,
-            tags=tag,
-            tag_mode=tag_mode,
-            exclude_tags=exclude_tag,
-            on_warning=lambda m: typer.secho(m, fg=typer.colors.YELLOW, err=True),
-        )
-    except ValueError as exc:
-        typer.secho(str(exc), fg=typer.colors.RED, err=True)
-        raise typer.Exit(code=2) from exc
-    if not selected:
-        typer.secho("Aucun DataProduct ne correspond aux filtres.", fg=typer.colors.YELLOW, err=True)
-        raise typer.Exit(code=1)
+    selected = _select_or_exit(ctx, urn=urn, domain=domain, tag=tag, tag_mode=tag_mode, exclude_tag=exclude_tag)
 
     state_path = state_file or state_module.DEFAULT_STATE_PATH
-    dataset_state = state_module.load(state_path)
+    state = state_module.PushState.open(state_path)
     any_failure = False
 
-    for dp_urn in selected:
-        try:
-            dataset = read_data_product(ctx, dp_urn, base_uri=base_uri)
-        except ValueError as exc:
-            typer.secho(f"IGNORÉ {dp_urn} : {exc}", fg=typer.colors.RED, err=True)
+    for outcome in pipeline.push(ctx, selected, target=client, state=state, base_uri=base_uri, dry_run=dry_run):
+        if isinstance(outcome, pipeline.Unreadable):
+            typer.secho(f"IGNORÉ {outcome.urn} : {outcome.reason}", fg=typer.colors.RED, err=True)
             any_failure = True
             continue
 
-        graph = dataset_to_graph(dataset)
+        dataset = outcome.dataset
         _echo_issues(dataset)
 
-        # P0-10 : aucune requête réseau d'écriture pour un jeu invalide.
-        result = validate_graph(graph)
-        if dataset.has_errors or not result.conforms:
+        if isinstance(outcome, pipeline.Rejected):
             typer.secho(f'IGNORÉ "{dataset.title}" : invalide (SHACL et/ou champs obligatoires manquants, voir ci-dessus)', fg=typer.colors.RED, err=True)
-            if not result.conforms:
-                typer.echo(result.report_text, err=True)
+            if not outcome.shacl.conforms:
+                typer.echo(outcome.shacl.report_text, err=True)
             any_failure = True
             continue
 
-        turtle = graph.serialize(format="turtle")
-        existing_id = state_module.get_hdh_id(dataset_state, dp_urn)
-
-        if dry_run:
-            action = f"PUT (mise à jour de {existing_id})" if existing_id else "POST (création)"
-            typer.echo(f'[dry-run] "{dataset.title}" -> {action} · {len(turtle)} octets Turtle')
+        if isinstance(outcome, pipeline.Planned):
+            action = f"PUT (mise à jour de {outcome.existing_id})" if outcome.existing_id else "POST (création)"
+            typer.echo(f'[dry-run] "{dataset.title}" -> {action} · {outcome.turtle_bytes} octets Turtle')
             continue
 
-        try:
-            if existing_id:
-                hdh_id = client.update_dataset(existing_id, turtle)
-            else:
-                hdh_id = client.create_dataset(turtle)
-        except HdhClientError as exc:
-            typer.secho(f'ÉCHEC "{dataset.title}" : {exc}', fg=typer.colors.RED, err=True)
+        if isinstance(outcome, pipeline.PushFailed):
+            typer.secho(f'ÉCHEC "{dataset.title}" : {outcome.error}', fg=typer.colors.RED, err=True)
             any_failure = True
             continue
 
-        state_module.set_hdh_id(dataset_state, dp_urn, hdh_id)
-        typer.echo(f'"{dataset.title}" -> {hdh_id}')
-
-    if not dry_run:
-        state_module.save(dataset_state, state_path)
+        # pipeline.Pushed — story 10 : indiquer création vs mise à jour.
+        action_label = "créé" if outcome.action is pipeline.PushAction.CREATED else "mis à jour"
+        typer.echo(f'"{dataset.title}" -> {outcome.hdh_id} ({action_label})')
 
     if any_failure:
         raise typer.Exit(code=1)

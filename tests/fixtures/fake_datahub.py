@@ -25,6 +25,22 @@ SAMPLE_URN = "urn:li:dataset:(urn:li:dataPlatform:s3,sharing_layer_Patient_sampl
 # (reader/dataproduct.py::_warn_undeclared_properties).
 UNDECLARED_PROPERTY = "fr.aphp.healthdcat.oldRemovedProperty"
 
+# Illisible : pas de dataProductProperties.name côté DataHub (DataProduct
+# invalide ou introuvable, reader/dataproduct.py:114-115 lève ValueError).
+# Sert à exercer l'outcome "Unreadable" du pipeline (spec-feature-export-pipeline.md).
+UNREADABLE_DATAPRODUCT_URN = "urn:li:dataProduct:unreadable"
+
+# Lisible mais non conforme SHACL : dataProductProperties minimal (nom +
+# description), aucune structured property, aucun asset. dataset_to_graph()
+# journalise une ERROR pour chaque champ obligatoire absent (dct:accessRights,
+# dcatap:applicableLegislation, dcat:contactPoint, dcat:distribution...) et
+# validate_graph() renvoie conforms=False. Sert à exercer l'outcome "Rejected".
+NONCONFORMING_DATAPRODUCT_URN = "urn:li:dataProduct:nonconforming"
+
+# Ordre : valide, illisible, non conforme — utilisé par FakeGraph.get_urns_by_filter
+# pour une sélection non filtrée (mixte, les trois outcomes du pipeline).
+ALL_DATAPRODUCT_URNS = [DATAPRODUCT_URN, UNREADABLE_DATAPRODUCT_URN, NONCONFORMING_DATAPRODUCT_URN]
+
 
 def _sp(name: str, *values: str) -> NS:
     return NS(propertyUrn=f"urn:li:structuredProperty:{name}", values=list(values))
@@ -95,6 +111,17 @@ def _entities() -> dict[str, dict]:
             "globalTags": NS(tags=[NS(tag="urn:li:tag:dcat:sample")]),
             "structuredProperties": NS(properties=[_sp("fr.aphp.healthdcat.accessUrl", "https://s3.aphp.fr/sharing-layer/Patient_sample.ndjson")]),
         },
+        UNREADABLE_DATAPRODUCT_URN: {
+            "dataProductProperties": None,
+        },
+        NONCONFORMING_DATAPRODUCT_URN: {
+            "dataProductProperties": NS(
+                name="DataProduct en cours de peuplement",
+                description="Squelette sans propriétés HealthDCAT-AP renseignées.",
+                assets=[],
+                lastModified=None,
+            ),
+        },
     }
 
 
@@ -127,7 +154,7 @@ class FakeGraph:
     def get_urns_by_filter(self, *, entity_types=None, extra_or_filters=None, **kwargs):  # noqa: ANN001, ANN003
         self.last_extra_or_filters = extra_or_filters
         if entity_types == ["dataProduct"]:
-            return [DATAPRODUCT_URN]
+            return list(ALL_DATAPRODUCT_URNS)
         return []
 
     def get_latest_timeseries_value(self, entity_urn, aspect_type, filter_criteria_map):  # noqa: ANN001

@@ -18,7 +18,7 @@ from __future__ import annotations
 import pytest
 
 from dh_healthdcat.selection import build_selection_filter, select_data_product_urns
-from tests.fixtures.fake_datahub import DATAPRODUCT_URN, build_context
+from tests.fixtures.fake_datahub import ALL_DATAPRODUCT_URNS, build_context
 
 
 class TestBuildSelectionFilter:
@@ -94,7 +94,7 @@ class TestSelectDataProductUrns:
         ctx = build_context()
         result = select_data_product_urns(ctx, urns=[], domains=[], tags=[])
 
-        assert result == [DATAPRODUCT_URN]
+        assert result == ALL_DATAPRODUCT_URNS
         assert ctx.graph.get_entity_semityped_calls == []
         assert ctx.graph.last_extra_or_filters is None
 

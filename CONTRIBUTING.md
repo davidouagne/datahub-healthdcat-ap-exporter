@@ -29,10 +29,13 @@ ligne de la même façon.
 
 ## Structure du projet
 
-Le pipeline est linéaire, orchestré par `cli.py` :
+Le pipeline est linéaire, orchestré par `pipeline.py` (pas par `cli.py`, qui
+ne fait que traduire ses outcomes en présentation terminal — voir
+[`spec/spec-feature-export-pipeline.md`](spec/spec-feature-export-pipeline.md)) :
 
 ```
 reader/  →  mapping/  →  validate/  →  emit/
+             ↑ orchestré par pipeline.py, consommé par cli.py et les tests
 ```
 
 - **`reader/`** — lit un DataProduct DataHub (`DataHubGraph.get_entity_semityped()`,
@@ -44,7 +47,13 @@ reader/  →  mapping/  →  validate/  →  emit/
 - **`validate/`** — valide le graphe RDF produit contre les shapes SHACL
   réelles du HDH (`shapes/ehds/`).
 - **`emit/`** — sérialise le graphe vers un fichier (Turtle, JSON-LD,
-  N-Triples) ou le pousse vers `/ingest/datasets` du HDH.
+  N-Triples), pousse vers `/ingest/datasets` du HDH (`hdh_client.py`), et
+  porte l'état de poussée durable (`state.py::PushState`).
+- **`pipeline.py`** — orchestre les quatre étapes ci-dessus et produit une
+  séquence d'outcomes typés (`Prepared`/`Unreadable`/`Rejected` pour
+  `prepare()`, plus `Pushed`/`Planned`/`PushFailed` pour `push()`) : c'est le
+  seul seam traversé par `export-file`, `push-hdh` et les tests
+  (`tests/unit/test_pipeline.py`, `test_push.py`).
 
 Le mapping DataHub ↔ HealthDCAT-AP (avec ses justifications) est documenté
 dans [`docs/mapping.md`](docs/mapping.md) — à tenir à jour avec tout
