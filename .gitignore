@@ -12,3 +12,4 @@ htmlcov/
 .dh-healthdcat-state.json
 .claude/
 spec/
+uv.lock
