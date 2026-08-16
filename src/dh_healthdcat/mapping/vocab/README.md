@@ -16,9 +16,14 @@ Fichiers vendus : `AccessRights`, `ApplicableRegulations`, `Booleans`,
 `PublicationsEuropAuthorityLanguage`, `PublisherType`.
 
 ⚠️ `HealthCategories.yml` et `HealthTheme.yml` pointent sur un hôte de
-développement en dur côté HDH (`http://13.81.34.152:1101/...`, vu tel quel dans
-leurs fichiers sources). C'est la question ouverte **Q1** de la spec — à ne pas
-considérer comme une erreur de recopie de notre part.
+développement en dur côté HDH (`http://13.81.34.152:1101/...`) — vu tel quel
+dans les fichiers sources du HDH, donc pas une erreur de recopie de notre
+part. Ce n'est pas bloquant côté `dh-healthdcat` : la shape SHACL n'exige
+qu'une IRI pour `healthdcatap:healthCategory`/`healthTheme`
+(`sh:nodeKind sh:BlankNodeOrIRI`, aucun `sh:in` restreignant les valeurs
+autorisées), donc l'hôte exact ne fait pas échouer la validation. Si le HDH
+republie un jour ces dictionnaires sur un hôte de production, un simple
+resynchronisation de ces deux fichiers suffit — voir la politique ci-dessus.
 
 `LegalBasis.yml` est le seul fichier d'auteur (pas vendu) : il documente le
 mapping des 12 codes `A6-1-*`/`A9-2-*` de la structured property
