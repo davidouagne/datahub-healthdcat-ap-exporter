@@ -13,5 +13,11 @@ export default {
     'header-max-length': [2, 'always', 72],
     // Scopes libres : aucune liste imposée.
     'scope-enum': [0],
+    // Corps auto-générés (Dependabot : tableaux markdown + URLs de comparaison)
+    // dépassent 100 caractères par ligne. La longueur de ligne du corps / pied
+    // n'est pas une contrainte de l'ADR-0002, et #24 interdit un `if:` excluant
+    // dependabot/* des checks — la config doit donc les tolérer.
+    'body-max-line-length': [0],
+    'footer-max-line-length': [0],
   },
 };
