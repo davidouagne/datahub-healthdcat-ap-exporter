@@ -56,7 +56,7 @@ ignore = [
     "PLR0917",
     # Complexité (branches / statements) : `dataset_to_graph` et
     # `read_data_product` sont volumineuses par nature. Décomposition suivie
-    # hors de cette PR d'outillage — voir issue #31.
+    # hors de cette PR d'outillage — voir issue #32.
     "PLR0912",
     "PLR0915",
 ]
