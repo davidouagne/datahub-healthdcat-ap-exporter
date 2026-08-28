@@ -59,6 +59,7 @@ vérifié par le SHACL de base · `⚙️` = dérivé/calculé, pas une saisie.
 | `dpv:hasLegalBasis` | | `legalBasis` → `LegalBasis` (vocabulaire d'auteur) | |
 | `dpv:hasPersonalData` | | `fr.aphp.healthdcat.personalData` → `PersonalData` | |
 | `healthdcatap:hasStructuredData` (`xsd:boolean`, R7 1..1) | | dérivé : `true` ssi ≥1 asset porte un `schemaMetadata` (→ `csvw:Table`) | `model.py::HealthDataset.has_structured_data` ; toujours émis, `false` compris ; validateur HDH indifférent |
+| `healthdcatap:hasVariables` → `csvw:TableGroup` (R7, `minCount 1` si `hasStructuredData`) | | ⚙️ regroupe par `csvw:table` toutes les `csvw:Table` du dataset (distributions + samples) | `dataset.py` ; émis ssi ≥1 `csvw:Table` ; nœud `<tablegroup:{uuid}>` ; validateur HDH indifférent (pas de `:CSVWTableGroup_Shape`) |
 | `foaf:page` | | `institutionalMemory.elements[].url` | non lu en v1 |
 | `dqv:hasQualityAnnotation` | | entités `ASSERTION` | **P2, non implémenté** |
 
