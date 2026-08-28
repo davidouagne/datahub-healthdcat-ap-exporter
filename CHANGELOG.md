@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.1...v0.1.2) (2026-08-28)
+
+
+### Bug Fixes
+
+* ruleset tags v* sans bypass Integration ni règle creation ([96869e6](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/96869e6cff122a0d4124c3b6543f7972b74f6d60))
+* ruleset tags v* sans bypass Integration ni règle creation ([d5c0ce6](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/d5c0ce67ce08b79911881aa18cdc5c6498b1218e))
+
 ## [0.1.1](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.0...v0.1.1) (2026-08-28)
 
 
