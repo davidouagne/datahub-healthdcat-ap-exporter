@@ -1,0 +1,24 @@
+# Vocabulaire d'auteur (dh-healthdcat), pas vendu du HDH — le HDH ne publie pas
+# de dictionnaire "spécifications de référence" parmi ses vocabulaires contrôlés.
+#
+# Couvre les valeurs de `fr.aphp.healthdcat.referenceSpecification` (→ dct:conformsTo).
+# URIs canoniques vérifiées le 2026-08-28 contre les sources primaires — voir
+# `docs/research/reference-specification-uris.md`. Choix de forme :
+#   - HL7-FHIR-R4 : version épinglée `4.0.1` (et non l'étiquette mouvante "R4"),
+#     schéma `http://` par convention HL7 (cohérent avec CodingSystem.yml).
+#   - OMOP-CDM-5.4 : page GitHub Pages versionnée d'OHDSI — aucune IRI abstraite
+#     façon HL7 n'existe pour l'OMOP CDM.
+#   - HL7v2 : `urn:hl7-org:v2xml`, namespace XML officiel HL7 v2 (URN réel,
+#     stable, non déréférençable) — v2 est une famille de versions sans URI
+#     canonique unique.
+# Tout code absent d'ici (p. ex. OSIRIS) retombe sur `urn:aphp:conformsTo:<code>`
+# côté reader/dataproduct.py — comportement voulu, pas un oubli.
+ReferenceSpecification:
+  vocabulary_list:
+    HL7-FHIR-R4: "http://hl7.org/fhir/4.0.1"
+    OMOP-CDM-5.4: "https://ohdsi.github.io/CommonDataModel/cdm54.html"
+    HL7v2: "urn:hl7-org:v2xml"
+  fr:
+    HL7-FHIR-R4: "HL7 FHIR (Release 4, v4.0.1)"
+    OMOP-CDM-5.4: "OMOP Common Data Model v5.4"
+    HL7v2: "HL7 version 2.x (messagerie)"

@@ -27,6 +27,21 @@ def test_read_data_product_end_to_end():
     assert dataset.samples[0].source_urn == SAMPLE_URN
 
 
+def test_reference_specification_codes_resolve_to_canonical_uris_local_fallback_kept():
+    """`fr.aphp.healthdcat.referenceSpecification` : les codes du vocab
+    ReferenceSpecification deviennent leur URI canonique ; un code hors vocab
+    (OSIRIS) retombe silencieusement sur urn:aphp:conformsTo:<code>."""
+
+    ctx = build_context()
+    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+
+    assert dataset.conforms_to == (
+        "http://hl7.org/fhir/4.0.1",
+        "urn:aphp:conformsTo:OSIRIS",
+    )
+    assert not [i for i in dataset.issues if i.datahub_field == "fr.aphp.healthdcat.referenceSpecification"]
+
+
 def test_type_coercion_warns_but_does_not_fail():
     ctx = build_context()
     dataset = read_data_product(ctx, DATAPRODUCT_URN)

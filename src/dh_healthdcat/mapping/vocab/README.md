@@ -25,9 +25,20 @@ autorisées), donc l'hôte exact ne fait pas échouer la validation. Si le HDH
 republie un jour ces dictionnaires sur un hôte de production, un simple
 resynchronisation de ces deux fichiers suffit — voir la politique ci-dessus.
 
-`LegalBasis.yml` est le seul fichier d'auteur (pas vendu) : il documente le
-mapping des 12 codes `A6-1-*`/`A9-2-*` de la structured property
-`fr.aphp.healthdcat.legalBasis` vers l'extension GDPR du Data Privacy
-Vocabulary (`https://w3id.org/dpv/legal/eu/gdpr#`). Les 12 identifiants ont été
-vérifiés terme à terme contre cette source le 2026-08-14 ; à revalider si le
-DPV publie une nouvelle version majeure.
+Trois fichiers sont d'auteur (pas vendus du HDH, qui ne publie pas de
+dictionnaire équivalent) :
+
+- `LegalBasis.yml` : mapping des 12 codes `A6-1-*`/`A9-2-*` de
+  `fr.aphp.healthdcat.legalBasis` vers l'extension GDPR du Data Privacy
+  Vocabulary (`https://w3id.org/dpv/legal/eu/gdpr#`). Les 12 identifiants ont
+  été vérifiés terme à terme contre cette source le 2026-08-14 ; à revalider si
+  le DPV publie une nouvelle version majeure.
+- `CodingSystem.yml` : les 9 codes de `fr.aphp.healthdcat.coding` (URIs
+  canoniques HL7/OMS/WHO-CC stables ; `CIP13`/`UCD`/`CCAM`/`NFS` en espace de
+  noms AP-HP local non déréférençable, faute d'identifiant officiel ANS/HDH).
+- `ReferenceSpecification.yml` : `HL7-FHIR-R4` / `OMOP-CDM-5.4` / `HL7v2` de
+  `fr.aphp.healthdcat.referenceSpecification` (→ `dct:conformsTo`) vers leurs
+  URIs canoniques, vérifiées contre les sources primaires le 2026-08-28 (voir
+  `docs/research/reference-specification-uris.md`). Tout autre code (p. ex.
+  `OSIRIS`) retombe sur `urn:aphp:conformsTo:<code>` côté
+  `reader/dataproduct.py`.
