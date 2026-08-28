@@ -11,6 +11,7 @@ G4/P0-6.
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 
 from dh_healthdcat.mapping import vocabularies as v
 from dh_healthdcat.mapping.vocabularies import (
@@ -135,6 +136,106 @@ def _as_uri(value: str | None, urn_namespace: str) -> str | None:
     return f"urn:{urn_namespace}:{value}"
 
 
+def _read_keywords(ctx: ReadContext, entity: SemitypedEntity) -> list[str]:
+    """Mots-clés : tags « porteurs de sens » (hors dcat:sample) + libellés des
+    glossary terms (ou leur id local à défaut de glossaryTermInfo.name)."""
+
+    keywords: list[str] = []
+    tags = entity.get("globalTags")
+    if tags:
+        for t in tags.tags:
+            local = t.tag.rsplit(":", 1)[-1]
+            if local not in ("dcat:sample",):
+                keywords.append(local)
+    glossary = entity.get("glossaryTerms")
+    if glossary:
+        for term in glossary.terms:
+            term_entity = ctx.get_entity(term.urn)
+            info = term_entity.get("glossaryTermInfo")
+            keywords.append(info.name if info and info.name else term.urn.rsplit(":", 1)[-1])
+    return keywords
+
+
+def _read_spatial(
+    ctx: ReadContext, entity: SemitypedEntity, title: str, urn: str, issues: list[ValidationIssue]
+) -> list[str]:
+    """dct:spatial : URI telle quelle, sinon code pays résolu via v.COUNTRY,
+    sinon le code brut (URI d'un autre référentiel, ou code régional FR-75)."""
+
+    spatial: list[str] = []
+    for code in props.get_strings(
+        ctx, entity, "fr.aphp.healthdcat.spatialCoverage", title, urn, issues
+    ):
+        if code.startswith("http"):
+            spatial.append(code)
+            continue
+        try:
+            spatial.append(v.COUNTRY.resolve(code))
+        except UnknownVocabularyValueError:
+            spatial.append(code)
+    return spatial
+
+
+def _read_conforms_to(
+    ctx: ReadContext, entity: SemitypedEntity, title: str, urn: str, issues: list[ValidationIssue]
+) -> list[str]:
+    """dct:conformsTo : code résolu via v.REFERENCE_SPECIFICATION, sinon
+    enveloppé en urn:aphp:conformsTo:<code> (OSIRIS & co.)."""
+
+    conforms_to: list[str] = []
+    for code in props.get_strings(
+        ctx, entity, "fr.aphp.healthdcat.referenceSpecification", title, urn, issues
+    ):
+        try:
+            conforms_to.append(v.REFERENCE_SPECIFICATION.resolve(code))
+        except UnknownVocabularyValueError:
+            fallback = _as_uri(code, "aphp:conformsTo")
+            if fallback:
+                conforms_to.append(fallback)
+    return conforms_to
+
+
+def _read_period(
+    entity: SemitypedEntity,
+    start_prop: str,
+    end_prop: str,
+    title: str,
+    urn: str,
+    issues: list[ValidationIssue],
+) -> PeriodOfTime | None:
+    """PeriodOfTime à partir d'un couple de structured properties date ;
+    None si les deux bornes sont absentes."""
+
+    start = props.get_date(entity, start_prop, title, urn, issues)
+    end = props.get_date(entity, end_prop, title, urn, issues)
+    return PeriodOfTime(start_date=start, end_date=end) if (start or end) else None
+
+
+def _read_assets(
+    ctx: ReadContext,
+    dp: Any,
+    title: str,
+    issues: list[ValidationIssue],
+    inherited_license: str | None,
+    inherited_legislation: tuple[str, ...],
+) -> tuple[list[Distribution], list[Distribution]]:
+    """Distributions / échantillons depuis dataProductProperties.assets, avec
+    héritage dct:rights et dcatap:applicableLegislation du DataProduct."""
+
+    distributions: list[Distribution] = []
+    samples: list[Distribution] = []
+    for association in dp.assets or []:
+        distribution = dataset_reader.read_distribution(
+            ctx, association.destinationUrn, association.destinationUrn, title, issues
+        )
+        if distribution.rights is None and inherited_license:
+            distribution = _with_rights(distribution, inherited_license)
+        if not distribution.applicable_legislation and inherited_legislation:
+            distribution = _with_legislation(distribution, inherited_legislation)
+        (samples if distribution.is_sample else distributions).append(distribution)
+    return distributions, samples
+
+
 def read_data_product(
     ctx: ReadContext,
     dataproduct_urn: str,
@@ -155,20 +256,7 @@ def read_data_product(
     issues: list[ValidationIssue] = []
     _warn_undeclared_properties(ctx, entity, title, dataproduct_urn, issues)
 
-    # --- Mots-clés : tags "porteurs de sens" + libellés des glossary terms ---
-    keywords: list[str] = []
-    tags = entity.get("globalTags")
-    if tags:
-        for t in tags.tags:
-            local = t.tag.rsplit(":", 1)[-1]
-            if local not in ("dcat:sample",):
-                keywords.append(local)
-    glossary = entity.get("glossaryTerms")
-    if glossary:
-        for term in glossary.terms:
-            term_entity = ctx.get_entity(term.urn)
-            info = term_entity.get("glossaryTermInfo")
-            keywords.append(info.name if info and info.name else term.urn.rsplit(":", 1)[-1])
+    keywords = _read_keywords(ctx, entity)
 
     # --- Champs structured properties, valeurs simples ---
     acronym = props.get_string(
@@ -273,31 +361,8 @@ def read_data_product(
         issues,
     )
 
-    spatial_raw = props.get_strings(
-        ctx, entity, "fr.aphp.healthdcat.spatialCoverage", title, dataproduct_urn, issues
-    )
-    spatial: list[str] = []
-    for code in spatial_raw:
-        if code.startswith("http"):
-            spatial.append(code)
-            continue
-        try:
-            spatial.append(v.COUNTRY.resolve(code))
-        except UnknownVocabularyValueError:
-            spatial.append(
-                code
-            )  # déjà une URI d'un autre référentiel (GeoNames...) ou code régional (FR-75)
-
-    conforms_to: list[str] = []
-    for code in props.get_strings(
-        ctx, entity, "fr.aphp.healthdcat.referenceSpecification", title, dataproduct_urn, issues
-    ):
-        try:
-            conforms_to.append(v.REFERENCE_SPECIFICATION.resolve(code))
-        except UnknownVocabularyValueError:
-            fallback = _as_uri(code, "aphp:conformsTo")  # OSIRIS & co. → urn:aphp:conformsTo:<code>
-            if fallback:
-                conforms_to.append(fallback)
+    spatial = _read_spatial(ctx, entity, title, dataproduct_urn, issues)
+    conforms_to = _read_conforms_to(ctx, entity, title, dataproduct_urn, issues)
     license_ = props.get_string(
         ctx, entity, "fr.aphp.healthdcat.license", title, dataproduct_urn, issues
     )
@@ -339,28 +404,21 @@ def read_data_product(
         else None
     )
 
-    temporal_start = props.get_date(
-        entity, "fr.aphp.healthdcat.temporalCoverageStart", title, dataproduct_urn, issues
+    temporal = _read_period(
+        entity,
+        "fr.aphp.healthdcat.temporalCoverageStart",
+        "fr.aphp.healthdcat.temporalCoverageEnd",
+        title,
+        dataproduct_urn,
+        issues,
     )
-    temporal_end = props.get_date(
-        entity, "fr.aphp.healthdcat.temporalCoverageEnd", title, dataproduct_urn, issues
-    )
-    temporal = (
-        PeriodOfTime(start_date=temporal_start, end_date=temporal_end)
-        if (temporal_start or temporal_end)
-        else None
-    )
-
-    retention_start = props.get_date(
-        entity, "fr.aphp.healthdcat.retentionPeriodStart", title, dataproduct_urn, issues
-    )
-    retention_end = props.get_date(
-        entity, "fr.aphp.healthdcat.retentionPeriodEnd", title, dataproduct_urn, issues
-    )
-    retention_period = (
-        PeriodOfTime(start_date=retention_start, end_date=retention_end)
-        if (retention_start or retention_end)
-        else None
+    retention_period = _read_period(
+        entity,
+        "fr.aphp.healthdcat.retentionPeriodStart",
+        "fr.aphp.healthdcat.retentionPeriodEnd",
+        title,
+        dataproduct_urn,
+        issues,
     )
 
     # --- Agents (publisher / creator / hdab) — structured properties plates sur le DataProduct ---
@@ -369,20 +427,7 @@ def read_data_product(
     hdab = agents_reader.read_hdab(ctx, entity, title, dataproduct_urn, issues)
     contact_point = agents_reader.read_contact_point(ctx, entity, title, dataproduct_urn, issues)
 
-    # --- Distributions / échantillons, depuis dataProductProperties.assets ---
-    distributions: list[Distribution] = []
-    samples: list[Distribution] = []
-    for association in dp.assets or []:
-        distribution = dataset_reader.read_distribution(
-            ctx, association.destinationUrn, association.destinationUrn, title, issues
-        )
-        # dct:rights hérité de la licence du DataProduct (:healthDistribution_Shape l'exige =1)
-        if distribution.rights is None and license_:
-            distribution = _with_rights(distribution, license_)
-        # dcatap:applicableLegislation hérité du DataProduct si l'asset n'en a pas
-        if not distribution.applicable_legislation and applicable_legislation:
-            distribution = _with_legislation(distribution, applicable_legislation)
-        (samples if distribution.is_sample else distributions).append(distribution)
+    distributions, samples = _read_assets(ctx, dp, title, issues, license_, applicable_legislation)
 
     return HealthDataset(
         source_urn=dataproduct_urn,
