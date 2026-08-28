@@ -91,6 +91,19 @@ def _resolve_one(
     )
 
 
+def _doi_to_uri(value: str) -> str:
+    """`dct:isReferencedBy` attend une IRI. Un DOI nu (`10.1234/…`) ou préfixé
+    `doi:` est normalisé en `https://doi.org/…` ; le reste (URL déjà complète,
+    autre URN) passe tel quel."""
+
+    stripped = value.strip()
+    if stripped.lower().startswith("doi:"):
+        return f"https://doi.org/{stripped[4:].strip()}"
+    if stripped.startswith("10."):
+        return f"https://doi.org/{stripped}"
+    return stripped
+
+
 def _as_uri(value: str | None, urn_namespace: str) -> str | None:
     """Si `value` ressemble déjà à une URI, le renvoie tel quel ; sinon
     l'enveloppe dans un URN stable pour rester `sh:nodeKind sh:IRI`-compatible
@@ -208,7 +221,10 @@ def read_data_product(
             if fallback:
                 conforms_to.append(fallback)
     license_ = props.get_string(ctx, entity, "fr.aphp.healthdcat.license", title, dataproduct_urn, issues)
-    is_referenced_by = props.get_strings(ctx, entity, "fr.aphp.healthdcat.isReferencedBy", title, dataproduct_urn, issues)
+    is_referenced_by = tuple(
+        _doi_to_uri(ref)
+        for ref in props.get_strings(ctx, entity, "fr.aphp.healthdcat.isReferencedBy", title, dataproduct_urn, issues)
+    )
 
     number_of_records = props.get_int(entity, "fr.aphp.healthdcat.numberOfRecords", title, dataproduct_urn, issues)
     number_of_unique_individuals = props.get_int(entity, "fr.aphp.healthdcat.numberOfUniqueIndividuals", title, dataproduct_urn, issues)
@@ -218,8 +234,7 @@ def read_data_product(
     provenance = props.get_string(ctx, entity, "fr.aphp.healthdcat.provenance", title, dataproduct_urn, issues)
     purpose = props.get_string(ctx, entity, "fr.aphp.healthdcat.purpose", title, dataproduct_urn, issues)
 
-    issued_date = props.get_date(entity, "fr.aphp.healthdcat.issued", title, dataproduct_urn, issues)
-    issued = datetime.combine(issued_date, datetime.min.time()) if issued_date else None
+    issued = props.get_date(entity, "fr.aphp.healthdcat.issued", title, dataproduct_urn, issues)  # date, émis en xsd:date
     modified = datetime.fromtimestamp(dp.lastModified.time / 1000) if getattr(dp, "lastModified", None) else None
 
     temporal_start = props.get_date(entity, "fr.aphp.healthdcat.temporalCoverageStart", title, dataproduct_urn, issues)

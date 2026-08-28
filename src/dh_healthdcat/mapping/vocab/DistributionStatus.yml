@@ -1,0 +1,13 @@
+# Vocabulaire d'auteur (dh-healthdcat), pas vendu du HDH — le HDH ne publie pas
+# de dictionnaire "statut de distribution".
+#
+# Couvre les valeurs de `fr.aphp.healthdcat.distributionStatus` (→ adms:status),
+# sous-ensemble du NAL EU Publications Office `distribution-status` retenu par le
+# registre (`allowedValues: COMPLETED, WITHDRAWN`).
+DistributionStatus:
+  vocabulary_list:
+    COMPLETED: "http://publications.europa.eu/resource/authority/distribution-status/COMPLETED"
+    WITHDRAWN: "http://publications.europa.eu/resource/authority/distribution-status/WITHDRAWN"
+  fr:
+    COMPLETED: "Finalisée"
+    WITHDRAWN: "Retirée"

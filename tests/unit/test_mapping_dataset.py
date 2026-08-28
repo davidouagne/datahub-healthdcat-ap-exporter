@@ -11,7 +11,7 @@ from rdflib import RDF, XSD, Literal
 
 from dh_healthdcat.mapping import vocabularies as v
 from dh_healthdcat.mapping.dataset import dataset_to_graph
-from dh_healthdcat.mapping.namespaces import CSVW, HEALTHDCATAP
+from dh_healthdcat.mapping.namespaces import CSVW, DCT, HEALTHDCATAP
 from dh_healthdcat.model import (
     Agent,
     Column,
@@ -81,7 +81,7 @@ def _fully_conformant_dataset() -> HealthDataset:
         health_category=(v.HEALTH_CATEGORY.resolve("HRAD"),),
         health_theme=(v.HEALTH_THEME.resolve("health_systems"),),
         spatial=(v.COUNTRY.resolve("FRA"),),
-        issued=datetime(2019, 1, 1),
+        issued=date(2019, 1, 1),
         modified=datetime(2026, 8, 1),
         accrual_periodicity=v.FREQUENCY.resolve("DAILY"),
         number_of_records=1_000_000_000,
@@ -199,6 +199,17 @@ def test_no_tablegroup_when_no_asset_carries_a_schema():
 
     assert list(graph.objects(None, HEALTHDCATAP.hasVariables)) == []
     assert list(graph.subjects(RDF.type, CSVW.TableGroup)) == []
+
+
+def test_issued_is_emitted_as_xsd_date_not_datetime():
+    """`fr.aphp.healthdcat.issued` est un `date` : on émet `dct:issued` en
+    `xsd:date`, pas en `xsd:dateTime` forcé. `dct:modified` reste un vrai
+    horodatage (`xsd:dateTime`)."""
+
+    dataset = _fully_conformant_dataset()
+    graph = dataset_to_graph(dataset)
+
+    assert list(graph.objects(None, DCT.issued)) == [Literal(date(2019, 1, 1), datatype=XSD.date)]
 
 
 def test_distribution_requires_stricter_fields_than_sample():

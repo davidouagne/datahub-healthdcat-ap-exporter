@@ -42,6 +42,34 @@ def test_reference_specification_codes_resolve_to_canonical_uris_local_fallback_
     assert not [i for i in dataset.issues if i.datahub_field == "fr.aphp.healthdcat.referenceSpecification"]
 
 
+def test_bare_dois_in_is_referenced_by_are_normalised_to_https_doi_org():
+    """`fr.aphp.healthdcat.isReferencedBy` : un DOI nu (`10.x/...`) ou préfixé
+    `doi:` devient `https://doi.org/...` ; une URL déjà complète passe telle
+    quelle (`dct:isReferencedBy` attend une IRI)."""
+
+    ctx = build_context()
+    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+
+    assert dataset.is_referenced_by == (
+        "https://doi.org/10.1234/abcd.2019",
+        "https://doi.org/10.5555/xyz",
+        "https://hal.science/hal-04",
+    )
+
+
+def test_distribution_status_is_resolved_to_publications_office_uri():
+    """`fr.aphp.healthdcat.distributionStatus` (COMPLETED/WITHDRAWN) est résolu
+    en IRI `.../distribution-status/*` et porté par `Distribution.status_uri`
+    (émis en `adms:status`). Sans ce câblage, la propriété était définie mais
+    jamais émise."""
+
+    ctx = build_context()
+    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+
+    distribution = next(d for d in dataset.distributions if d.source_urn == ASSET_URN)
+    assert distribution.status_uri == "http://publications.europa.eu/resource/authority/distribution-status/COMPLETED"
+
+
 def test_type_coercion_warns_but_does_not_fail():
     ctx = build_context()
     dataset = read_data_product(ctx, DATAPRODUCT_URN)
