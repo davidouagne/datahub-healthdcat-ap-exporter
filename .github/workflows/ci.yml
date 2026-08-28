@@ -30,8 +30,8 @@ jobs:
           enable-cache: true
           python-version: ${{ matrix.python-version }}
 
-      - name: Installer le projet (mode éditable + extra dev)
-        run: uv pip install -e ".[dev]"
+      - name: Installer le projet et ses dépendances de dev
+        run: uv sync --frozen
 
       - name: Lancer la suite de tests
         run: uv run pytest

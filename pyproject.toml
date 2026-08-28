@@ -16,12 +16,6 @@ dependencies = [
     "pyyaml>=6.0",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0",
-    "pytest-cov>=5.0",
-]
-
 [project.scripts]
 dh-healthdcat = "dh_healthdcat.cli:app"
 
@@ -29,8 +23,70 @@ dh-healthdcat = "dh_healthdcat.cli:app"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[dependency-groups]
+# PEP 735 — outillage de dev, hors extras publiés. Installé par défaut par `uv sync`.
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.16,<0.17",
+    "mypy>=2.3,<3.0",
+    "pip-audit>=2.10,<3.0",
+    "types-PyYAML>=6.0",
+]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/dh_healthdcat"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100  # URIs RDF + libellés de vocabulaire longs
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "RUF", "PL"]
+ignore = [
+    # Imports différés volontaires : dépendances lourdes (pyshacl, plugins rdflib)
+    # chargées à l'appel, et cassures de cycles internes.
+    "PLC0415",
+    # Fonctions de mapping/reader à N champs nommés : la liste d'arguments EST
+    # l'interface. Regrouper en dataclass n'apporterait rien ici.
+    "PLR0913",
+    "PLR0917",
+    # Complexité (branches / statements) : `dataset_to_graph` et
+    # `read_data_product` sont volumineuses par nature. Décomposition suivie
+    # hors de cette PR d'outillage — voir issue #31.
+    "PLR0912",
+    "PLR0915",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["PLR2004"]        # littéraux « magiques » assumés dans les assertions
+"**/__init__.py" = ["F401"]     # ré-exports
+
+[tool.ruff.lint.flake8-bugbear]
+# Idiome Typer : les valeurs par défaut SONT des appels `typer.Option(...)` /
+# `typer.Argument(...)`.
+extend-immutable-calls = ["typer.Argument", "typer.Option"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["src/dh_healthdcat"]
+
+[[tool.mypy.overrides]]
+# Doubles de test typés « au mieux » : filet sans exiger l'annotation de chaque test_*.
+module = "tests.*"
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+# Dépendances sans stubs.
+module = ["datahub.*", "pyshacl.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# rdflib est typé (py.typed) mais ne re-exporte pas explicitement ses namespaces
+# (`from rdflib.namespace import DCTERMS`, etc.) — inoffensif sous --strict.
+module = ["rdflib.*"]
+implicit_reexport = true
