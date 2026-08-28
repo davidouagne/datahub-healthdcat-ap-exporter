@@ -10,7 +10,10 @@ from dh_healthdcat.model import ValidationIssue
 
 
 def test_resolve_known_code():
-    assert v.ACCESS_RIGHTS.resolve("PUBLIC") == "http://publications.europa.eu/resource/authority/access-right/PUBLIC"
+    assert (
+        v.ACCESS_RIGHTS.resolve("PUBLIC")
+        == "http://publications.europa.eu/resource/authority/access-right/PUBLIC"
+    )
 
 
 def test_resolve_unknown_code_raises():
@@ -45,7 +48,10 @@ def test_reference_specification_maps_standards_to_canonical_uris():
     # reference-specification-uris.md). OSIRIS n'y figure pas : il retombe sur
     # urn:aphp:conformsTo:OSIRIS côté reader.
     assert v.REFERENCE_SPECIFICATION.resolve("HL7-FHIR-R4") == "http://hl7.org/fhir/4.0.1"
-    assert v.REFERENCE_SPECIFICATION.resolve("OMOP-CDM-5.4") == "https://ohdsi.github.io/CommonDataModel/cdm54.html"
+    assert (
+        v.REFERENCE_SPECIFICATION.resolve("OMOP-CDM-5.4")
+        == "https://ohdsi.github.io/CommonDataModel/cdm54.html"
+    )
     assert v.REFERENCE_SPECIFICATION.resolve("HL7v2") == "urn:hl7-org:v2xml"
     with pytest.raises(v.UnknownVocabularyValueError):
         v.REFERENCE_SPECIFICATION.resolve("OSIRIS")
@@ -56,5 +62,11 @@ def test_health_category_and_theme_use_semic_authority_host():
     # healthTheme (vocab HealthDCAT-AP non publié). On aligne sur le namespace
     # SEMIC healthdataportal.eu, comme PublisherType.yml — non déréférençable
     # pour l'instant, mais un identifiant SEMIC plutôt qu'une IP de dev.
-    assert v.HEALTH_CATEGORY.resolve("HRAD") == "http://healthdataportal.eu/resource/authority/healthcategories/HRAD"
-    assert v.HEALTH_THEME.resolve("health_systems") == "http://healthdataportal.eu/resource/authority/health-theme/HEALTH_SYSTEMS"
+    assert (
+        v.HEALTH_CATEGORY.resolve("HRAD")
+        == "http://healthdataportal.eu/resource/authority/healthcategories/HRAD"
+    )
+    assert (
+        v.HEALTH_THEME.resolve("health_systems")
+        == "http://healthdataportal.eu/resource/authority/health-theme/HEALTH_SYSTEMS"
+    )

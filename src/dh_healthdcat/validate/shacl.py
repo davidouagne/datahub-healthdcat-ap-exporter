@@ -36,7 +36,9 @@ class ShaclResult:
 
 def _load_shapes_graph() -> Graph:
     shapes = Graph()
-    with resources.as_file(resources.files("dh_healthdcat.validate") / "shapes" / _SHAPES_RESOURCE) as path:
+    with resources.as_file(
+        resources.files("dh_healthdcat.validate") / "shapes" / _SHAPES_RESOURCE
+    ) as path:
         shapes.parse(path, format="turtle")
     return shapes
 

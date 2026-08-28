@@ -55,7 +55,15 @@ def _entities() -> dict[str, dict]:
                 assets=[NS(destinationUrn=ASSET_URN), NS(destinationUrn=SAMPLE_URN)],
                 lastModified=None,
             ),
-            "ownership": NS(owners=[NS(owner="urn:li:corpuser:antoine.sansegundo", typeUrn=None, type="TECHNICAL_OWNER")]),
+            "ownership": NS(
+                owners=[
+                    NS(
+                        owner="urn:li:corpuser:antoine.sansegundo",
+                        typeUrn=None,
+                        type="TECHNICAL_OWNER",
+                    )
+                ]
+            ),
             "globalTags": NS(tags=[NS(tag="urn:li:tag:aphp:access")]),
             "glossaryTerms": NS(terms=[]),
             "domains": NS(domains=["urn:li:domain:9306fe49bb1f70f491a712ff19b8d972"]),
@@ -63,12 +71,21 @@ def _entities() -> dict[str, dict]:
                 properties=[
                     _sp("fr.aphp.healthdcat.datasetType", "PERSONAL_DATA"),
                     _sp("fr.aphp.healthdcat.accessRights", "NON_PUBLIC"),
-                    _sp("fr.aphp.healthdcat.applicableLegislation", "COMMISSION IMPLEMENTING REGULATION (EU) 2023/138"),
+                    _sp(
+                        "fr.aphp.healthdcat.applicableLegislation",
+                        "COMMISSION IMPLEMENTING REGULATION (EU) 2023/138",
+                    ),
                     _sp("fr.aphp.healthdcat.healthCategory", "HRAD"),
                     _sp("fr.aphp.healthdcat.healthTheme", "health_systems"),
                     _sp("fr.aphp.healthdcat.spatialCoverage", "FRA"),
-                    _sp("fr.aphp.healthdcat.provenance", "Donnees issues du dossier patient informatise ORBIS."),
-                    _sp("fr.aphp.healthdcat.purpose", "Recherche et pilotage de l'activite hospitaliere."),
+                    _sp(
+                        "fr.aphp.healthdcat.provenance",
+                        "Donnees issues du dossier patient informatise ORBIS.",
+                    ),
+                    _sp(
+                        "fr.aphp.healthdcat.purpose",
+                        "Recherche et pilotage de l'activite hospitaliere.",
+                    ),
                     _sp("fr.aphp.healthdcat.contactPointName", "Coordination EDS"),
                     _sp("fr.aphp.healthdcat.contactPointEmail", "eds-coord@aphp.fr"),
                     _sp("fr.aphp.healthdcat.contactPointUrl", "https://eds.aphp.fr"),
@@ -76,12 +93,22 @@ def _entities() -> dict[str, dict]:
                     # referenceSpecification : un code du vocab + un code local (OSIRIS)
                     _sp("fr.aphp.healthdcat.referenceSpecification", "HL7-FHIR-R4", "OSIRIS"),
                     # isReferencedBy : DOI nu, DOI préfixé "doi:", et URL complète
-                    _sp("fr.aphp.healthdcat.isReferencedBy", "10.1234/abcd.2019", "doi:10.5555/xyz", "https://hal.science/hal-04"),
-                    _sp("fr.aphp.healthdcat.numberOfRecords", "1000000000"),  # string au lieu de number : coercition
+                    _sp(
+                        "fr.aphp.healthdcat.isReferencedBy",
+                        "10.1234/abcd.2019",
+                        "doi:10.5555/xyz",
+                        "https://hal.science/hal-04",
+                    ),
+                    _sp(
+                        "fr.aphp.healthdcat.numberOfRecords", "1000000000"
+                    ),  # string au lieu de number : coercition
                     _sp("fr.aphp.healthdcat.publishingFrequency", "DAILY"),
                     _sp(UNDECLARED_PROPERTY, "x"),
                     # Publisher (structured properties plates sur le DataProduct)
-                    _sp("fr.aphp.healthdcat.publisherName", "Assistance Publique - Hopitaux de Paris"),
+                    _sp(
+                        "fr.aphp.healthdcat.publisherName",
+                        "Assistance Publique - Hopitaux de Paris",
+                    ),
                     _sp("fr.aphp.healthdcat.publisherHomepage", "https://www.aphp.fr"),
                     _sp("fr.aphp.healthdcat.publisherEmail", "eds-contact@aphp.fr"),
                     _sp("fr.aphp.healthdcat.publisherType", "Hospital or Healthcare System"),
@@ -95,28 +122,62 @@ def _entities() -> dict[str, dict]:
             ),
         },
         ASSET_URN: {
-            "datasetProperties": NS(name="Patient.ndjson", description="Ressources FHIR Patient", externalUrl=None, created=None, lastModified=None),
+            "datasetProperties": NS(
+                name="Patient.ndjson",
+                description="Ressources FHIR Patient",
+                externalUrl=None,
+                created=None,
+                lastModified=None,
+            ),
             "editableDatasetProperties": None,
             "schemaMetadata": NS(
                 fields=[
-                    NS(fieldPath="id", nativeDataType="string", description="Identifiant", isPartOfKey=True),
-                    NS(fieldPath="gender", nativeDataType="string", description="Sexe", isPartOfKey=False),
+                    NS(
+                        fieldPath="id",
+                        nativeDataType="string",
+                        description="Identifiant",
+                        isPartOfKey=True,
+                    ),
+                    NS(
+                        fieldPath="gender",
+                        nativeDataType="string",
+                        description="Sexe",
+                        isPartOfKey=False,
+                    ),
                 ]
             ),
             "deprecation": None,
             "globalTags": NS(tags=[]),
-            "structuredProperties": NS(properties=[
-                _sp("fr.aphp.healthdcat.accessUrl", "https://s3.aphp.fr/sharing-layer/Patient.ndjson"),
-                _sp("fr.aphp.healthdcat.distributionStatus", "COMPLETED"),
-            ]),
+            "structuredProperties": NS(
+                properties=[
+                    _sp(
+                        "fr.aphp.healthdcat.accessUrl",
+                        "https://s3.aphp.fr/sharing-layer/Patient.ndjson",
+                    ),
+                    _sp("fr.aphp.healthdcat.distributionStatus", "COMPLETED"),
+                ]
+            ),
         },
         SAMPLE_URN: {
-            "datasetProperties": NS(name="Patient_sample.ndjson", description="Echantillon FHIR Patient", externalUrl=None, created=None, lastModified=None),
+            "datasetProperties": NS(
+                name="Patient_sample.ndjson",
+                description="Echantillon FHIR Patient",
+                externalUrl=None,
+                created=None,
+                lastModified=None,
+            ),
             "editableDatasetProperties": None,
             "schemaMetadata": NS(fields=[]),
             "deprecation": None,
             "globalTags": NS(tags=[NS(tag="urn:li:tag:dcat:sample")]),
-            "structuredProperties": NS(properties=[_sp("fr.aphp.healthdcat.accessUrl", "https://s3.aphp.fr/sharing-layer/Patient_sample.ndjson")]),
+            "structuredProperties": NS(
+                properties=[
+                    _sp(
+                        "fr.aphp.healthdcat.accessUrl",
+                        "https://s3.aphp.fr/sharing-layer/Patient_sample.ndjson",
+                    )
+                ]
+            ),
         },
         UNREADABLE_DATAPRODUCT_URN: {
             "dataProductProperties": None,
@@ -158,29 +219,46 @@ class FakeGraph:
         self.get_entity_semityped_calls.append(urn)
         return self._entities[urn]
 
-    def get_urns_by_filter(self, *, entity_types=None, extra_or_filters=None, **kwargs):  # noqa: ANN001, ANN003
+    def get_urns_by_filter(self, *, entity_types=None, extra_or_filters=None, **kwargs):
         self.last_extra_or_filters = extra_or_filters
         if entity_types == ["dataProduct"]:
             return list(ALL_DATAPRODUCT_URNS)
         return []
 
-    def get_latest_timeseries_value(self, entity_urn, aspect_type, filter_criteria_map):  # noqa: ANN001
+    def get_latest_timeseries_value(self, entity_urn, aspect_type, filter_criteria_map):
         return _PROFILES.get(entity_urn)
 
 
 # Sous-ensemble des définitions réellement déclarées dans assets.yml — UNDECLARED_PROPERTY
 # est intentionnellement absente.
 _DECLARED_QUALIFIED_NAMES = [
-    "fr.aphp.healthdcat.datasetType", "fr.aphp.healthdcat.accessRights", "fr.aphp.healthdcat.applicableLegislation",
-    "fr.aphp.healthdcat.healthCategory", "fr.aphp.healthdcat.healthTheme", "fr.aphp.healthdcat.spatialCoverage",
-    "fr.aphp.healthdcat.provenance", "fr.aphp.healthdcat.purpose", "fr.aphp.healthdcat.contactPointName",
-    "fr.aphp.healthdcat.contactPointEmail", "fr.aphp.healthdcat.contactPointUrl", "fr.aphp.healthdcat.license",
-    "fr.aphp.healthdcat.numberOfRecords", "fr.aphp.healthdcat.publishingFrequency", "fr.aphp.healthdcat.accessUrl",
-    "fr.aphp.healthdcat.referenceSpecification", "fr.aphp.healthdcat.isReferencedBy",
+    "fr.aphp.healthdcat.datasetType",
+    "fr.aphp.healthdcat.accessRights",
+    "fr.aphp.healthdcat.applicableLegislation",
+    "fr.aphp.healthdcat.healthCategory",
+    "fr.aphp.healthdcat.healthTheme",
+    "fr.aphp.healthdcat.spatialCoverage",
+    "fr.aphp.healthdcat.provenance",
+    "fr.aphp.healthdcat.purpose",
+    "fr.aphp.healthdcat.contactPointName",
+    "fr.aphp.healthdcat.contactPointEmail",
+    "fr.aphp.healthdcat.contactPointUrl",
+    "fr.aphp.healthdcat.license",
+    "fr.aphp.healthdcat.numberOfRecords",
+    "fr.aphp.healthdcat.publishingFrequency",
+    "fr.aphp.healthdcat.accessUrl",
+    "fr.aphp.healthdcat.referenceSpecification",
+    "fr.aphp.healthdcat.isReferencedBy",
     "fr.aphp.healthdcat.distributionStatus",
-    "fr.aphp.healthdcat.publisherName", "fr.aphp.healthdcat.publisherHomepage", "fr.aphp.healthdcat.publisherEmail",
-    "fr.aphp.healthdcat.publisherType", "fr.aphp.healthdcat.publisherNote", "fr.aphp.healthdcat.trustedDataHolder",
-    "fr.aphp.healthdcat.hdabName", "fr.aphp.healthdcat.hdabHomepage", "fr.aphp.healthdcat.hdabEmail",
+    "fr.aphp.healthdcat.publisherName",
+    "fr.aphp.healthdcat.publisherHomepage",
+    "fr.aphp.healthdcat.publisherEmail",
+    "fr.aphp.healthdcat.publisherType",
+    "fr.aphp.healthdcat.publisherNote",
+    "fr.aphp.healthdcat.trustedDataHolder",
+    "fr.aphp.healthdcat.hdabName",
+    "fr.aphp.healthdcat.hdabHomepage",
+    "fr.aphp.healthdcat.hdabEmail",
 ]
 
 

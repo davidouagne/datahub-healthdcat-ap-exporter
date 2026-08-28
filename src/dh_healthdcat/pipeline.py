@@ -25,9 +25,9 @@ ici — un second appel dupliquerait chaque issue ERROR."""
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from enum import Enum
-from typing import Iterable, Iterator, Union
 
 from rdflib import Graph
 
@@ -69,7 +69,7 @@ class Rejected:
     shacl: ShaclResult
 
 
-Outcome = Union[Prepared, Unreadable, Rejected]
+Outcome = Prepared | Unreadable | Rejected
 
 
 def prepare(
@@ -139,7 +139,7 @@ class PushFailed:
     error: str
 
 
-PushOutcome = Union[Pushed, Planned, PushFailed, Unreadable, Rejected]
+PushOutcome = Pushed | Planned | PushFailed | Unreadable | Rejected
 
 
 def push(

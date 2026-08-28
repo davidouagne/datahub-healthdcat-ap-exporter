@@ -10,14 +10,16 @@ ligne) et `select_data_product_urns` (l'appel réseau proprement dit)."""
 
 from __future__ import annotations
 
-from typing import Any, Callable, Literal
+from collections.abc import Callable
+from typing import Any, Literal
 
 from dh_healthdcat.reader.graph import ReadContext
 
 TagMode = Literal["any", "all"]
 
 _URN_PRECEDENCE_WARNING = (
-    "--urn a été fourni : --domain/--tag/--exclude-tag sont ignorés (--urn est prioritaire, voir spec/spec-feature-tag-filtering.md)."
+    "--urn a été fourni : --domain/--tag/--exclude-tag sont ignorés "
+    "(--urn est prioritaire, voir spec/spec-feature-tag-filtering.md)."
 )
 
 
@@ -58,7 +60,9 @@ def build_selection_filter(
     # reader/graph.py::_load_property_definitions pour StructuredProperties).
     from datahub.sdk.search_filters import FilterDsl as F
 
-    clauses = []
+    # Classes de filtre hétérogènes (_DomainFilter / _TagFilter / _Not, privées
+    # côté acryl-datahub) : on ne les manipule qu'à travers .compile()/.to_raw().
+    clauses: list[Any] = []
 
     if domains:
         clauses.append(F.domain([normalize_domain(d) for d in domains]))
@@ -90,10 +94,13 @@ def select_data_product_urns(
     exclude_tags = exclude_tags or []
 
     if urns:
-        if domains or tags or exclude_tags:
-            if on_warning is not None:
-                on_warning(_URN_PRECEDENCE_WARNING)
+        if (domains or tags or exclude_tags) and on_warning is not None:
+            on_warning(_URN_PRECEDENCE_WARNING)
         return urns
 
-    search_filter = build_selection_filter(domains=domains, tags=tags, tag_mode=tag_mode, exclude_tags=exclude_tags)
-    return list(ctx.graph.get_urns_by_filter(entity_types=["dataProduct"], extra_or_filters=search_filter))
+    search_filter = build_selection_filter(
+        domains=domains, tags=tags, tag_mode=tag_mode, exclude_tags=exclude_tags
+    )
+    return list(
+        ctx.graph.get_urns_by_filter(entity_types=["dataProduct"], extra_or_filters=search_filter)
+    )

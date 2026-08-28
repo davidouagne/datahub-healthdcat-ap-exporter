@@ -52,7 +52,9 @@ class TestFindConfigFile:
         explicit = tmp_path / "custom.yml"
         explicit.write_text("profiles: {}\n", encoding="utf-8")
 
-        found = find_config_file(explicit=explicit, env={}, cwd=tmp_path / "cwd", home=tmp_path / "home")
+        found = find_config_file(
+            explicit=explicit, env={}, cwd=tmp_path / "cwd", home=tmp_path / "home"
+        )
 
         assert found == explicit
 
@@ -71,13 +73,20 @@ class TestFindConfigFile:
         env_path = tmp_path / "from-env.yml"
         env_path.write_text("profiles: {}\n", encoding="utf-8")
 
-        found = find_config_file(explicit=None, env={"HDH_CONFIG": str(env_path)}, cwd=tmp_path, home=tmp_path)
+        found = find_config_file(
+            explicit=None, env={"HDH_CONFIG": str(env_path)}, cwd=tmp_path, home=tmp_path
+        )
 
         assert found == env_path
 
     def test_env_path_missing_raises(self, tmp_path):
         with pytest.raises(ConfigError, match="HDH_CONFIG"):
-            find_config_file(explicit=None, env={"HDH_CONFIG": str(tmp_path / "absent.yml")}, cwd=tmp_path, home=tmp_path)
+            find_config_file(
+                explicit=None,
+                env={"HDH_CONFIG": str(tmp_path / "absent.yml")},
+                cwd=tmp_path,
+                home=tmp_path,
+            )
 
     def test_cwd_wins_over_home_no_merge(self, tmp_path):
         cwd = tmp_path / "cwd"
@@ -129,8 +138,12 @@ class TestLoadConfig:
 
         assert config.path == path
         assert config.default_profile == "dev"
-        assert config.profiles["dev"] == Profile(name="dev", url="https://dev.test", api_key_env="DEV_KEY")
-        assert config.profiles["prod"] == Profile(name="prod", url="https://prod.test", api_key_env=None)
+        assert config.profiles["dev"] == Profile(
+            name="dev", url="https://dev.test", api_key_env="DEV_KEY"
+        )
+        assert config.profiles["prod"] == Profile(
+            name="prod", url="https://prod.test", api_key_env=None
+        )
 
     def test_empty_file_yields_no_profiles(self, tmp_path):
         path = tmp_path / "config.yml"
@@ -143,7 +156,10 @@ class TestLoadConfig:
 
     def test_rejects_literal_api_key(self, tmp_path):
         path = tmp_path / "config.yml"
-        path.write_text("profiles:\n  prod:\n    url: https://prod.test\n    api_key: mdc_secret\n", encoding="utf-8")
+        path.write_text(
+            "profiles:\n  prod:\n    url: https://prod.test\n    api_key: mdc_secret\n",
+            encoding="utf-8",
+        )
 
         with pytest.raises(ConfigError, match="prod") as excinfo:
             load_config(path)
@@ -153,7 +169,10 @@ class TestLoadConfig:
 
     def test_rejects_unknown_default_profile(self, tmp_path):
         path = tmp_path / "config.yml"
-        path.write_text("default_profile: preprod\nprofiles:\n  dev:\n    url: https://dev.test\n", encoding="utf-8")
+        path.write_text(
+            "default_profile: preprod\nprofiles:\n  dev:\n    url: https://dev.test\n",
+            encoding="utf-8",
+        )
 
         with pytest.raises(ConfigError, match="preprod"):
             load_config(path)
@@ -178,7 +197,10 @@ class TestLoadConfig:
 
     def test_rejects_non_string_api_key_env(self, tmp_path):
         path = tmp_path / "config.yml"
-        path.write_text("profiles:\n  prod:\n    url: https://prod.test\n    api_key_env: 123\n", encoding="utf-8")
+        path.write_text(
+            "profiles:\n  prod:\n    url: https://prod.test\n    api_key_env: 123\n",
+            encoding="utf-8",
+        )
 
         with pytest.raises(ConfigError, match="prod"):
             load_config(path)
@@ -186,47 +208,77 @@ class TestLoadConfig:
 
 class TestResolveTarget:
     def test_cli_url_wins_over_env_and_profile(self):
-        config = Config(path=None, profiles={"prod": Profile(name="prod", url="https://profile.test")})
+        config = Config(
+            path=None, profiles={"prod": Profile(name="prod", url="https://profile.test")}
+        )
 
         resolved = resolve_target(
-            config=config, env={"HDH_URL": "https://env.test"}, cli_url="https://cli.test", cli_profile="prod", cli_api_key_env=None
+            config=config,
+            env={"HDH_URL": "https://env.test"},
+            cli_url="https://cli.test",
+            cli_profile="prod",
+            cli_api_key_env=None,
         )
 
         assert resolved.url == "https://cli.test"
 
     def test_env_url_wins_over_profile(self):
-        config = Config(path=None, profiles={"prod": Profile(name="prod", url="https://profile.test")})
+        config = Config(
+            path=None, profiles={"prod": Profile(name="prod", url="https://profile.test")}
+        )
 
         resolved = resolve_target(
-            config=config, env={"HDH_URL": "https://env.test"}, cli_url=None, cli_profile="prod", cli_api_key_env=None
+            config=config,
+            env={"HDH_URL": "https://env.test"},
+            cli_url=None,
+            cli_profile="prod",
+            cli_api_key_env=None,
         )
 
         assert resolved.url == "https://env.test"
 
     def test_profile_url_used_when_no_override(self):
-        config = Config(path=None, profiles={"prod": Profile(name="prod", url="https://profile.test")})
+        config = Config(
+            path=None, profiles={"prod": Profile(name="prod", url="https://profile.test")}
+        )
 
-        resolved = resolve_target(config=config, env={}, cli_url=None, cli_profile="prod", cli_api_key_env=None)
+        resolved = resolve_target(
+            config=config, env={}, cli_url=None, cli_profile="prod", cli_api_key_env=None
+        )
 
         assert resolved.url == "https://profile.test"
         assert resolved.profile_name == "prod"
 
     def test_url_is_normalized(self):
-        config = Config(path=None, profiles={"prod": Profile(name="prod", url="https://Profile.test:443/")})
+        config = Config(
+            path=None, profiles={"prod": Profile(name="prod", url="https://Profile.test:443/")}
+        )
 
-        resolved = resolve_target(config=config, env={}, cli_url=None, cli_profile="prod", cli_api_key_env=None)
+        resolved = resolve_target(
+            config=config, env={}, cli_url=None, cli_profile="prod", cli_api_key_env=None
+        )
 
         assert resolved.url == "https://profile.test"
 
     def test_no_url_anywhere_raises(self):
         with pytest.raises(ConfigError, match="URL"):
-            resolve_target(config=None, env={}, cli_url=None, cli_profile=None, cli_api_key_env=None)
+            resolve_target(
+                config=None, env={}, cli_url=None, cli_profile=None, cli_api_key_env=None
+            )
 
     def test_unknown_profile_raises_listing_known_profiles(self):
-        config = Config(path=None, profiles={"dev": Profile(name="dev", url="https://dev.test"), "prod": Profile(name="prod", url="https://prod.test")})
+        config = Config(
+            path=None,
+            profiles={
+                "dev": Profile(name="dev", url="https://dev.test"),
+                "prod": Profile(name="prod", url="https://prod.test"),
+            },
+        )
 
         with pytest.raises(ConfigError, match="dev") as excinfo:
-            resolve_target(config=config, env={}, cli_url=None, cli_profile="preprd", cli_api_key_env=None)
+            resolve_target(
+                config=config, env={}, cli_url=None, cli_profile="preprd", cli_api_key_env=None
+            )
 
         assert "prod" in str(excinfo.value)
 
@@ -237,20 +289,40 @@ class TestResolveTarget:
         config = Config(path=None, profiles={"dev": Profile(name="dev", url="https://dev.test")})
 
         with pytest.raises(ConfigError, match="preprd"):
-            resolve_target(config=config, env={}, cli_url="https://cli.test", cli_profile="preprd", cli_api_key_env=None)
+            resolve_target(
+                config=config,
+                env={},
+                cli_url="https://cli.test",
+                cli_profile="preprd",
+                cli_api_key_env=None,
+            )
 
     def test_sole_profile_used_when_no_selection(self):
         config = Config(path=None, profiles={"only": Profile(name="only", url="https://only.test")})
 
-        resolved = resolve_target(config=config, env={}, cli_url=None, cli_profile=None, cli_api_key_env=None)
+        resolved = resolve_target(
+            config=config, env={}, cli_url=None, cli_profile=None, cli_api_key_env=None
+        )
 
         assert resolved.profile_name == "only"
         assert resolved.url == "https://only.test"
 
     def test_no_profile_selected_when_several_exist_and_url_given(self):
-        config = Config(path=None, profiles={"dev": Profile(name="dev", url="https://dev.test"), "prod": Profile(name="prod", url="https://prod.test")})
+        config = Config(
+            path=None,
+            profiles={
+                "dev": Profile(name="dev", url="https://dev.test"),
+                "prod": Profile(name="prod", url="https://prod.test"),
+            },
+        )
 
-        resolved = resolve_target(config=config, env={}, cli_url="https://cli.test", cli_profile=None, cli_api_key_env=None)
+        resolved = resolve_target(
+            config=config,
+            env={},
+            cli_url="https://cli.test",
+            cli_profile=None,
+            cli_api_key_env=None,
+        )
 
         assert resolved.profile_name is None
         assert resolved.url == "https://cli.test"
@@ -258,41 +330,71 @@ class TestResolveTarget:
     def test_default_profile_used_over_sole_profile_rule(self):
         config = Config(
             path=None,
-            profiles={"dev": Profile(name="dev", url="https://dev.test"), "prod": Profile(name="prod", url="https://prod.test")},
+            profiles={
+                "dev": Profile(name="dev", url="https://dev.test"),
+                "prod": Profile(name="prod", url="https://prod.test"),
+            },
             default_profile="prod",
         )
 
-        resolved = resolve_target(config=config, env={}, cli_url=None, cli_profile=None, cli_api_key_env=None)
+        resolved = resolve_target(
+            config=config, env={}, cli_url=None, cli_profile=None, cli_api_key_env=None
+        )
 
         assert resolved.profile_name == "prod"
 
     def test_cli_profile_wins_over_env_profile_and_default(self):
         config = Config(
             path=None,
-            profiles={"dev": Profile(name="dev", url="https://dev.test"), "prod": Profile(name="prod", url="https://prod.test")},
+            profiles={
+                "dev": Profile(name="dev", url="https://dev.test"),
+                "prod": Profile(name="prod", url="https://prod.test"),
+            },
             default_profile="prod",
         )
 
-        resolved = resolve_target(config=config, env={"HDH_PROFILE": "prod"}, cli_url=None, cli_profile="dev", cli_api_key_env=None)
+        resolved = resolve_target(
+            config=config,
+            env={"HDH_PROFILE": "prod"},
+            cli_url=None,
+            cli_profile="dev",
+            cli_api_key_env=None,
+        )
 
         assert resolved.profile_name == "dev"
 
     def test_cli_api_key_env_wins_over_profile_and_default(self):
-        config = Config(path=None, profiles={"prod": Profile(name="prod", url="https://prod.test", api_key_env="PROFILE_KEY")})
+        config = Config(
+            path=None,
+            profiles={
+                "prod": Profile(name="prod", url="https://prod.test", api_key_env="PROFILE_KEY")
+            },
+        )
 
-        resolved = resolve_target(config=config, env={}, cli_url=None, cli_profile="prod", cli_api_key_env="CLI_KEY")
+        resolved = resolve_target(
+            config=config, env={}, cli_url=None, cli_profile="prod", cli_api_key_env="CLI_KEY"
+        )
 
         assert resolved.api_key_env == "CLI_KEY"
 
     def test_profile_api_key_env_used_when_no_cli_override(self):
-        config = Config(path=None, profiles={"prod": Profile(name="prod", url="https://prod.test", api_key_env="PROFILE_KEY")})
+        config = Config(
+            path=None,
+            profiles={
+                "prod": Profile(name="prod", url="https://prod.test", api_key_env="PROFILE_KEY")
+            },
+        )
 
-        resolved = resolve_target(config=config, env={}, cli_url=None, cli_profile="prod", cli_api_key_env=None)
+        resolved = resolve_target(
+            config=config, env={}, cli_url=None, cli_profile="prod", cli_api_key_env=None
+        )
 
         assert resolved.api_key_env == "PROFILE_KEY"
 
     def test_default_api_key_env_when_nothing_declared(self):
-        resolved = resolve_target(config=None, env={}, cli_url="https://cli.test", cli_profile=None, cli_api_key_env=None)
+        resolved = resolve_target(
+            config=None, env={}, cli_url="https://cli.test", cli_profile=None, cli_api_key_env=None
+        )
 
         assert resolved.api_key_env == DEFAULT_API_KEY_ENV
 
@@ -301,9 +403,16 @@ class TestResolveTarget:
         la variable de clé donnée en ligne de commande, jamais l'un ou
         l'autre en bloc."""
 
-        config = Config(path=None, profiles={"prod": Profile(name="prod", url="https://prod.test", api_key_env="PROFILE_KEY")})
+        config = Config(
+            path=None,
+            profiles={
+                "prod": Profile(name="prod", url="https://prod.test", api_key_env="PROFILE_KEY")
+            },
+        )
 
-        resolved = resolve_target(config=config, env={}, cli_url=None, cli_profile="prod", cli_api_key_env="CLI_KEY")
+        resolved = resolve_target(
+            config=config, env={}, cli_url=None, cli_profile="prod", cli_api_key_env="CLI_KEY"
+        )
 
         assert resolved.url == "https://prod.test"
         assert resolved.api_key_env == "CLI_KEY"

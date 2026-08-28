@@ -104,29 +104,45 @@ def dataset_to_graph(dataset: HealthDataset, graph: Graph | None = None) -> Grap
     for legislation in dataset.applicable_legislation:
         graph.add((uri, DCATAP.applicableLegislation, URIRef(legislation)))
     if not dataset.applicable_legislation:
-        _missing(dataset, "dcatap:applicableLegislation", "fr.aphp.healthdcat.applicableLegislation")
+        _missing(
+            dataset, "dcatap:applicableLegislation", "fr.aphp.healthdcat.applicableLegislation"
+        )
 
     for lang in dataset.language:
         graph.add((uri, DCT.language, URIRef(lang)))
 
     # --- Agents ---
     if dataset.publisher:
-        agent_mapping.add_publisher(graph, uri, dataset.publisher, dataset.source_urn, dataset.title, dataset.issues)
+        agent_mapping.add_publisher(
+            graph, uri, dataset.publisher, dataset.source_urn, dataset.title, dataset.issues
+        )
     else:
-        _missing(dataset, "dct:publisher", "owner de type ownershipType:healthdcat.publisher (CorpGroup)")
+        _missing(
+            dataset, "dct:publisher", "owner de type ownershipType:healthdcat.publisher (CorpGroup)"
+        )
 
     if dataset.creator:
-        agent_mapping.add_creator(graph, uri, dataset.creator, dataset.source_urn, dataset.title, dataset.issues)
+        agent_mapping.add_creator(
+            graph, uri, dataset.creator, dataset.source_urn, dataset.title, dataset.issues
+        )
 
     if dataset.hdab:
-        agent_mapping.add_hdab(graph, uri, dataset.hdab, dataset.source_urn, dataset.title, dataset.issues)
+        agent_mapping.add_hdab(
+            graph, uri, dataset.hdab, dataset.source_urn, dataset.title, dataset.issues
+        )
     else:
-        _missing(dataset, "healthdcatap:hdab", "owner de type ownershipType:healthdcat.hdab (CorpGroup)")
+        _missing(
+            dataset, "healthdcatap:hdab", "owner de type ownershipType:healthdcat.hdab (CorpGroup)"
+        )
 
     if dataset.contact_point:
-        agent_mapping.add_contact_point(graph, uri, dataset.contact_point, dataset.source_urn, dataset.title, dataset.issues)
+        agent_mapping.add_contact_point(
+            graph, uri, dataset.contact_point, dataset.source_urn, dataset.title, dataset.issues
+        )
     else:
-        _missing(dataset, "dcat:contactPoint", "fr.aphp.healthdcat.contactPointName/.contactPointEmail")
+        _missing(
+            dataset, "dcat:contactPoint", "fr.aphp.healthdcat.contactPointName/.contactPointEmail"
+        )
 
     # --- dct:provenance (>=1) ---
     if dataset.provenance:
@@ -180,24 +196,54 @@ def dataset_to_graph(dataset: HealthDataset, graph: Graph | None = None) -> Grap
         graph.add((uri, FOAF.page, URIRef(page)))
 
     if dataset.temporal:
-        agent_mapping.add_period_of_time(graph, uri, DCT.temporal, dataset.temporal, dataset.source_urn + "|temporal")
+        agent_mapping.add_period_of_time(
+            graph, uri, DCT.temporal, dataset.temporal, dataset.source_urn + "|temporal"
+        )
     if dataset.retention_period:
         agent_mapping.add_period_of_time(
-            graph, uri, HEALTHDCATAP.retentionPeriod, dataset.retention_period, dataset.source_urn + "|retention"
+            graph,
+            uri,
+            HEALTHDCATAP.retentionPeriod,
+            dataset.retention_period,
+            dataset.source_urn + "|retention",
         )
 
     if dataset.number_of_records is not None:
-        graph.add((uri, HEALTHDCATAP.numberOfRecords, Literal(dataset.number_of_records, datatype=XSD.nonNegativeInteger)))
+        graph.add(
+            (
+                uri,
+                HEALTHDCATAP.numberOfRecords,
+                Literal(dataset.number_of_records, datatype=XSD.nonNegativeInteger),
+            )
+        )
     if dataset.number_of_unique_individuals is not None:
         graph.add(
-            (uri, HEALTHDCATAP.numberOfUniqueIndividuals, Literal(dataset.number_of_unique_individuals, datatype=XSD.nonNegativeInteger))
+            (
+                uri,
+                HEALTHDCATAP.numberOfUniqueIndividuals,
+                Literal(dataset.number_of_unique_individuals, datatype=XSD.nonNegativeInteger),
+            )
         )
     if dataset.min_typical_age is not None:
-        graph.add((uri, HEALTHDCATAP.minTypicalAge, Literal(dataset.min_typical_age, datatype=XSD.nonNegativeInteger)))
+        graph.add(
+            (
+                uri,
+                HEALTHDCATAP.minTypicalAge,
+                Literal(dataset.min_typical_age, datatype=XSD.nonNegativeInteger),
+            )
+        )
     if dataset.max_typical_age is not None:
-        graph.add((uri, HEALTHDCATAP.maxTypicalAge, Literal(dataset.max_typical_age, datatype=XSD.nonNegativeInteger)))
+        graph.add(
+            (
+                uri,
+                HEALTHDCATAP.maxTypicalAge,
+                Literal(dataset.max_typical_age, datatype=XSD.nonNegativeInteger),
+            )
+        )
     if dataset.population_coverage:
-        graph.add((uri, HEALTHDCATAP.populationCoverage, Literal(dataset.population_coverage, lang="fr")))
+        graph.add(
+            (uri, HEALTHDCATAP.populationCoverage, Literal(dataset.population_coverage, lang="fr"))
+        )
 
     for coding in dataset.coding_system:
         graph.add((uri, HEALTHDCATAP.hasCodingSystem, URIRef(coding)))
@@ -211,23 +257,41 @@ def dataset_to_graph(dataset: HealthDataset, graph: Graph | None = None) -> Grap
     # --- healthdcatap:hasStructuredData (xsd:boolean, cardinalité R7 1..1) :
     # dérivé de la présence d'un schéma sur au moins un asset (cf.
     # HealthDataset.has_structured_data) ; toujours émis, `false` compris. ---
-    graph.add((uri, HEALTHDCATAP.hasStructuredData, Literal(dataset.has_structured_data, datatype=XSD.boolean)))
+    graph.add(
+        (
+            uri,
+            HEALTHDCATAP.hasStructuredData,
+            Literal(dataset.has_structured_data, datatype=XSD.boolean),
+        )
+    )
 
     # --- Distributions / échantillons ---
     table_nodes: list[URIRef] = []
     for distribution in dataset.distributions:
-        _, table_node = distribution_mapping.add_distribution(graph, uri, distribution, dataset.title, dataset.issues)
+        _, table_node = distribution_mapping.add_distribution(
+            graph, uri, distribution, dataset.title, dataset.issues
+        )
         if table_node is not None:
             table_nodes.append(table_node)
     if not dataset.distributions:
-        _missing(dataset, "dcat:distribution", "dataProductProperties.assets (aucun asset non marqué dcat:sample)")
+        _missing(
+            dataset,
+            "dcat:distribution",
+            "dataProductProperties.assets (aucun asset non marqué dcat:sample)",
+        )
 
     for sample in dataset.samples:
-        _, table_node = distribution_mapping.add_distribution(graph, uri, sample, dataset.title, dataset.issues)
+        _, table_node = distribution_mapping.add_distribution(
+            graph, uri, sample, dataset.title, dataset.issues
+        )
         if table_node is not None:
             table_nodes.append(table_node)
     if not dataset.samples:
-        _missing(dataset, "adms:sample", "dataProductProperties.assets marqué du tag dcat:sample (aucun trouvé)")
+        _missing(
+            dataset,
+            "adms:sample",
+            "dataProductProperties.assets marqué du tag dcat:sample (aucun trouvé)",
+        )
 
     # --- healthdcatap:hasVariables → csvw:TableGroup (R7) : regroupe par
     # csvw:table toutes les csvw:Table du dataset. Émis ssi ≥ 1 table (⇔

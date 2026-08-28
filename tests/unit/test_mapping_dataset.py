@@ -26,7 +26,11 @@ from dh_healthdcat.validate.shacl import validate_graph
 
 
 def _fully_conformant_dataset() -> HealthDataset:
-    hdab = Agent(name="Health Data Hub", homepage="https://health-data-hub.fr", mbox="contact@health-data-hub.fr")
+    hdab = Agent(
+        name="Health Data Hub",
+        homepage="https://health-data-hub.fr",
+        mbox="contact@health-data-hub.fr",
+    )
     publisher = Agent(
         name="Assistance Publique - Hopitaux de Paris",
         homepage="https://www.aphp.fr",
@@ -39,7 +43,11 @@ def _fully_conformant_dataset() -> HealthDataset:
 
     table = Table(
         title="Patient",
-        columns=(Column(name="id", description="Identifiant logique", datatype="string", is_primary_key=True),),
+        columns=(
+            Column(
+                name="id", description="Identifiant logique", datatype="string", is_primary_key=True
+            ),
+        ),
     )
     dist = Distribution(
         node_id="dist-1",
@@ -49,7 +57,9 @@ def _fully_conformant_dataset() -> HealthDataset:
         byte_size=123456,
         format_uri=v.FILE_TYPE.resolve("JSON"),
         rights="Usage restreint EDS",
-        applicable_legislation=(v.APPLICABLE_REGULATIONS.resolve("COMMISSION IMPLEMENTING REGULATION (EU) 2023/138"),),
+        applicable_legislation=(
+            v.APPLICABLE_REGULATIONS.resolve("COMMISSION IMPLEMENTING REGULATION (EU) 2023/138"),
+        ),
         source_urn="urn:li:dataset:(urn:li:dataPlatform:s3,sharing_layer_Patient.ndjson,PROD)",
     )
     sample = Distribution(
@@ -71,7 +81,9 @@ def _fully_conformant_dataset() -> HealthDataset:
         theme=(v.DATA_THEME_HEALTH,),
         dataset_type=v.DATASET_TYPE.resolve("PERSONAL_DATA"),
         access_rights=v.ACCESS_RIGHTS.resolve("NON_PUBLIC"),
-        applicable_legislation=(v.APPLICABLE_REGULATIONS.resolve("COMMISSION IMPLEMENTING REGULATION (EU) 2023/138"),),
+        applicable_legislation=(
+            v.APPLICABLE_REGULATIONS.resolve("COMMISSION IMPLEMENTING REGULATION (EU) 2023/138"),
+        ),
         language=(v.LANGUAGE.resolve("FRA"),),
         publisher=publisher,
         hdab=hdab,
@@ -230,7 +242,7 @@ def test_distribution_requires_stricter_fields_than_sample():
         ),
     )
 
-    graph = dataset_to_graph(dataset)
+    dataset_to_graph(dataset)  # enrichit dataset.issues en place
 
     by_property = {i.rdf_property for i in dataset.issues if i.severity is Severity.ERROR}
     assert "dcat:byteSize" in by_property
@@ -238,4 +250,6 @@ def test_distribution_requires_stricter_fields_than_sample():
     assert "dct:rights" in by_property
     # Le sample, lui, ne doit déclencher aucune de ces erreurs.
     sample_issues = [i for i in dataset.issues if i.dataset_urn == dataset.samples[0].source_urn]
-    assert not any(i.rdf_property in ("dcat:byteSize", "dct:format", "dct:rights") for i in sample_issues)
+    assert not any(
+        i.rdf_property in ("dcat:byteSize", "dct:format", "dct:rights") for i in sample_issues
+    )

@@ -4,11 +4,11 @@ Contrat confirmé par lecture de `api/app/ingest/routes.py` et
 `api/app/tests/ingest/test_routes.py` côté
 `hdh/catalogue-de-metadonnees/api` :
 
-| Méthode | Chemin                                   | Corps        | 200            |
+| Méthode | Chemin | Corps | 200 |
 |---|---|---|---|
-| POST    | /ingest/datasets                         | text/turtle  | {"id": uuid}   |
-| PUT     | /ingest/datasets/origin?originalId={id}  | text/turtle  | {"id": id}     |
-| DELETE  | /ingest/datasets/{id}                    | —            | {"status": "deleted", "id": id} |
+| POST | /ingest/datasets | text/turtle | {"id": uuid} |
+| PUT | /ingest/datasets/origin?originalId={id} | text/turtle | {"id": id} |
+| DELETE | /ingest/datasets/{id} | — | {"status": "deleted", "id": id} |
 
 Auth : en-tête `X-API-Key`, rôle Keycloak `data-provider` requis. Erreurs :
 400 corps vide, 403 rôle absent ou jeu appartenant à un autre fournisseur,
@@ -23,8 +23,10 @@ enchaînement des trois verbes.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Protocol
+from http import HTTPStatus
+from typing import Any, Protocol
 
 import httpx
 
@@ -85,7 +87,7 @@ class HdhClient:
         except httpx.HTTPError as exc:
             raise HdhTransportError(str(exc)) from exc
 
-    def whoami(self) -> dict:
+    def whoami(self) -> dict[str, Any]:
         """Vérifie la clé avant toute boucle d'envoi (P0-9) — endpoint de
         test documenté côté HDH pour une clé fraîchement générée."""
 
@@ -97,7 +99,8 @@ class HdhClient:
             )
         )
         self._raise_for_status(response)
-        return response.json()
+        payload: dict[str, Any] = response.json()
+        return payload
 
     def create_dataset(self, turtle: str) -> str:
         response = self._send(
@@ -109,7 +112,8 @@ class HdhClient:
             )
         )
         self._raise_for_status(response)
-        return response.json()["id"]
+        payload: dict[str, Any] = response.json()
+        return str(payload["id"])
 
     def update_dataset(self, original_id: str, turtle: str) -> str:
         response = self._send(
@@ -122,7 +126,8 @@ class HdhClient:
             )
         )
         self._raise_for_status(response)
-        return response.json()["id"]
+        payload: dict[str, Any] = response.json()
+        return str(payload["id"])
 
     def delete_dataset(self, dataset_id: str) -> None:
         response = self._send(
@@ -139,9 +144,9 @@ class HdhClient:
         if response.is_success:
             return
         detail = _extract_detail(response)
-        if response.status_code in (401, 403):
+        if response.status_code in (HTTPStatus.UNAUTHORIZED, HTTPStatus.FORBIDDEN):
             raise HdhAuthError(response.status_code, detail)
-        if response.status_code == 404:
+        if response.status_code == HTTPStatus.NOT_FOUND:
             raise HdhNotFoundError(response.status_code, detail)
         raise HdhClientError(response.status_code, detail)
 
