@@ -7,8 +7,11 @@ from __future__ import annotations
 
 from datetime import date, datetime
 
+from rdflib import XSD, Literal
+
 from dh_healthdcat.mapping import vocabularies as v
 from dh_healthdcat.mapping.dataset import dataset_to_graph
+from dh_healthdcat.mapping.namespaces import HEALTHDCATAP
 from dh_healthdcat.model import (
     Agent,
     Column,
@@ -119,6 +122,42 @@ def test_missing_required_fields_are_reported_with_datahub_field_name():
     assert "adms:sample" in by_property
     assert "dct:publisher" in by_property
     assert "healthdcatap:hdab" in by_property
+
+
+def test_has_structured_data_true_when_an_asset_carries_a_schema():
+    """healthdcatap:hasStructuredData (xsd:boolean, 1..1 en R7) se dérive :
+    `true` dès qu'au moins un asset (distribution ou sample) porte un schéma
+    (`csvw:Table` construite depuis `schemaMetadata`)."""
+
+    dataset = _fully_conformant_dataset()  # le sample porte déjà une Table
+    graph = dataset_to_graph(dataset)
+    dataset_uri = next(graph.subjects(HEALTHDCATAP.hasStructuredData, None))
+    values = list(graph.objects(dataset_uri, HEALTHDCATAP.hasStructuredData))
+
+    assert values == [Literal(True, datatype=XSD.boolean)]
+
+
+def test_has_structured_data_false_is_emitted_when_no_asset_carries_a_schema():
+    """La cardinalité R7 est 1..1 : le booléen est toujours émis, `false`
+    compris, quand aucun asset ne porte de schéma."""
+
+    dataset = _fully_conformant_dataset()
+    dataset.samples = (
+        Distribution(
+            node_id=dataset.samples[0].node_id,
+            title=dataset.samples[0].title,
+            is_sample=True,
+            access_url=dataset.samples[0].access_url,
+            source_urn=dataset.samples[0].source_urn,
+        ),
+    )
+    assert all(d.table is None for d in (*dataset.distributions, *dataset.samples))
+
+    graph = dataset_to_graph(dataset)
+    dataset_uri = next(graph.subjects(HEALTHDCATAP.hasStructuredData, None))
+    values = list(graph.objects(dataset_uri, HEALTHDCATAP.hasStructuredData))
+
+    assert values == [Literal(False, datatype=XSD.boolean)]
 
 
 def test_distribution_requires_stricter_fields_than_sample():

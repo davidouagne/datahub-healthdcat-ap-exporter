@@ -58,6 +58,7 @@ vérifié par le SHACL de base · `⚙️` = dérivé/calculé, pas une saisie.
 | `healthdcatap:hasCodingSystem` | | `coding` → `CodingSystem` (vocabulaire d'auteur) | |
 | `dpv:hasLegalBasis` | | `legalBasis` → `LegalBasis` (vocabulaire d'auteur) | |
 | `dpv:hasPersonalData` | | `fr.aphp.healthdcat.personalData` → `PersonalData` | |
+| `healthdcatap:hasStructuredData` (`xsd:boolean`, R7 1..1) | | dérivé : `true` ssi ≥1 asset porte un `schemaMetadata` (→ `csvw:Table`) | `model.py::HealthDataset.has_structured_data` ; toujours émis, `false` compris ; validateur HDH indifférent |
 | `foaf:page` | | `institutionalMemory.elements[].url` | non lu en v1 |
 | `dqv:hasQualityAnnotation` | | entités `ASSERTION` | **P2, non implémenté** |
 
