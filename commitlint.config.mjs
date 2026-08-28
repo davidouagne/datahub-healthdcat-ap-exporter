@@ -1,7 +1,7 @@
 // Politique de commits — ADR-0002.
 // Vérifié en CI (wagoid/commitlint-github-action) sur les commits non-merge
 // de la PR : git rev-list --no-merges BASE..HEAD.
-module.exports = {
+export default {
   extends: ['@commitlint/config-conventional'],
   rules: {
     'type-enum': [2, 'always', ['feat', 'fix', 'test', 'docs', 'chore', 'build']],
