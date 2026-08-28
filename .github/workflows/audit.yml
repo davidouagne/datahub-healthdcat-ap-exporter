@@ -1,0 +1,73 @@
+name: Audit dépendances
+
+# Veille de fond, complémentaire de la barrière PR (`ci.yml`) : rejoue
+# `pip-audit` chaque semaine contre le lockfile verrouillé. ADR-0003 / #18.
+on:
+  schedule:
+    - cron: "0 6 * * 1" # lundi 06:00 UTC
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: audit-${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: pip-audit (bloquant)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.12"
+
+      - name: Installer les dépendances de dev
+        run: uv sync --frozen
+
+      - name: pip-audit
+        run: uv run pip-audit
+
+  open-issue:
+    name: Ouvrir une issue à l'échec
+    needs: audit
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Créer l'issue « dependencies » (dédoublonnée par titre)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: "pip-audit : vulnérabilité connue dans les dépendances"
+          RUN_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        run: |
+          gh label create dependencies \
+            --color BFD4F2 \
+            --description "Sécurité et mises à jour de dépendances" \
+            2>/dev/null || true
+
+          existing=$(gh issue list \
+            --state open --label dependencies \
+            --search "\"$TITLE\" in:title" \
+            --json number --jq '.[0].number // empty')
+
+          if [ -n "$existing" ]; then
+            echo "Issue #$existing déjà ouverte — rien à faire."
+            exit 0
+          fi
+
+          gh issue create \
+            --title "$TITLE" \
+            --label dependencies \
+            --body "Le workflow \`audit.yml\` a échoué : \`pip-audit\` a trouvé au moins une vulnérabilité connue dans les dépendances verrouillées.
+
+          Détail dans les logs du run : $RUN_URL
+
+          Cette issue est dédoublonnée par titre — elle ne sera pas rouverte tant qu'elle reste ouverte."

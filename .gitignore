@@ -7,6 +7,7 @@ build/
 *.egg-info/
 .pytest_cache/
 .coverage
+coverage.xml
 htmlcov/
 *.ttl.out
 .dh-healthdcat-state.json

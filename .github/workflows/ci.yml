@@ -6,17 +6,68 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  contents: read
+# permissions minimales par défaut ; chaque job élève ce dont il a besoin
+# (ADR-0003 / #20).
+permissions: {}
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Tests (Python ${{ matrix.python-version }})
+  lint:
+    name: lint
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.12"
+
+      - name: Installer les dépendances de dev
+        run: uv sync --frozen
+
+      - name: ruff check
+        run: uv run ruff check .
+
+      - name: ruff format --check
+        run: uv run ruff format --check .
+
+      - name: pip-audit (advisory)
+        continue-on-error: true
+        run: uv run pip-audit
+
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.12"
+
+      - name: Installer les dépendances de dev
+        run: uv sync --frozen
+
+      - name: mypy --strict
+        run: uv run mypy src/dh_healthdcat
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # upload Codecov OIDC, sans token (#18)
     strategy:
       fail-fast: false
       matrix:
@@ -30,15 +81,25 @@ jobs:
           enable-cache: true
           python-version: ${{ matrix.python-version }}
 
-      - name: Installer le projet et ses dépendances de dev
+      - name: Installer les dépendances de dev
         run: uv sync --frozen
 
-      - name: Lancer la suite de tests
-        run: uv run pytest
+      - name: pytest + couverture
+        run: uv run pytest --cov=dh_healthdcat --cov-report=xml
+
+      - name: Upload couverture vers Codecov
+        if: matrix.python-version == '3.12'
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
+          files: ./coverage.xml
+          fail_ci_if_error: true
 
   build:
-    name: Construction du wheel et fumée sur installation non-éditable
+    name: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -75,3 +136,19 @@ jobs:
           assert result.conforms
           print('Données embarquées (vocab + shapes SHACL) chargées avec succès.')
           "
+
+  dependency-review:
+    name: dependency-review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Revue des dépendances de la PR
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          # Projet Apache-2.0 : refuse l'entrée de dépendances sous copyleft fort.
+          deny-licenses: "GPL-2.0-only, GPL-2.0-or-later, GPL-3.0-only, GPL-3.0-or-later, AGPL-3.0-only, AGPL-3.0-or-later"

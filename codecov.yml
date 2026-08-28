@@ -1,0 +1,15 @@
+# Barrière de couverture (ADR-0003 / #18).
+# - project: auto → anti-régression sans chiffre magique (bloquant).
+# - patch: 80% → le code neuf d'une PR doit être couvert (bloquant).
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 0%
+    patch:
+      default:
+        target: 80%
+
+ignore:
+  - "tests/**"
