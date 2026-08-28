@@ -21,10 +21,10 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Installer uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           python-version: "3.12"
@@ -48,10 +48,10 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Installer uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           python-version: "3.12"
@@ -73,10 +73,10 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Installer uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           python-version: ${{ matrix.python-version }}
@@ -89,7 +89,7 @@ jobs:
 
       - name: Upload couverture vers Codecov
         if: matrix.python-version == '3.12'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           use_oidc: true
           files: ./coverage.xml
@@ -101,10 +101,10 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Installer uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           python-version: "3.12"
@@ -144,10 +144,10 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Revue des dépendances de la PR
-        uses: actions/dependency-review-action@v4
+        uses: actions/dependency-review-action@v5
         with:
           fail-on-severity: high
           # Projet Apache-2.0 : refuse l'entrée de dépendances sous copyleft fort.
