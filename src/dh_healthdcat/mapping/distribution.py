@@ -42,8 +42,12 @@ def add_distribution(
     distribution: Distribution,
     dataset_name: str,
     issues: list[ValidationIssue],
-) -> URIRef:
-    """Ajoute un dcat:distribution ou adms:sample selon `distribution.is_sample`."""
+) -> tuple[URIRef, URIRef | None]:
+    """Ajoute un dcat:distribution ou adms:sample selon `distribution.is_sample`.
+
+    Renvoie `(nœud distribution, nœud csvw:Table | None)` — l'appelant
+    (`mapping/dataset.py`) collecte les nœuds table pour les regrouper sous le
+    `csvw:TableGroup` porté par `healthdcatap:hasVariables`."""
 
     kind = "sample" if distribution.is_sample else "distribution"
     node = node_uri(kind, distribution.source_urn or distribution.node_id)
@@ -110,10 +114,11 @@ def add_distribution(
         if not distribution.rights:
             _missing(issues, dataset_name, dataset_urn_or_source(distribution), "dct:rights", "fr.aphp.healthdcat.license (DataProduct, hérité)")
 
+    table_node = None
     if distribution.table is not None:
-        _add_table(graph, node, distribution, distribution.table)
+        table_node = _add_table(graph, node, distribution, distribution.table)
 
-    return node
+    return node, table_node
 
 
 def dataset_urn_or_source(distribution: Distribution) -> str:
@@ -123,11 +128,13 @@ def dataset_urn_or_source(distribution: Distribution) -> str:
     return distribution.source_urn
 
 
-def _add_table(graph: Graph, distribution_node: URIRef, distribution: Distribution, table: Table) -> None:
+def _add_table(graph: Graph, distribution_node: URIRef, distribution: Distribution, table: Table) -> URIRef:
     """csvw:Table. Aucun prédicat Distribution→Table n'est défini par les shapes HDH
     (:CSVWTableShape cible juste `csvw:Table` en isolation) ; on relie table et
     distribution par le même `csvw:url` que `dcat:accessURL` plutôt que
-    d'inventer un prédicat."""
+    d'inventer un prédicat. Le rattachement R7 se fait en amont, au niveau
+    `dcat:Dataset` : `mapping/dataset.py` regroupe le nœud renvoyé ici sous un
+    `csvw:TableGroup` porté par `healthdcatap:hasVariables`."""
 
     table_node = node_uri("table", str(distribution_node))
     graph.add((table_node, RDF.type, CSVW.Table))
@@ -148,3 +155,5 @@ def _add_table(graph: Graph, distribution_node: URIRef, distribution: Distributi
         graph.add((column_node, CSVW.datatype, Literal(column.datatype)))
         if column.description:
             graph.add((column_node, DCT.description, Literal(column.description, lang="fr")))
+
+    return table_node
