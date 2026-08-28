@@ -1,0 +1,38 @@
+version: 2
+updates:
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 3
+    commit-message:
+      prefix: "build"
+      prefix-development: "build"
+      include: "scope"
+    labels: ["dependencies"]
+    assignees: ["davidouagne"]
+    groups:
+      dev-dependencies:
+        dependency-type: "development"
+        patterns: ["*"]
+      prod-minor-patch:
+        dependency-type: "production"
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "build"
+      include: "scope"
+    labels: ["dependencies", "github-actions"]
+    assignees: ["davidouagne"]
+    groups:
+      actions:
+        patterns: ["*"]
