@@ -7,11 +7,11 @@ from __future__ import annotations
 
 from datetime import date, datetime
 
-from rdflib import XSD, Literal
+from rdflib import RDF, XSD, Literal
 
 from dh_healthdcat.mapping import vocabularies as v
 from dh_healthdcat.mapping.dataset import dataset_to_graph
-from dh_healthdcat.mapping.namespaces import HEALTHDCATAP
+from dh_healthdcat.mapping.namespaces import CSVW, HEALTHDCATAP
 from dh_healthdcat.model import (
     Agent,
     Column,
@@ -158,6 +158,47 @@ def test_has_structured_data_false_is_emitted_when_no_asset_carries_a_schema():
     values = list(graph.objects(dataset_uri, HEALTHDCATAP.hasStructuredData))
 
     assert values == [Literal(False, datatype=XSD.boolean)]
+
+
+def test_has_variables_groups_every_csvw_table_under_one_tablegroup():
+    """healthdcatap:hasVariables → csvw:TableGroup au niveau du dcat:Dataset,
+    regroupant par csvw:table toutes les csvw:Table déjà produites depuis
+    schemaMetadata (distributions comme échantillons)."""
+
+    dataset = _fully_conformant_dataset()  # 1 csvw:Table, portée par le sample
+    graph = dataset_to_graph(dataset)
+
+    dataset_uri = next(graph.subjects(HEALTHDCATAP.hasVariables, None))
+    groups = list(graph.objects(dataset_uri, HEALTHDCATAP.hasVariables))
+    assert len(groups) == 1
+    table_group = groups[0]
+    assert (table_group, RDF.type, CSVW.TableGroup) in graph
+
+    grouped = set(graph.objects(table_group, CSVW.table))
+    all_tables = set(graph.subjects(RDF.type, CSVW.Table))
+    assert grouped == all_tables
+    assert len(grouped) == 1
+
+
+def test_no_tablegroup_when_no_asset_carries_a_schema():
+    """R7 interdit healthdcatap:hasVariables quand hasStructuredData est faux :
+    aucune table → aucun csvw:TableGroup, aucun hasVariables."""
+
+    dataset = _fully_conformant_dataset()
+    dataset.samples = (
+        Distribution(
+            node_id=dataset.samples[0].node_id,
+            title=dataset.samples[0].title,
+            is_sample=True,
+            access_url=dataset.samples[0].access_url,
+            source_urn=dataset.samples[0].source_urn,
+        ),
+    )
+
+    graph = dataset_to_graph(dataset)
+
+    assert list(graph.objects(None, HEALTHDCATAP.hasVariables)) == []
+    assert list(graph.subjects(RDF.type, CSVW.TableGroup)) == []
 
 
 def test_distribution_requires_stricter_fields_than_sample():

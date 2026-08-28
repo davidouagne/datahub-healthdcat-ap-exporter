@@ -24,6 +24,7 @@ from rdflib.namespace import RDFS
 from dh_healthdcat.mapping import agent as agent_mapping
 from dh_healthdcat.mapping import distribution as distribution_mapping
 from dh_healthdcat.mapping.namespaces import (
+    CSVW,
     DCAT,
     DCATAP,
     DCT,
@@ -213,14 +214,31 @@ def dataset_to_graph(dataset: HealthDataset, graph: Graph | None = None) -> Grap
     graph.add((uri, HEALTHDCATAP.hasStructuredData, Literal(dataset.has_structured_data, datatype=XSD.boolean)))
 
     # --- Distributions / échantillons ---
+    table_nodes: list[URIRef] = []
     for distribution in dataset.distributions:
-        distribution_mapping.add_distribution(graph, uri, distribution, dataset.title, dataset.issues)
+        _, table_node = distribution_mapping.add_distribution(graph, uri, distribution, dataset.title, dataset.issues)
+        if table_node is not None:
+            table_nodes.append(table_node)
     if not dataset.distributions:
         _missing(dataset, "dcat:distribution", "dataProductProperties.assets (aucun asset non marqué dcat:sample)")
 
     for sample in dataset.samples:
-        distribution_mapping.add_distribution(graph, uri, sample, dataset.title, dataset.issues)
+        _, table_node = distribution_mapping.add_distribution(graph, uri, sample, dataset.title, dataset.issues)
+        if table_node is not None:
+            table_nodes.append(table_node)
     if not dataset.samples:
         _missing(dataset, "adms:sample", "dataProductProperties.assets marqué du tag dcat:sample (aucun trouvé)")
+
+    # --- healthdcatap:hasVariables → csvw:TableGroup (R7) : regroupe par
+    # csvw:table toutes les csvw:Table du dataset. Émis ssi ≥ 1 table (⇔
+    # has_structured_data ; R7 : hasVariables interdit si hasStructuredData
+    # est faux). Le validateur HDH n'a pas de shape TableGroup et
+    # :Dataset_Shape n'est pas sh:closed — émission sans effet sur lui. ---
+    if table_nodes:
+        table_group = node_uri("tablegroup", str(uri))
+        graph.add((uri, HEALTHDCATAP.hasVariables, table_group))
+        graph.add((table_group, RDF.type, CSVW.TableGroup))
+        for table_node in table_nodes:
+            graph.add((table_group, CSVW.table, table_node))
 
     return graph
