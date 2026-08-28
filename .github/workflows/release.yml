@@ -1,0 +1,101 @@
+name: release
+
+# Mono-workflow (ADR-0003 / #25 / #26). Pas de PAT ni de GitHub App : le tag
+# posé par release-please via GITHUB_TOKEN ne déclenche aucun workflow, donc
+# build / publish / smoke sont des jobs de CE workflow, gardés par
+# `release_created == 'true'` et exécutés dans le contexte push/main.
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          signoff: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+
+  build:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # gh release upload
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      - name: Construire sdist + wheel
+        run: uv build --no-sources
+
+      - name: Vérifier les artefacts
+        run: uvx twine check dist/*
+
+      - name: Attacher les artefacts à la GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ needs.release-please.outputs.tag_name }}" dist/*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # OIDC Trusted Publishing — rien d'autre
+    environment:
+      name: pypi
+      url: https://pypi.org/p/dh-healthdcat
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: dist
+          path: dist/
+
+      # OIDC : aucun input (user/password vides) ; packages-dir=dist ;
+      # attestations PEP 740 activées par défaut.
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+
+  smoke:
+    needs: [release-please, publish]
+    runs-on: ubuntu-latest
+    continue-on-error: true # advisory : la release est déjà publiée et non annulable
+    permissions: {}
+    steps:
+      - name: Installer depuis PyPI et fumer la CLI
+        env:
+          VERSION: ${{ needs.release-please.outputs.version }}
+        run: |
+          python -m venv /tmp/smoke
+          for i in 1 2 3 4 5; do
+            /tmp/smoke/bin/pip install "dh-healthdcat==$VERSION" && break
+            sleep 30
+          done
+          /tmp/smoke/bin/dh-healthdcat --help
