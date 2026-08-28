@@ -165,7 +165,7 @@ def dataset_to_graph(dataset: HealthDataset, graph: Graph | None = None) -> Grap
 
     # --- Champs recommandés / optionnels, sans exigence de cardinalité minimale ---
     if dataset.issued:
-        graph.add((uri, DCT.issued, Literal(dataset.issued, datatype=XSD.dateTime)))
+        graph.add((uri, DCT.issued, Literal(dataset.issued, datatype=XSD.date)))
     if dataset.modified:
         graph.add((uri, DCT.modified, Literal(dataset.modified, datatype=XSD.dateTime)))
     if dataset.accrual_periodicity:

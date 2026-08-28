@@ -180,8 +180,8 @@ class HealthDataset:
     coding_system: tuple[str, ...] = ()
 
     # Temporel / cycle de vie
-    issued: datetime | None = None
-    modified: datetime | None = None
+    issued: date | None = None  # dct:issued — `fr.aphp.healthdcat.issued` est un date, émis en xsd:date
+    modified: datetime | None = None  # dct:modified — vrai horodatage (dataProductProperties.lastModified)
     temporal: PeriodOfTime | None = None
     accrual_periodicity: str | None = None
 

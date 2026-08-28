@@ -115,9 +115,18 @@ def read_distribution(
         issues=issues,
     )
 
-    status_uri = None
+    # adms:status — le SP explicite fixe le statut ; une dépréciation DataHub
+    # écrase en WITHDRAWN (un asset déprécié n'est pas COMPLETED).
+    status_uri = resolve_or_warn(
+        v.DISTRIBUTION_STATUS,
+        props.get_string(ctx, entity, "fr.aphp.healthdcat.distributionStatus", parent_dataset_name, dataset_urn, issues),
+        dataset_name=parent_dataset_name,
+        dataset_urn=dataset_urn,
+        datahub_field="fr.aphp.healthdcat.distributionStatus",
+        issues=issues,
+    )
     if deprecation is not None and deprecation.deprecated:
-        status_uri = "http://publications.europa.eu/resource/authority/distribution-status/WITHDRAWN"
+        status_uri = v.DISTRIBUTION_STATUS.resolve("WITHDRAWN")
 
     table = None
     if schema is not None and schema.fields:

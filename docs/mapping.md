@@ -45,13 +45,13 @@ vérifié par le SHACL de base · `⚙️` = dérivé/calculé, pas une saisie.
 | `dcat:distribution` | M, ≥1 | assets non tagués `dcat:sample` | dataset.py (reader) |
 | `adms:sample` | M, ≥1 | assets tagués `dcat:sample` | dataset.py (reader) |
 | `dct:language` | | `fr.aphp.healthdcat.language` → `PublicationsEuropAuthorityLanguage` | |
-| `dct:issued` | | `fr.aphp.healthdcat.issued` | |
+| `dct:issued` (`xsd:date`) | | `fr.aphp.healthdcat.issued` (un `date` — émis en `xsd:date`, pas `xsd:dateTime`) | |
 | `dct:modified` | | `dataProductProperties.lastModified` | |
 | `dct:temporal` | | `temporalCoverageStart`/`End` | |
 | `dct:accrualPeriodicity` | | `publishingFrequency` → `Frequency` | |
 | `dct:conformsTo` | | `referenceSpecification` → `ReferenceSpecification` (vocab d'auteur) ; code hors vocab → `urn:aphp:conformsTo:<code>` (ex. `OSIRIS`) | |
 | `dct:license` | | `license`, passage direct | |
-| `dct:isReferencedBy` | | `fr.aphp.healthdcat.isReferencedBy` | |
+| `dct:isReferencedBy` | | `fr.aphp.healthdcat.isReferencedBy` ; DOI nu (`10.x/…`) ou `doi:` préfixé → `https://doi.org/…` | |
 | `healthdcatap:numberOfRecords`/`numberOfUniqueIndividuals`/`min|maxTypicalAge` | | `number` | |
 | `healthdcatap:populationCoverage` | | `fr.aphp.healthdcat.populationCoverage` | |
 | `healthdcatap:retentionPeriod` | | `retentionPeriodStart`/`End` → `dct:PeriodOfTime` | |
@@ -95,13 +95,14 @@ valide avec la seule `dcat:accessURL`.
 | `dct:rights` (nœud `dct:RightsStatement`, pas un littéral direct — exigé `sh:BlankNodeOrIRI`) | M, =1 | — | hérité de `fr.aphp.healthdcat.license` du DataProduct |
 | `dcatap:applicableLegislation` | M | — | hérité du DataProduct si l'asset n'en a pas |
 | `dct:title` / `dct:description` | | | `datasetProperties.name`/`.description`, fusion `editableDatasetProperties` |
+| `adms:status` | | | `fr.aphp.healthdcat.distributionStatus` → `DistributionStatus` ; `deprecation.deprecated` écrase en `WITHDRAWN` |
 | `csvw:Table` → `csvw:column` | | | `schemaMetadata.fields` |
 
 ## Vocabulaires (`mapping/vocab/`)
 
 12 fichiers vendus tels quels depuis
 `hdh/.../controlled_vocabulary/controled_voc_dicts/` (voir `vocab/README.md`
-pour la liste et la procédure de resynchronisation), plus trois fichiers
+pour la liste et la procédure de resynchronisation), plus quatre fichiers
 d'auteur :
 
 - **`LegalBasis.yml`** — mapping des 12 codes `eu-gdpr:A6-1-*`/`eu-gdpr:A9-2-*`
@@ -114,6 +115,9 @@ d'auteur :
   `OMOP-CDM-5.4` → page GitHub Pages OHDSI versionnée, `HL7v2` → `urn:hl7-org:v2xml`
   (URIs vérifiées le 2026-08-28, cf. `docs/research/reference-specification-uris.md`).
   Câblé dans `reader/dataproduct.py` ; code hors vocab → `urn:aphp:conformsTo:<code>`.
+- **`DistributionStatus.yml`** — `COMPLETED` / `WITHDRAWN` → NAL EU Publications
+  Office `.../distribution-status/*`. Câblé dans `reader/dataset.py` (`adms:status`) ;
+  une dépréciation DataHub écrase en `WITHDRAWN`.
 
 Toute résolution échoue explicitement (`UnknownVocabularyValueError`) plutôt
 que de retomber sur un `skos:prefLabel "NA"@en` silencieux comme le fait le

@@ -28,7 +28,7 @@ sources HDH portaient historiquement un hôte de dév en dur
 (`http://13.81.34.152:1101/…`), repointé ici (issue #6) ; resynchroniser ces
 deux fichiers quand un hôte officiel paraîtra.
 
-Trois fichiers sont d'auteur (pas vendus du HDH, qui ne publie pas de
+Quatre fichiers sont d'auteur (pas vendus du HDH, qui ne publie pas de
 dictionnaire équivalent) :
 
 - `LegalBasis.yml` : mapping des 12 codes `A6-1-*`/`A9-2-*` de
@@ -45,3 +45,8 @@ dictionnaire équivalent) :
   `docs/research/reference-specification-uris.md`). Tout autre code (p. ex.
   `OSIRIS`) retombe sur `urn:aphp:conformsTo:<code>` côté
   `reader/dataproduct.py`.
+- `DistributionStatus.yml` : `COMPLETED` / `WITHDRAWN` de
+  `fr.aphp.healthdcat.distributionStatus` (→ `adms:status`) vers le NAL EU
+  Publications Office `.../distribution-status/*` (sous-ensemble retenu par le
+  registre). Câblé dans `reader/dataset.py` ; une dépréciation DataHub écrase
+  en `WITHDRAWN`.

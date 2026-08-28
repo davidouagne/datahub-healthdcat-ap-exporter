@@ -75,6 +75,8 @@ def _entities() -> dict[str, dict]:
                     _sp("fr.aphp.healthdcat.license", "https://eds.aphp.fr/licence"),
                     # referenceSpecification : un code du vocab + un code local (OSIRIS)
                     _sp("fr.aphp.healthdcat.referenceSpecification", "HL7-FHIR-R4", "OSIRIS"),
+                    # isReferencedBy : DOI nu, DOI préfixé "doi:", et URL complète
+                    _sp("fr.aphp.healthdcat.isReferencedBy", "10.1234/abcd.2019", "doi:10.5555/xyz", "https://hal.science/hal-04"),
                     _sp("fr.aphp.healthdcat.numberOfRecords", "1000000000"),  # string au lieu de number : coercition
                     _sp("fr.aphp.healthdcat.publishingFrequency", "DAILY"),
                     _sp(UNDECLARED_PROPERTY, "x"),
@@ -103,7 +105,10 @@ def _entities() -> dict[str, dict]:
             ),
             "deprecation": None,
             "globalTags": NS(tags=[]),
-            "structuredProperties": NS(properties=[_sp("fr.aphp.healthdcat.accessUrl", "https://s3.aphp.fr/sharing-layer/Patient.ndjson")]),
+            "structuredProperties": NS(properties=[
+                _sp("fr.aphp.healthdcat.accessUrl", "https://s3.aphp.fr/sharing-layer/Patient.ndjson"),
+                _sp("fr.aphp.healthdcat.distributionStatus", "COMPLETED"),
+            ]),
         },
         SAMPLE_URN: {
             "datasetProperties": NS(name="Patient_sample.ndjson", description="Echantillon FHIR Patient", externalUrl=None, created=None, lastModified=None),
@@ -171,7 +176,8 @@ _DECLARED_QUALIFIED_NAMES = [
     "fr.aphp.healthdcat.provenance", "fr.aphp.healthdcat.purpose", "fr.aphp.healthdcat.contactPointName",
     "fr.aphp.healthdcat.contactPointEmail", "fr.aphp.healthdcat.contactPointUrl", "fr.aphp.healthdcat.license",
     "fr.aphp.healthdcat.numberOfRecords", "fr.aphp.healthdcat.publishingFrequency", "fr.aphp.healthdcat.accessUrl",
-    "fr.aphp.healthdcat.referenceSpecification",
+    "fr.aphp.healthdcat.referenceSpecification", "fr.aphp.healthdcat.isReferencedBy",
+    "fr.aphp.healthdcat.distributionStatus",
     "fr.aphp.healthdcat.publisherName", "fr.aphp.healthdcat.publisherHomepage", "fr.aphp.healthdcat.publisherEmail",
     "fr.aphp.healthdcat.publisherType", "fr.aphp.healthdcat.publisherNote", "fr.aphp.healthdcat.trustedDataHolder",
     "fr.aphp.healthdcat.hdabName", "fr.aphp.healthdcat.hdabHomepage", "fr.aphp.healthdcat.hdabEmail",
