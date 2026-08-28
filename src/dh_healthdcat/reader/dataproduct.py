@@ -19,11 +19,17 @@ from dh_healthdcat.mapping.vocabularies import (
     resolve_many_or_warn,
     resolve_or_warn,
 )
-from dh_healthdcat.model import Agent, HealthDataset, PeriodOfTime, Severity, ValidationIssue
+from dh_healthdcat.model import (
+    Distribution,
+    HealthDataset,
+    PeriodOfTime,
+    Severity,
+    ValidationIssue,
+)
 from dh_healthdcat.reader import agents as agents_reader
 from dh_healthdcat.reader import dataset as dataset_reader
 from dh_healthdcat.reader import props
-from dh_healthdcat.reader.graph import ReadContext
+from dh_healthdcat.reader.graph import ReadContext, SemitypedEntity
 
 DEFAULT_BASE_URI = "https://eds.aphp.fr"
 
@@ -34,7 +40,7 @@ def _dataset_id_from_urn(urn: str) -> str:
 
 def _warn_undeclared_properties(
     ctx: ReadContext,
-    entity,  # noqa: ANN001 - SemitypedEntity
+    entity: SemitypedEntity,
     dataset_name: str,
     dataset_urn: str,
     issues: list[ValidationIssue],
@@ -60,7 +66,10 @@ def _warn_undeclared_properties(
                     dataset_urn=dataset_urn,
                     rdf_property="(référentiel)",
                     datahub_field=qualified_name,
-                    message="propriété structurée assignée mais absente du référentiel DataHub (assets.yml a-t-il changé ?)",
+                    message=(
+                        "propriété structurée assignée mais absente du référentiel "
+                        "DataHub (assets.yml a-t-il changé ?)"
+                    ),
                 )
             )
 
@@ -74,7 +83,12 @@ def _resolve_many(
     issues: list[ValidationIssue],
 ) -> tuple[str, ...]:
     return resolve_many_or_warn(
-        vocab, codes, dataset_name=dataset_name, dataset_urn=dataset_urn, datahub_field=datahub_field, issues=issues
+        vocab,
+        codes,
+        dataset_name=dataset_name,
+        dataset_urn=dataset_urn,
+        datahub_field=datahub_field,
+        issues=issues,
     )
 
 
@@ -87,7 +101,12 @@ def _resolve_one(
     issues: list[ValidationIssue],
 ) -> str | None:
     return resolve_or_warn(
-        vocab, code, dataset_name=dataset_name, dataset_urn=dataset_urn, datahub_field=datahub_field, issues=issues
+        vocab,
+        code,
+        dataset_name=dataset_name,
+        dataset_urn=dataset_urn,
+        datahub_field=datahub_field,
+        issues=issues,
     )
 
 
@@ -125,7 +144,10 @@ def read_data_product(
     entity = ctx.get_entity(dataproduct_urn)
     dp = entity.get("dataProductProperties")
     if dp is None or not dp.name:
-        raise ValueError(f"{dataproduct_urn} n'a pas de dataProductProperties.name — DataProduct invalide ou introuvable")
+        raise ValueError(
+            f"{dataproduct_urn} n'a pas de dataProductProperties.name "
+            "— DataProduct invalide ou introuvable"
+        )
 
     dataset_id = _dataset_id_from_urn(dataproduct_urn)
     title = dp.name
@@ -149,59 +171,111 @@ def read_data_product(
             keywords.append(info.name if info and info.name else term.urn.rsplit(":", 1)[-1])
 
     # --- Champs structured properties, valeurs simples ---
-    acronym = props.get_string(ctx, entity, "fr.aphp.healthdcat.acronym", title, dataproduct_urn, issues)
+    acronym = props.get_string(
+        ctx, entity, "fr.aphp.healthdcat.acronym", title, dataproduct_urn, issues
+    )
     dataset_type = _resolve_one(
         v.DATASET_TYPE,
-        props.get_string(ctx, entity, "fr.aphp.healthdcat.datasetType", title, dataproduct_urn, issues),
-        title, dataproduct_urn, "fr.aphp.healthdcat.datasetType", issues,
+        props.get_string(
+            ctx, entity, "fr.aphp.healthdcat.datasetType", title, dataproduct_urn, issues
+        ),
+        title,
+        dataproduct_urn,
+        "fr.aphp.healthdcat.datasetType",
+        issues,
     )
     access_rights = _resolve_one(
         v.ACCESS_RIGHTS,
-        props.get_string(ctx, entity, "fr.aphp.healthdcat.accessRights", title, dataproduct_urn, issues),
-        title, dataproduct_urn, "fr.aphp.healthdcat.accessRights", issues,
+        props.get_string(
+            ctx, entity, "fr.aphp.healthdcat.accessRights", title, dataproduct_urn, issues
+        ),
+        title,
+        dataproduct_urn,
+        "fr.aphp.healthdcat.accessRights",
+        issues,
     )
     applicable_legislation = _resolve_many(
         v.APPLICABLE_REGULATIONS,
-        props.get_strings(ctx, entity, "fr.aphp.healthdcat.applicableLegislation", title, dataproduct_urn, issues),
-        title, dataproduct_urn, "fr.aphp.healthdcat.applicableLegislation", issues,
+        props.get_strings(
+            ctx, entity, "fr.aphp.healthdcat.applicableLegislation", title, dataproduct_urn, issues
+        ),
+        title,
+        dataproduct_urn,
+        "fr.aphp.healthdcat.applicableLegislation",
+        issues,
     )
     health_category = _resolve_many(
         v.HEALTH_CATEGORY,
-        props.get_strings(ctx, entity, "fr.aphp.healthdcat.healthCategory", title, dataproduct_urn, issues),
-        title, dataproduct_urn, "fr.aphp.healthdcat.healthCategory", issues,
+        props.get_strings(
+            ctx, entity, "fr.aphp.healthdcat.healthCategory", title, dataproduct_urn, issues
+        ),
+        title,
+        dataproduct_urn,
+        "fr.aphp.healthdcat.healthCategory",
+        issues,
     )
     health_theme = _resolve_many(
         v.HEALTH_THEME,
-        props.get_strings(ctx, entity, "fr.aphp.healthdcat.healthTheme", title, dataproduct_urn, issues),
-        title, dataproduct_urn, "fr.aphp.healthdcat.healthTheme", issues,
+        props.get_strings(
+            ctx, entity, "fr.aphp.healthdcat.healthTheme", title, dataproduct_urn, issues
+        ),
+        title,
+        dataproduct_urn,
+        "fr.aphp.healthdcat.healthTheme",
+        issues,
     )
     personal_data = _resolve_many(
         v.PERSONAL_DATA,
-        props.get_strings(ctx, entity, "fr.aphp.healthdcat.personalData", title, dataproduct_urn, issues),
-        title, dataproduct_urn, "fr.aphp.healthdcat.personalData", issues,
+        props.get_strings(
+            ctx, entity, "fr.aphp.healthdcat.personalData", title, dataproduct_urn, issues
+        ),
+        title,
+        dataproduct_urn,
+        "fr.aphp.healthdcat.personalData",
+        issues,
     )
     language = _resolve_many(
         v.LANGUAGE,
-        props.get_strings(ctx, entity, "fr.aphp.healthdcat.language", title, dataproduct_urn, issues),
-        title, dataproduct_urn, "fr.aphp.healthdcat.language", issues,
+        props.get_strings(
+            ctx, entity, "fr.aphp.healthdcat.language", title, dataproduct_urn, issues
+        ),
+        title,
+        dataproduct_urn,
+        "fr.aphp.healthdcat.language",
+        issues,
     )
     legal_basis = _resolve_many(
         v.LEGAL_BASIS,
-        props.get_strings(ctx, entity, "fr.aphp.healthdcat.legalBasis", title, dataproduct_urn, issues),
-        title, dataproduct_urn, "fr.aphp.healthdcat.legalBasis", issues,
+        props.get_strings(
+            ctx, entity, "fr.aphp.healthdcat.legalBasis", title, dataproduct_urn, issues
+        ),
+        title,
+        dataproduct_urn,
+        "fr.aphp.healthdcat.legalBasis",
+        issues,
     )
     coding_system = _resolve_many(
         v.CODING_SYSTEM,
         props.get_strings(ctx, entity, "fr.aphp.healthdcat.coding", title, dataproduct_urn, issues),
-        title, dataproduct_urn, "fr.aphp.healthdcat.coding", issues,
+        title,
+        dataproduct_urn,
+        "fr.aphp.healthdcat.coding",
+        issues,
     )
     accrual_periodicity = _resolve_one(
         v.FREQUENCY,
-        props.get_string(ctx, entity, "fr.aphp.healthdcat.publishingFrequency", title, dataproduct_urn, issues),
-        title, dataproduct_urn, "fr.aphp.healthdcat.publishingFrequency", issues,
+        props.get_string(
+            ctx, entity, "fr.aphp.healthdcat.publishingFrequency", title, dataproduct_urn, issues
+        ),
+        title,
+        dataproduct_urn,
+        "fr.aphp.healthdcat.publishingFrequency",
+        issues,
     )
 
-    spatial_raw = props.get_strings(ctx, entity, "fr.aphp.healthdcat.spatialCoverage", title, dataproduct_urn, issues)
+    spatial_raw = props.get_strings(
+        ctx, entity, "fr.aphp.healthdcat.spatialCoverage", title, dataproduct_urn, issues
+    )
     spatial: list[str] = []
     for code in spatial_raw:
         if code.startswith("http"):
@@ -210,41 +284,83 @@ def read_data_product(
         try:
             spatial.append(v.COUNTRY.resolve(code))
         except UnknownVocabularyValueError:
-            spatial.append(code)  # déjà une URI d'un autre référentiel (GeoNames...) ou code régional (FR-75)
+            spatial.append(
+                code
+            )  # déjà une URI d'un autre référentiel (GeoNames...) ou code régional (FR-75)
 
     conforms_to: list[str] = []
-    for code in props.get_strings(ctx, entity, "fr.aphp.healthdcat.referenceSpecification", title, dataproduct_urn, issues):
+    for code in props.get_strings(
+        ctx, entity, "fr.aphp.healthdcat.referenceSpecification", title, dataproduct_urn, issues
+    ):
         try:
             conforms_to.append(v.REFERENCE_SPECIFICATION.resolve(code))
         except UnknownVocabularyValueError:
             fallback = _as_uri(code, "aphp:conformsTo")  # OSIRIS & co. → urn:aphp:conformsTo:<code>
             if fallback:
                 conforms_to.append(fallback)
-    license_ = props.get_string(ctx, entity, "fr.aphp.healthdcat.license", title, dataproduct_urn, issues)
+    license_ = props.get_string(
+        ctx, entity, "fr.aphp.healthdcat.license", title, dataproduct_urn, issues
+    )
     is_referenced_by = tuple(
         _doi_to_uri(ref)
-        for ref in props.get_strings(ctx, entity, "fr.aphp.healthdcat.isReferencedBy", title, dataproduct_urn, issues)
+        for ref in props.get_strings(
+            ctx, entity, "fr.aphp.healthdcat.isReferencedBy", title, dataproduct_urn, issues
+        )
     )
 
-    number_of_records = props.get_int(entity, "fr.aphp.healthdcat.numberOfRecords", title, dataproduct_urn, issues)
-    number_of_unique_individuals = props.get_int(entity, "fr.aphp.healthdcat.numberOfUniqueIndividuals", title, dataproduct_urn, issues)
-    min_typical_age = props.get_int(entity, "fr.aphp.healthdcat.minTypicalAge", title, dataproduct_urn, issues)
-    max_typical_age = props.get_int(entity, "fr.aphp.healthdcat.maxTypicalAge", title, dataproduct_urn, issues)
-    population_coverage = props.get_string(ctx, entity, "fr.aphp.healthdcat.populationCoverage", title, dataproduct_urn, issues)
-    provenance = props.get_string(ctx, entity, "fr.aphp.healthdcat.provenance", title, dataproduct_urn, issues)
-    purpose = props.get_string(ctx, entity, "fr.aphp.healthdcat.purpose", title, dataproduct_urn, issues)
+    number_of_records = props.get_int(
+        entity, "fr.aphp.healthdcat.numberOfRecords", title, dataproduct_urn, issues
+    )
+    number_of_unique_individuals = props.get_int(
+        entity, "fr.aphp.healthdcat.numberOfUniqueIndividuals", title, dataproduct_urn, issues
+    )
+    min_typical_age = props.get_int(
+        entity, "fr.aphp.healthdcat.minTypicalAge", title, dataproduct_urn, issues
+    )
+    max_typical_age = props.get_int(
+        entity, "fr.aphp.healthdcat.maxTypicalAge", title, dataproduct_urn, issues
+    )
+    population_coverage = props.get_string(
+        ctx, entity, "fr.aphp.healthdcat.populationCoverage", title, dataproduct_urn, issues
+    )
+    provenance = props.get_string(
+        ctx, entity, "fr.aphp.healthdcat.provenance", title, dataproduct_urn, issues
+    )
+    purpose = props.get_string(
+        ctx, entity, "fr.aphp.healthdcat.purpose", title, dataproduct_urn, issues
+    )
 
-    issued = props.get_date(entity, "fr.aphp.healthdcat.issued", title, dataproduct_urn, issues)  # date, émis en xsd:date
-    modified = datetime.fromtimestamp(dp.lastModified.time / 1000) if getattr(dp, "lastModified", None) else None
+    issued = props.get_date(
+        entity, "fr.aphp.healthdcat.issued", title, dataproduct_urn, issues
+    )  # date, émis en xsd:date
+    modified = (
+        datetime.fromtimestamp(dp.lastModified.time / 1000)
+        if getattr(dp, "lastModified", None)
+        else None
+    )
 
-    temporal_start = props.get_date(entity, "fr.aphp.healthdcat.temporalCoverageStart", title, dataproduct_urn, issues)
-    temporal_end = props.get_date(entity, "fr.aphp.healthdcat.temporalCoverageEnd", title, dataproduct_urn, issues)
-    temporal = PeriodOfTime(start_date=temporal_start, end_date=temporal_end) if (temporal_start or temporal_end) else None
+    temporal_start = props.get_date(
+        entity, "fr.aphp.healthdcat.temporalCoverageStart", title, dataproduct_urn, issues
+    )
+    temporal_end = props.get_date(
+        entity, "fr.aphp.healthdcat.temporalCoverageEnd", title, dataproduct_urn, issues
+    )
+    temporal = (
+        PeriodOfTime(start_date=temporal_start, end_date=temporal_end)
+        if (temporal_start or temporal_end)
+        else None
+    )
 
-    retention_start = props.get_date(entity, "fr.aphp.healthdcat.retentionPeriodStart", title, dataproduct_urn, issues)
-    retention_end = props.get_date(entity, "fr.aphp.healthdcat.retentionPeriodEnd", title, dataproduct_urn, issues)
+    retention_start = props.get_date(
+        entity, "fr.aphp.healthdcat.retentionPeriodStart", title, dataproduct_urn, issues
+    )
+    retention_end = props.get_date(
+        entity, "fr.aphp.healthdcat.retentionPeriodEnd", title, dataproduct_urn, issues
+    )
     retention_period = (
-        PeriodOfTime(start_date=retention_start, end_date=retention_end) if (retention_start or retention_end) else None
+        PeriodOfTime(start_date=retention_start, end_date=retention_end)
+        if (retention_start or retention_end)
+        else None
     )
 
     # --- Agents (publisher / creator / hdab) — structured properties plates sur le DataProduct ---
@@ -254,10 +370,12 @@ def read_data_product(
     contact_point = agents_reader.read_contact_point(ctx, entity, title, dataproduct_urn, issues)
 
     # --- Distributions / échantillons, depuis dataProductProperties.assets ---
-    distributions = []
-    samples = []
+    distributions: list[Distribution] = []
+    samples: list[Distribution] = []
     for association in dp.assets or []:
-        distribution = dataset_reader.read_distribution(ctx, association.destinationUrn, association.destinationUrn, title, issues)
+        distribution = dataset_reader.read_distribution(
+            ctx, association.destinationUrn, association.destinationUrn, title, issues
+        )
         # dct:rights hérité de la licence du DataProduct (:healthDistribution_Shape l'exige =1)
         if distribution.rights is None and license_:
             distribution = _with_rights(distribution, license_)
@@ -310,13 +428,13 @@ def read_data_product(
     )
 
 
-def _with_rights(distribution, rights: str):  # noqa: ANN001 - évite un import circulaire de Distribution ici
+def _with_rights(distribution: Distribution, rights: str) -> Distribution:
     from dataclasses import replace
 
     return replace(distribution, rights=rights)
 
 
-def _with_legislation(distribution, legislation: tuple[str, ...]):  # noqa: ANN001
+def _with_legislation(distribution: Distribution, legislation: tuple[str, ...]) -> Distribution:
     from dataclasses import replace
 
     return replace(distribution, applicable_legislation=legislation)

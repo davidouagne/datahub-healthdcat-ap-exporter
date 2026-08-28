@@ -23,7 +23,13 @@ from dh_healthdcat.mapping.nodes import node_uri
 from dh_healthdcat.model import Distribution, Severity, Table, ValidationIssue
 
 
-def _missing(issues: list[ValidationIssue], dataset_name: str, dataset_urn: str, rdf_property: str, datahub_field: str) -> None:
+def _missing(
+    issues: list[ValidationIssue],
+    dataset_name: str,
+    dataset_urn: str,
+    rdf_property: str,
+    datahub_field: str,
+) -> None:
     issues.append(
         ValidationIssue(
             severity=Severity.ERROR,
@@ -100,19 +106,45 @@ def add_distribution(
         graph.add((rights_node, RDF.type, DCT.RightsStatement))
         graph.add((rights_node, RDFS.label, Literal(distribution.rights, lang="fr")))
     if distribution.byte_size is not None:
-        graph.add((node, DCAT.byteSize, Literal(distribution.byte_size, datatype=XSD.nonNegativeInteger)))
+        graph.add(
+            (node, DCAT.byteSize, Literal(distribution.byte_size, datatype=XSD.nonNegativeInteger))
+        )
 
     # :healthDistribution_Shape n'impose ces quatre champs qu'aux dcat:distribution,
     # pas aux adms:sample.
     if not distribution.is_sample:
         if not distribution.applicable_legislation:
-            _missing(issues, dataset_name, dataset_urn_or_source(distribution), "dcatap:applicableLegislation", "hérité du DataProduct — vérifier fr.aphp.healthdcat.applicableLegislation")
+            _missing(
+                issues,
+                dataset_name,
+                dataset_urn_or_source(distribution),
+                "dcatap:applicableLegislation",
+                "hérité du DataProduct — vérifier fr.aphp.healthdcat.applicableLegislation",
+            )
         if distribution.byte_size is None:
-            _missing(issues, dataset_name, dataset_urn_or_source(distribution), "dcat:byteSize", f"profil DataHub absent pour {distribution.title} (datasetProfile.sizeInBytes)")
+            _missing(
+                issues,
+                dataset_name,
+                dataset_urn_or_source(distribution),
+                "dcat:byteSize",
+                f"profil DataHub absent pour {distribution.title} (datasetProfile.sizeInBytes)",
+            )
         if not distribution.format_uri:
-            _missing(issues, dataset_name, dataset_urn_or_source(distribution), "dct:format", f"fr.aphp.healthdcat.distributionFormat (Dataset {distribution.title})")
+            _missing(
+                issues,
+                dataset_name,
+                dataset_urn_or_source(distribution),
+                "dct:format",
+                f"fr.aphp.healthdcat.distributionFormat (Dataset {distribution.title})",
+            )
         if not distribution.rights:
-            _missing(issues, dataset_name, dataset_urn_or_source(distribution), "dct:rights", "fr.aphp.healthdcat.license (DataProduct, hérité)")
+            _missing(
+                issues,
+                dataset_name,
+                dataset_urn_or_source(distribution),
+                "dct:rights",
+                "fr.aphp.healthdcat.license (DataProduct, hérité)",
+            )
 
     table_node = None
     if distribution.table is not None:
@@ -128,7 +160,9 @@ def dataset_urn_or_source(distribution: Distribution) -> str:
     return distribution.source_urn
 
 
-def _add_table(graph: Graph, distribution_node: URIRef, distribution: Distribution, table: Table) -> URIRef:
+def _add_table(
+    graph: Graph, distribution_node: URIRef, distribution: Distribution, table: Table
+) -> URIRef:
     """csvw:Table. Aucun prédicat Distribution→Table n'est défini par les shapes HDH
     (:CSVWTableShape cible juste `csvw:Table` en isolation) ; on relie table et
     distribution par le même `csvw:url` que `dcat:accessURL` plutôt que

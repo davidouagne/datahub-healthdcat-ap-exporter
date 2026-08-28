@@ -13,7 +13,7 @@ rôle est justement de détecter ces écarts avant l'envoi (P0-10).
 from __future__ import annotations
 
 from dataclasses import dataclass
-from functools import lru_cache
+from functools import cache
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -28,12 +28,15 @@ VOCAB_DIR = Path(__file__).parent / "vocab"
 class UnknownVocabularyValueError(ValueError):
     """Levée quand un code DataHub ne correspond à aucune valeur autorisée."""
 
+    _SAMPLE_SIZE = 10
+
     def __init__(self, vocabulary: str, code: str, valid_codes: list[str]) -> None:
         self.vocabulary = vocabulary
         self.code = code
         self.valid_codes = valid_codes
-        sample = ", ".join(sorted(valid_codes)[:10])
-        more = f" (+{len(valid_codes) - 10} autres)" if len(valid_codes) > 10 else ""
+        sample = ", ".join(sorted(valid_codes)[: self._SAMPLE_SIZE])
+        overflow = len(valid_codes) - self._SAMPLE_SIZE
+        more = f" (+{overflow} autres)" if overflow > 0 else ""
         super().__init__(
             f'valeur "{code}" absente du vocabulaire {vocabulary}. '
             f"Valeurs attendues : {sample}{more}."
@@ -50,9 +53,7 @@ class Vocabulary:
         try:
             return self.code_to_uri[code]
         except KeyError:
-            raise UnknownVocabularyValueError(
-                self.name, code, list(self.code_to_uri)
-            ) from None
+            raise UnknownVocabularyValueError(self.name, code, list(self.code_to_uri)) from None
 
     def resolve_optional(self, code: str | None) -> str | None:
         return None if code is None else self.resolve(code)
@@ -61,7 +62,7 @@ class Vocabulary:
         return self.labels_fr.get(code, default if default is not None else code)
 
 
-@lru_cache(maxsize=None)
+@cache
 def _load(name: str) -> Vocabulary:
     path = VOCAB_DIR / f"{name}.yml"
     if not path.exists():
@@ -117,7 +118,7 @@ def resolve_or_warn(
     dataset_name: str,
     dataset_urn: str,
     datahub_field: str,
-    issues: list["ValidationIssue"],
+    issues: list[ValidationIssue],
 ) -> str | None:
     """`vocab.resolve(code)`, mais un code inconnu devient un WARNING dans
     `issues` (pas une exception) : un seul code hors vocabulaire ne doit pas
@@ -125,7 +126,8 @@ def resolve_or_warn(
 
     if code is None:
         return None
-    from dh_healthdcat.model import Severity, ValidationIssue as VI
+    from dh_healthdcat.model import Severity
+    from dh_healthdcat.model import ValidationIssue as VI
 
     try:
         return vocab.resolve(code)
@@ -150,10 +152,17 @@ def resolve_many_or_warn(
     dataset_name: str,
     dataset_urn: str,
     datahub_field: str,
-    issues: list["ValidationIssue"],
+    issues: list[ValidationIssue],
 ) -> tuple[str, ...]:
     resolved = (
-        resolve_or_warn(vocab, code, dataset_name=dataset_name, dataset_urn=dataset_urn, datahub_field=datahub_field, issues=issues)
+        resolve_or_warn(
+            vocab,
+            code,
+            dataset_name=dataset_name,
+            dataset_urn=dataset_urn,
+            datahub_field=datahub_field,
+            issues=issues,
+        )
         for code in codes
     )
     return tuple(r for r in resolved if r is not None)

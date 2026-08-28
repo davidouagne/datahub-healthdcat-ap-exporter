@@ -21,6 +21,7 @@ un double (voir tests/fixtures/) sans instance DataHub ni réseau.
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
@@ -28,18 +29,26 @@ from typing import Any, Protocol
 class SemitypedEntity(Protocol):
     """Ce que `DataHubGraph.get_entity_semityped()` retourne : un mapping
     aspect_name -> objet d'aspect typé (ou None/absent si l'entité n'a pas
-    cet aspect)."""
+    cet aspect). `AspectBag` côté acryl-datahub s'y conforme structurellement
+    (l'accès positionnel évite de comparer le nom du 1ᵉʳ paramètre à `key`)."""
 
-    def get(self, aspect_name: str, default: Any = None) -> Any: ...
+    def get(self, name: str, default: Any = None, /) -> Any: ...
 
 
 class GraphLike(Protocol):
     """Sous-ensemble de `DataHubGraph` dont le reader dépend. N'importe quel
     objet respectant cette interface (y compris un double de test) convient."""
 
-    def get_entity_semityped(self, urn: str, aspects: list[str] | None = None) -> SemitypedEntity: ...
+    def get_entity_semityped(
+        self, entity_urn: str, aspects: list[str] | None = None
+    ) -> SemitypedEntity: ...
 
-    def get_urns_by_filter(self, *, entity_types: list[str] | None = None, **kwargs: Any) -> Any: ...
+    def get_urns_by_filter(
+        self,
+        *,
+        entity_types: Sequence[str] | None = None,
+        extra_or_filters: Any = None,
+    ) -> Iterable[str]: ...
 
     def get_latest_timeseries_value(
         self, entity_urn: str, aspect_type: Any, filter_criteria_map: dict[str, str]
@@ -106,9 +115,13 @@ class ReadContext:
 
         definitions: dict[str, PropertyDefinition] = {}
         for prop in StructuredProperties.list(self.graph):  # type: ignore[arg-type]
-            definitions[prop.qualified_name] = PropertyDefinition(
-                qualified_name=prop.qualified_name,
-                urn=prop.urn,
+            qualified_name = prop.qualified_name
+            urn = prop.urn
+            if qualified_name is None or urn is None:
+                continue
+            definitions[qualified_name] = PropertyDefinition(
+                qualified_name=qualified_name,
+                urn=urn,
                 value_type=prop.type,
                 cardinality=prop.cardinality or "SINGLE",
                 entity_types=tuple(prop.entity_types or ()),
@@ -123,7 +136,9 @@ def from_env() -> ReadContext:
     from datahub.ingestion.graph.client import DataHubGraph, get_default_graph
 
     graph: DataHubGraph = get_default_graph()
-    return ReadContext(graph=graph)
+    # DataHubGraph respecte GraphLike structurellement ; mypy ne reconnaît pas
+    # `AspectBag` comme sous-type de `SemitypedEntity` (protocole minimal maison).
+    return ReadContext(graph=graph)  # type: ignore[arg-type]
 
 
 def from_config(server: str, token: str | None = None) -> ReadContext:
@@ -131,4 +146,4 @@ def from_config(server: str, token: str | None = None) -> ReadContext:
     from datahub.ingestion.graph.config import DatahubClientConfig
 
     graph = DataHubGraph(DatahubClientConfig(server=server, token=token))
-    return ReadContext(graph=graph)
+    return ReadContext(graph=graph)  # type: ignore[arg-type]

@@ -71,31 +71,71 @@ def add_publisher(
     if agent.publisher_type:
         graph.add((node, HEALTHDCATAP.publisherType, URIRef(agent.publisher_type)))
     else:
-        _missing(issues, dataset_name, dataset_urn, "healthdcatap:publisherType", "fr.aphp.healthdcat.publisherType (CorpGroup)")
+        _missing(
+            issues,
+            dataset_name,
+            dataset_urn,
+            "healthdcatap:publisherType",
+            "fr.aphp.healthdcat.publisherType (CorpGroup)",
+        )
 
     if agent.publisher_note:
         graph.add((node, HEALTHDCATAP.publisherNote, Literal(agent.publisher_note, lang="fr")))
     else:
-        _missing(issues, dataset_name, dataset_urn, "healthdcatap:publisherNote", "fr.aphp.healthdcat.publisherNote (CorpGroup)")
+        _missing(
+            issues,
+            dataset_name,
+            dataset_urn,
+            "healthdcatap:publisherNote",
+            "fr.aphp.healthdcat.publisherNote (CorpGroup)",
+        )
 
     if agent.trusted_data_holder is not None:
-        graph.add((node, HEALTHDCATAP.trustedDataHolder, Literal(agent.trusted_data_holder, datatype=XSD.boolean)))
+        graph.add(
+            (
+                node,
+                HEALTHDCATAP.trustedDataHolder,
+                Literal(agent.trusted_data_holder, datatype=XSD.boolean),
+            )
+        )
     else:
-        _missing(issues, dataset_name, dataset_urn, "healthdcatap:trustedDataHolder", "fr.aphp.healthdcat.trustedDataHolder (CorpGroup)")
+        _missing(
+            issues,
+            dataset_name,
+            dataset_urn,
+            "healthdcatap:trustedDataHolder",
+            "fr.aphp.healthdcat.trustedDataHolder (CorpGroup)",
+        )
 
     return node
 
 
-def add_creator(graph: Graph, dataset_uri: URIRef, agent: Agent, dataset_urn: str, dataset_name: str, issues: list[ValidationIssue]) -> URIRef:
+def add_creator(
+    graph: Graph,
+    dataset_uri: URIRef,
+    agent: Agent,
+    dataset_urn: str,
+    dataset_name: str,
+    issues: list[ValidationIssue],
+) -> URIRef:
     """dct:creator → foaf:Agent (:Agent_Shape uniquement, pas de contrainte santé)."""
 
     node = node_uri("creator", dataset_urn)
     graph.add((dataset_uri, DCT.creator, node))
-    _add_base_agent(graph, node, agent, dataset_urn, dataset_name, issues, role="creator", require_contact=False)
+    _add_base_agent(
+        graph, node, agent, dataset_urn, dataset_name, issues, role="creator", require_contact=False
+    )
     return node
 
 
-def add_hdab(graph: Graph, dataset_uri: URIRef, agent: Agent, dataset_urn: str, dataset_name: str, issues: list[ValidationIssue]) -> URIRef:
+def add_hdab(
+    graph: Graph,
+    dataset_uri: URIRef,
+    agent: Agent,
+    dataset_urn: str,
+    dataset_name: str,
+    issues: list[ValidationIssue],
+) -> URIRef:
     """healthdcatap:hdab → :HealthAgent_Shape (homepage et mbox obligatoires)."""
 
     node = node_uri("hdab", dataset_urn)
@@ -119,17 +159,31 @@ def _add_base_agent(
     if agent.name:
         graph.add((node, FOAF.name, Literal(agent.name)))
     else:
-        _missing(issues, dataset_name, dataset_urn, "foaf:name", f"owner ({role}) sans CorpGroup name")
+        _missing(
+            issues, dataset_name, dataset_urn, "foaf:name", f"owner ({role}) sans CorpGroup name"
+        )
 
     if agent.homepage:
         graph.add((node, FOAF.homepage, URIRef(agent.homepage)))
     elif require_contact:
-        _missing(issues, dataset_name, dataset_urn, "foaf:homepage", f"fr.aphp.healthdcat.agentHomepage (CorpGroup {role})")
+        _missing(
+            issues,
+            dataset_name,
+            dataset_urn,
+            "foaf:homepage",
+            f"fr.aphp.healthdcat.agentHomepage (CorpGroup {role})",
+        )
 
     if agent.mbox:
         graph.add((node, FOAF.mbox, URIRef(f"mailto:{agent.mbox}")))
     elif require_contact:
-        _missing(issues, dataset_name, dataset_urn, "foaf:mbox", f"fr.aphp.healthdcat.agentEmail (CorpGroup {role})")
+        _missing(
+            issues,
+            dataset_name,
+            dataset_urn,
+            "foaf:mbox",
+            f"fr.aphp.healthdcat.agentEmail (CorpGroup {role})",
+        )
 
 
 def add_contact_point(
@@ -150,11 +204,15 @@ def add_contact_point(
     if cp.url:
         graph.add((node, VCARD.hasURL, URIRef(cp.url)))
     else:
-        _missing(issues, dataset_name, dataset_urn, "vcard:hasURL", "fr.aphp.healthdcat.contactPointUrl")
+        _missing(
+            issues, dataset_name, dataset_urn, "vcard:hasURL", "fr.aphp.healthdcat.contactPointUrl"
+        )
     return node
 
 
-def add_period_of_time(graph: Graph, subject: URIRef, predicate: URIRef, period: PeriodOfTime, seed: str) -> URIRef:
+def add_period_of_time(
+    graph: Graph, subject: URIRef, predicate: URIRef, period: PeriodOfTime, seed: str
+) -> URIRef:
     """dct:temporal / healthdcatap:retentionPeriod → dct:PeriodOfTime."""
 
     node = node_uri("periodOfTime", seed)

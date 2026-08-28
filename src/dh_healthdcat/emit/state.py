@@ -22,9 +22,10 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
+from typing import Any
 
 DEFAULT_STATE_PATH = Path(".dh-healthdcat-state.json")
 _FORMAT_VERSION = 2
@@ -34,7 +35,9 @@ _FORMAT_VERSION = 2
 class PushState:
     path: Path
     instance: str
-    _document: dict = field(default_factory=lambda: {"version": _FORMAT_VERSION, "instances": {}})
+    _document: dict[str, Any] = field(
+        default_factory=lambda: {"version": _FORMAT_VERSION, "instances": {}}
+    )
 
     @classmethod
     def open(
@@ -62,12 +65,16 @@ class PushState:
         # octet pour octet identique tant que record() n'a pas eu lieu, donc
         # un --dry-run ne le modifie pas.
         if on_warning is not None and raw:
-            on_warning(f"État de poussée au format historique repris sous l'instance {instance!r} ({len(raw)} id(s)).")
+            on_warning(
+                f"État de poussée au format historique repris sous l'instance "
+                f"{instance!r} ({len(raw)} id(s))."
+            )
         document = {"version": _FORMAT_VERSION, "instances": {instance: dict(raw)}}
         return cls(path=path, instance=instance, _document=document)
 
     def hdh_id_for(self, dataset_urn: str) -> str | None:
-        return self._document["instances"].get(self.instance, {}).get(dataset_urn)
+        bucket: dict[str, str] = self._document["instances"].get(self.instance, {})
+        return bucket.get(dataset_urn)
 
     def record(self, dataset_urn: str, hdh_id: str) -> None:
         """Enregistre l'id et persiste immédiatement sur disque — uniquement

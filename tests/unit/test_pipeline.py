@@ -79,7 +79,9 @@ def test_regression_one_invalid_dataproduct_does_not_exclude_the_others():
 
     ctx = build_context()
 
-    outcomes = list(prepare(ctx, [NONCONFORMING_DATAPRODUCT_URN, DATAPRODUCT_URN, UNREADABLE_DATAPRODUCT_URN]))
+    outcomes = list(
+        prepare(ctx, [NONCONFORMING_DATAPRODUCT_URN, DATAPRODUCT_URN, UNREADABLE_DATAPRODUCT_URN])
+    )
 
     by_urn = {o.urn: o for o in outcomes}
     assert isinstance(by_urn[DATAPRODUCT_URN], Prepared)

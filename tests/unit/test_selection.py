@@ -34,7 +34,15 @@ class TestBuildSelectionFilter:
         # tag_mode="any" (défaut) : une seule règle multi-valeurs, OU implicite
         # au niveau de la recherche — reproduit exactement le comportement v0.
         assert build_selection_filter(domains=[], tags=["a", "b"]) == [
-            {"and": [{"field": "tags", "condition": "EQUAL", "values": ["urn:li:tag:a", "urn:li:tag:b"]}]}
+            {
+                "and": [
+                    {
+                        "field": "tags",
+                        "condition": "EQUAL",
+                        "values": ["urn:li:tag:a", "urn:li:tag:b"],
+                    }
+                ]
+            }
         ]
 
     def test_tags_all_is_one_rule_per_tag_anded(self):
@@ -50,7 +58,18 @@ class TestBuildSelectionFilter:
 
     def test_exclude_tags_is_a_single_negated_rule(self):
         result = build_selection_filter(domains=[], tags=[], exclude_tags=["x"])
-        assert result == [{"and": [{"field": "tags", "condition": "EQUAL", "values": ["urn:li:tag:x"], "negated": True}]}]
+        assert result == [
+            {
+                "and": [
+                    {
+                        "field": "tags",
+                        "condition": "EQUAL",
+                        "values": ["urn:li:tag:x"],
+                        "negated": True,
+                    }
+                ]
+            }
+        ]
 
     def test_domain_and_tag_combine_with_and(self):
         result = build_selection_filter(domains=["d1"], tags=["a"])
@@ -100,7 +119,9 @@ class TestSelectDataProductUrns:
 
     def test_explicit_urn_takes_precedence_no_network_call(self):
         ctx = build_context()
-        result = select_data_product_urns(ctx, urns=["urn:li:dataProduct:explicit"], domains=[], tags=[])
+        result = select_data_product_urns(
+            ctx, urns=["urn:li:dataProduct:explicit"], domains=[], tags=[]
+        )
 
         assert result == ["urn:li:dataProduct:explicit"]
         assert ctx.graph.get_entity_semityped_calls == []
@@ -124,7 +145,13 @@ class TestSelectDataProductUrns:
     def test_no_warning_when_urn_given_without_filters(self):
         ctx = build_context()
         warnings: list[str] = []
-        select_data_product_urns(ctx, urns=["urn:li:dataProduct:explicit"], domains=[], tags=[], on_warning=warnings.append)
+        select_data_product_urns(
+            ctx,
+            urns=["urn:li:dataProduct:explicit"],
+            domains=[],
+            tags=[],
+            on_warning=warnings.append,
+        )
 
         assert warnings == []
 

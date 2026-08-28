@@ -9,7 +9,15 @@ invalides au HDH est une propriété de sûreté, pas une préférence."""
 from __future__ import annotations
 
 from dh_healthdcat.emit.state import PushState
-from dh_healthdcat.pipeline import Planned, PushAction, PushFailed, Pushed, Rejected, Unreadable, push
+from dh_healthdcat.pipeline import (
+    Planned,
+    PushAction,
+    Pushed,
+    PushFailed,
+    Rejected,
+    Unreadable,
+    push,
+)
 from tests.fixtures.fake_datahub import (
     DATAPRODUCT_URN,
     NONCONFORMING_DATAPRODUCT_URN,

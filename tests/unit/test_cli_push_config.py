@@ -33,7 +33,10 @@ def test_no_url_anywhere_exits_2(tmp_path):
 def test_unknown_profile_exits_2_and_lists_known_profiles(tmp_path):
     config = _write_config(
         tmp_path,
-        "profiles:\n  dev:\n    url: https://dev.test\n  preprod:\n    url: https://preprod.test\n  prod:\n    url: https://prod.test\n",
+        "profiles:\n"
+        "  dev:\n    url: https://dev.test\n"
+        "  preprod:\n    url: https://preprod.test\n"
+        "  prod:\n    url: https://prod.test\n",
     )
 
     result = runner.invoke(app, ["push-hdh", "--config", str(config), "--profile", "preprd"])
@@ -53,13 +56,17 @@ def test_missing_config_path_exits_2(tmp_path):
 def test_missing_api_key_exits_1(tmp_path):
     config = _write_config(tmp_path, "profiles: {}\n")
 
-    result = runner.invoke(app, ["push-hdh", "--hdh-url", "https://exemple.test", "--config", str(config)])
+    result = runner.invoke(
+        app, ["push-hdh", "--hdh-url", "https://exemple.test", "--config", str(config)]
+    )
 
     assert result.exit_code == 1
 
 
 def test_literal_api_key_in_config_is_rejected_before_any_network_call(tmp_path):
-    config = _write_config(tmp_path, "profiles:\n  prod:\n    url: https://prod.test\n    api_key: mdc_secret\n")
+    config = _write_config(
+        tmp_path, "profiles:\n  prod:\n    url: https://prod.test\n    api_key: mdc_secret\n"
+    )
 
     result = runner.invoke(app, ["push-hdh", "--config", str(config), "--profile", "prod"])
 

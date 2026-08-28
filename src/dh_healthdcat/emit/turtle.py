@@ -27,7 +27,14 @@ def write_graph(graph: Graph, output_path: Path, *, fmt: str = "turtle") -> None
     graph.serialize(destination=str(output_path), format=FORMAT_TO_RDFLIB[fmt])
 
 
-def merge_into_catalog(graphs: list[Graph], *, catalog_uri: str, title: str, description: str, publisher_uri: str | None = None) -> Graph:
+def merge_into_catalog(
+    graphs: list[Graph],
+    *,
+    catalog_uri: str,
+    title: str,
+    description: str,
+    publisher_uri: str | None = None,
+) -> Graph:
     """Enveloppe plusieurs graphes dcat:Dataset dans un unique dcat:Catalog
     (P1-3), aligné sur `CatalogSerializer` côté HDH."""
 

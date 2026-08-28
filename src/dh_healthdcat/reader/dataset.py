@@ -10,6 +10,7 @@ rights, applicableLegislation — voir mapping/distribution.py).
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from typing import Any
 
 from dh_healthdcat.mapping import vocabularies as v
 from dh_healthdcat.mapping.vocabularies import resolve_or_warn
@@ -39,7 +40,13 @@ def _infer_format_code(dataset_name: str) -> str:
     `fr.aphp.healthdcat.distributionFormat` n'est pas renseignée."""
 
     lowered = dataset_name.lower()
-    for suffix, code in ((".ndjson", None), (".json", "JSON"), (".csv", "CSV"), (".parquet", "PARQUET"), (".xml", "XML")):
+    for suffix, code in (
+        (".ndjson", None),
+        (".json", "JSON"),
+        (".csv", "CSV"),
+        (".parquet", "PARQUET"),
+        (".xml", "XML"),
+    ):
         if lowered.endswith(suffix):
             if code is None:
                 return v.FILE_TYPE_NDJSON_FALLBACK  # NDJSON absent du vocabulaire HDH
@@ -47,7 +54,7 @@ def _infer_format_code(dataset_name: str) -> str:
     return "Other"  # clé exacte du vocabulaire FileType du HDH (pas "OTHER")
 
 
-def _map_column(field) -> Column:  # noqa: ANN001 - SchemaFieldClass, typé côté acryl-datahub
+def _map_column(field: Any) -> Column:
     return Column(
         name=field.fieldPath,
         description=field.description,
@@ -84,12 +91,23 @@ def read_distribution(
         dp.description if dp else None
     )
 
-    access_url = props.get_string(ctx, entity, "fr.aphp.healthdcat.accessUrl", parent_dataset_name, dataset_urn, issues)
+    access_url = props.get_string(
+        ctx, entity, "fr.aphp.healthdcat.accessUrl", parent_dataset_name, dataset_urn, issues
+    )
     if not access_url and dp and dp.externalUrl:
         access_url = dp.externalUrl
-    download_url = props.get_string(ctx, entity, "fr.aphp.healthdcat.downloadUrl", parent_dataset_name, dataset_urn, issues)
+    download_url = props.get_string(
+        ctx, entity, "fr.aphp.healthdcat.downloadUrl", parent_dataset_name, dataset_urn, issues
+    )
 
-    format_code = props.get_string(ctx, entity, "fr.aphp.healthdcat.distributionFormat", parent_dataset_name, dataset_urn, issues)
+    format_code = props.get_string(
+        ctx,
+        entity,
+        "fr.aphp.healthdcat.distributionFormat",
+        parent_dataset_name,
+        dataset_urn,
+        issues,
+    )
     if not format_code:
         format_code = _infer_format_code(technical_name)
         if format_code == v.FILE_TYPE_NDJSON_FALLBACK:
@@ -100,7 +118,10 @@ def read_distribution(
                     dataset_urn=dataset_urn,
                     rdf_property="dct:format",
                     datahub_field="fr.aphp.healthdcat.distributionFormat",
-                    message=f'".ndjson" absent du vocabulaire FileType du HDH — repli sur "{v.FILE_TYPE_NDJSON_FALLBACK}"',
+                    message=(
+                        '".ndjson" absent du vocabulaire FileType du HDH — repli '
+                        f'sur "{v.FILE_TYPE_NDJSON_FALLBACK}"'
+                    ),
                 )
             )
     # resolve_or_warn plutôt que .resolve() : un code FileType invalide ne doit
@@ -119,7 +140,14 @@ def read_distribution(
     # écrase en WITHDRAWN (un asset déprécié n'est pas COMPLETED).
     status_uri = resolve_or_warn(
         v.DISTRIBUTION_STATUS,
-        props.get_string(ctx, entity, "fr.aphp.healthdcat.distributionStatus", parent_dataset_name, dataset_urn, issues),
+        props.get_string(
+            ctx,
+            entity,
+            "fr.aphp.healthdcat.distributionStatus",
+            parent_dataset_name,
+            dataset_urn,
+            issues,
+        ),
         dataset_name=parent_dataset_name,
         dataset_urn=dataset_urn,
         datahub_field="fr.aphp.healthdcat.distributionStatus",

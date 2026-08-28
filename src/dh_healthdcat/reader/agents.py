@@ -44,24 +44,39 @@ def _read_base_agent(
     Retourne None si aucune des trois n'est renseignée (rôle non utilisé sur
     ce DataProduct — ex. `dct:creator`, souvent absent)."""
 
-    name = props.get_string(ctx, entity, f"fr.aphp.healthdcat.{prefix}Name", dataset_name, dataset_urn, issues)
-    homepage = props.get_string(ctx, entity, f"fr.aphp.healthdcat.{prefix}Homepage", dataset_name, dataset_urn, issues)
-    email = props.get_string(ctx, entity, f"fr.aphp.healthdcat.{prefix}Email", dataset_name, dataset_urn, issues)
+    name = props.get_string(
+        ctx, entity, f"fr.aphp.healthdcat.{prefix}Name", dataset_name, dataset_urn, issues
+    )
+    homepage = props.get_string(
+        ctx, entity, f"fr.aphp.healthdcat.{prefix}Homepage", dataset_name, dataset_urn, issues
+    )
+    email = props.get_string(
+        ctx, entity, f"fr.aphp.healthdcat.{prefix}Email", dataset_name, dataset_urn, issues
+    )
     if not (name or homepage or email):
         return None
     return Agent(name=name or "", homepage=homepage or "", mbox=email or "")
 
 
 def read_publisher(
-    ctx: ReadContext, entity: SemitypedEntity, dataset_name: str, dataset_urn: str, issues: list[ValidationIssue]
+    ctx: ReadContext,
+    entity: SemitypedEntity,
+    dataset_name: str,
+    dataset_urn: str,
+    issues: list[ValidationIssue],
 ) -> Agent | None:
-    """dct:publisher → :HealthPublisherAgent_Shape (publisherType/.Note/.trustedDataHolder en plus)."""
+    """dct:publisher → :HealthPublisherAgent_Shape.
+
+    (publisherType / .Note / .trustedDataHolder en plus.)
+    """
 
     agent = _read_base_agent(ctx, entity, dataset_name, dataset_urn, issues, prefix="publisher")
     if agent is None:
         return None
 
-    publisher_type_code = props.get_string(ctx, entity, "fr.aphp.healthdcat.publisherType", dataset_name, dataset_urn, issues)
+    publisher_type_code = props.get_string(
+        ctx, entity, "fr.aphp.healthdcat.publisherType", dataset_name, dataset_urn, issues
+    )
     publisher_type = resolve_or_warn(
         v.PUBLISHER_TYPE,
         publisher_type_code,
@@ -70,8 +85,12 @@ def read_publisher(
         datahub_field="fr.aphp.healthdcat.publisherType",
         issues=issues,
     )
-    publisher_note = props.get_string(ctx, entity, "fr.aphp.healthdcat.publisherNote", dataset_name, dataset_urn, issues)
-    trusted_data_holder = props.get_bool(entity, "fr.aphp.healthdcat.trustedDataHolder", dataset_name, dataset_urn, issues)
+    publisher_note = props.get_string(
+        ctx, entity, "fr.aphp.healthdcat.publisherNote", dataset_name, dataset_urn, issues
+    )
+    trusted_data_holder = props.get_bool(
+        entity, "fr.aphp.healthdcat.trustedDataHolder", dataset_name, dataset_urn, issues
+    )
 
     return Agent(
         name=agent.name,
@@ -84,7 +103,11 @@ def read_publisher(
 
 
 def read_creator(
-    ctx: ReadContext, entity: SemitypedEntity, dataset_name: str, dataset_urn: str, issues: list[ValidationIssue]
+    ctx: ReadContext,
+    entity: SemitypedEntity,
+    dataset_name: str,
+    dataset_urn: str,
+    issues: list[ValidationIssue],
 ) -> Agent | None:
     """dct:creator → foaf:Agent simple (:Agent_Shape uniquement)."""
 
@@ -92,7 +115,11 @@ def read_creator(
 
 
 def read_hdab(
-    ctx: ReadContext, entity: SemitypedEntity, dataset_name: str, dataset_urn: str, issues: list[ValidationIssue]
+    ctx: ReadContext,
+    entity: SemitypedEntity,
+    dataset_name: str,
+    dataset_urn: str,
+    issues: list[ValidationIssue],
 ) -> Agent | None:
     """healthdcatap:hdab → :HealthAgent_Shape (homepage et mbox obligatoires)."""
 
@@ -108,9 +135,15 @@ def read_contact_point(
 ) -> ContactPoint | None:
     """dcat:contactPoint — point de contact opérationnel, distinct du publisher."""
 
-    name = props.get_string(ctx, entity, "fr.aphp.healthdcat.contactPointName", dataset_name, dataset_urn, issues)
-    email = props.get_string(ctx, entity, "fr.aphp.healthdcat.contactPointEmail", dataset_name, dataset_urn, issues)
+    name = props.get_string(
+        ctx, entity, "fr.aphp.healthdcat.contactPointName", dataset_name, dataset_urn, issues
+    )
+    email = props.get_string(
+        ctx, entity, "fr.aphp.healthdcat.contactPointEmail", dataset_name, dataset_urn, issues
+    )
     if not name and not email:
         return None
-    url = props.get_string(ctx, entity, "fr.aphp.healthdcat.contactPointUrl", dataset_name, dataset_urn, issues)
+    url = props.get_string(
+        ctx, entity, "fr.aphp.healthdcat.contactPointUrl", dataset_name, dataset_urn, issues
+    )
     return ContactPoint(name=name or dataset_name, email=email or "", url=url)

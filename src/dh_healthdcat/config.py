@@ -11,9 +11,9 @@ construits ; c'est `cli.py` qui fait le pont vers le système de fichiers et
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Mapping
 from urllib.parse import urlsplit, urlunsplit
 
 import yaml
@@ -68,7 +68,9 @@ def normalize_url(raw: str) -> str:
     return urlunsplit((scheme, netloc, path, "", ""))
 
 
-def find_config_file(*, explicit: Path | None, env: Mapping[str, str], cwd: Path, home: Path) -> Path | None:
+def find_config_file(
+    *, explicit: Path | None, env: Mapping[str, str], cwd: Path, home: Path
+) -> Path | None:
     """Résout le chemin du fichier de configuration : `--config` (explicite)
     > `$HDH_CONFIG` > `<cwd>/.dh-healthdcat.yml` > `<home>/.dh-healthdcat.yml`
     — premier trouvé gagne, sans fusion (REQ-002).
@@ -111,15 +113,19 @@ def load_config(path: Path) -> Config:
 
     raw = raw or {}
     if not isinstance(raw, dict):
-        raise ConfigError(f"Fichier de configuration invalide ({path}) : attendu un mapping en racine")
+        raise ConfigError(
+            f"Fichier de configuration invalide ({path}) : attendu un mapping en racine"
+        )
 
     raw_profiles = raw.get("profiles") or {}
     if not isinstance(raw_profiles, dict):
-        raise ConfigError(f"Fichier de configuration invalide ({path}) : `profiles` doit être un mapping")
+        raise ConfigError(
+            f"Fichier de configuration invalide ({path}) : `profiles` doit être un mapping"
+        )
 
     profiles: dict[str, Profile] = {}
-    for name, body in raw_profiles.items():
-        body = body or {}
+    for name, raw_body in raw_profiles.items():
+        body = raw_body or {}
         if not isinstance(body, dict):
             raise ConfigError(f"Profil {name!r} invalide ({path}) : attendu un mapping")
         if "api_key" in body:
@@ -131,15 +137,23 @@ def load_config(path: Path) -> Config:
         url = body.get("url")
         api_key_env = body.get("api_key_env")
         if url is not None and not isinstance(url, str):
-            raise ConfigError(f"Profil {name!r} ({path}) : `url` doit être une chaîne (reçu {url!r}).")
+            raise ConfigError(
+                f"Profil {name!r} ({path}) : `url` doit être une chaîne (reçu {url!r})."
+            )
         if api_key_env is not None and not isinstance(api_key_env, str):
-            raise ConfigError(f"Profil {name!r} ({path}) : `api_key_env` doit être une chaîne (reçu {api_key_env!r}).")
+            raise ConfigError(
+                f"Profil {name!r} ({path}) : `api_key_env` doit être une chaîne "
+                f"(reçu {api_key_env!r})."
+            )
         profiles[name] = Profile(name=name, url=url, api_key_env=api_key_env)
 
     default_profile = raw.get("default_profile")
     if default_profile is not None and default_profile not in profiles:
         known = ", ".join(sorted(profiles)) or "aucun"
-        raise ConfigError(f"`default_profile: {default_profile}` ({path}) ne correspond à aucun profil déclaré ({known}).")
+        raise ConfigError(
+            f"`default_profile: {default_profile}` ({path}) ne correspond à "
+            f"aucun profil déclaré ({known})."
+        )
 
     return Config(path=path, profiles=profiles, default_profile=default_profile)
 
@@ -168,7 +182,9 @@ def resolve_target(
         if profile is None:
             known = ", ".join(sorted(config.profiles)) or "aucun"
             location = f" ({config.path})" if config.path else ""
-            raise ConfigError(f"Profil {profile_name!r} inconnu{location} — profils déclarés : {known}.")
+            raise ConfigError(
+                f"Profil {profile_name!r} inconnu{location} — profils déclarés : {known}."
+            )
 
     raw_url = cli_url or env.get("HDH_URL") or (profile.url if profile else None)
     if not raw_url:
@@ -177,6 +193,8 @@ def resolve_target(
             "dans le profil sélectionné."
         )
 
-    api_key_env = cli_api_key_env or (profile.api_key_env if profile else None) or DEFAULT_API_KEY_ENV
+    api_key_env = (
+        cli_api_key_env or (profile.api_key_env if profile else None) or DEFAULT_API_KEY_ENV
+    )
 
     return Resolved(url=normalize_url(raw_url), api_key_env=api_key_env, profile_name=profile_name)

@@ -41,7 +41,9 @@ def test_each_record_is_durable_without_waiting_for_the_batch_to_finish(tmp_path
     state = PushState.open(path, instance=INSTANCE_A)
 
     state.record("urn:li:dataProduct:a", "hdh-id-1")
-    assert PushState.open(path, instance=INSTANCE_A).hdh_id_for("urn:li:dataProduct:a") == "hdh-id-1"
+    assert (
+        PushState.open(path, instance=INSTANCE_A).hdh_id_for("urn:li:dataProduct:a") == "hdh-id-1"
+    )
 
     state.record("urn:li:dataProduct:b", "hdh-id-2")
     reopened = PushState.open(path, instance=INSTANCE_A)
@@ -56,7 +58,9 @@ def test_record_overwrites_existing_id_for_the_same_urn(tmp_path):
     state.record("urn:li:dataProduct:a", "hdh-id-1")
     state.record("urn:li:dataProduct:a", "hdh-id-2")
 
-    assert PushState.open(path, instance=INSTANCE_A).hdh_id_for("urn:li:dataProduct:a") == "hdh-id-2"
+    assert (
+        PushState.open(path, instance=INSTANCE_A).hdh_id_for("urn:li:dataProduct:a") == "hdh-id-2"
+    )
 
 
 def test_record_leaves_no_leftover_temp_file(tmp_path):
@@ -79,8 +83,13 @@ def test_record_writes_the_versioned_instance_partitioned_shape(tmp_path):
     state.record("urn:li:dataProduct:a", "id-a")
 
     on_disk = json.loads(path.read_text(encoding="utf-8"))
-    assert on_disk == {"version": 2, "instances": {INSTANCE_A: {"urn:li:dataProduct:a": "id-a", "urn:li:dataProduct:b": "id-b"}}}
-    assert path.read_text(encoding="utf-8") == json.dumps(on_disk, indent=2, sort_keys=True, ensure_ascii=False)
+    assert on_disk == {
+        "version": 2,
+        "instances": {INSTANCE_A: {"urn:li:dataProduct:a": "id-a", "urn:li:dataProduct:b": "id-b"}},
+    }
+    assert path.read_text(encoding="utf-8") == json.dumps(
+        on_disk, indent=2, sort_keys=True, ensure_ascii=False
+    )
 
 
 def test_open_creates_parent_directories_lazily_on_first_record(tmp_path):
@@ -163,7 +172,12 @@ class TestFlatFormatMigration:
         on_disk = json.loads(path.read_text(encoding="utf-8"))
         assert on_disk == {
             "version": 2,
-            "instances": {INSTANCE_A: {"urn:li:dataProduct:a": "legacy-id", "urn:li:dataProduct:new": "new-id"}},
+            "instances": {
+                INSTANCE_A: {
+                    "urn:li:dataProduct:a": "legacy-id",
+                    "urn:li:dataProduct:new": "new-id",
+                }
+            },
         }
 
     def test_no_warning_when_flat_file_is_empty(self, tmp_path):

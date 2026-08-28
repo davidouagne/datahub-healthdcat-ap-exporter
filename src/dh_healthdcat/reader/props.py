@@ -11,7 +11,7 @@ journalise un avertissement dans `issues` en cas d'écart (P0-3).
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date
 
 from dh_healthdcat.model import Severity, ValidationIssue
 from dh_healthdcat.reader.graph import ReadContext, SemitypedEntity
@@ -25,7 +25,9 @@ URN = "urn:li:dataType:datahub.urn"
 STRUCTURED_PROPERTY_PREFIX = "urn:li:structuredProperty:"
 
 
-def _warn(issues: list[ValidationIssue], dataset_name: str, dataset_urn: str, field: str, message: str) -> None:
+def _warn(
+    issues: list[ValidationIssue], dataset_name: str, dataset_urn: str, field: str, message: str
+) -> None:
     issues.append(
         ValidationIssue(
             severity=Severity.WARNING,
@@ -67,7 +69,13 @@ def _coerce_str(
             out.append(v)
         else:
             out.append(str(v))
-            _warn(issues, dataset_name, dataset_urn, qualified_name, f"attendu texte, reçu nombre ({v!r}) — converti tel quel")
+            _warn(
+                issues,
+                dataset_name,
+                dataset_urn,
+                qualified_name,
+                f"attendu texte, reçu nombre ({v!r}) — converti tel quel",
+            )
     return out
 
 
@@ -83,9 +91,21 @@ def _coerce_int(
         if isinstance(v, str):
             try:
                 out.append(int(float(v)))
-                _warn(issues, dataset_name, dataset_urn, qualified_name, f"attendu nombre, reçu texte ({v!r}) — converti")
+                _warn(
+                    issues,
+                    dataset_name,
+                    dataset_urn,
+                    qualified_name,
+                    f"attendu nombre, reçu texte ({v!r}) — converti",
+                )
             except ValueError:
-                _warn(issues, dataset_name, dataset_urn, qualified_name, f"valeur non numérique ignorée ({v!r})")
+                _warn(
+                    issues,
+                    dataset_name,
+                    dataset_urn,
+                    qualified_name,
+                    f"valeur non numérique ignorée ({v!r})",
+                )
         else:
             out.append(int(v))
     return out
@@ -104,7 +124,13 @@ def _coerce_date(
         try:
             out.append(date.fromisoformat(text[:10]))
         except ValueError:
-            _warn(issues, dataset_name, dataset_urn, qualified_name, f"date non ISO-8601 ignorée ({text!r})")
+            _warn(
+                issues,
+                dataset_name,
+                dataset_urn,
+                qualified_name,
+                f"date non ISO-8601 ignorée ({text!r})",
+            )
     return out
 
 
@@ -123,7 +149,13 @@ def _coerce_bool(
         elif text in ("false", "0"):
             out.append(False)
         else:
-            _warn(issues, dataset_name, dataset_urn, qualified_name, f"booléen non reconnu ignoré ({v!r})")
+            _warn(
+                issues,
+                dataset_name,
+                dataset_urn,
+                qualified_name,
+                f"booléen non reconnu ignoré ({v!r})",
+            )
     return out
 
 
