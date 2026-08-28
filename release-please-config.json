@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "fe408fb8044f1ce02ca525838891d8f5948d6aa1",
+  "packages": {
+    ".": {
+      "release-type": "python",
+      "package-name": "dh-healthdcat",
+      "include-component-in-tag": false,
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false
+    }
+  }
+}
