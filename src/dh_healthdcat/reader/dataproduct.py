@@ -199,10 +199,14 @@ def read_data_product(
         except UnknownVocabularyValueError:
             spatial.append(code)  # déjà une URI d'un autre référentiel (GeoNames...) ou code régional (FR-75)
 
-    conforms_to = tuple(
-        _as_uri(c, "aphp:conformsTo")
-        for c in props.get_strings(ctx, entity, "fr.aphp.healthdcat.referenceSpecification", title, dataproduct_urn, issues)
-    )
+    conforms_to: list[str] = []
+    for code in props.get_strings(ctx, entity, "fr.aphp.healthdcat.referenceSpecification", title, dataproduct_urn, issues):
+        try:
+            conforms_to.append(v.REFERENCE_SPECIFICATION.resolve(code))
+        except UnknownVocabularyValueError:
+            fallback = _as_uri(code, "aphp:conformsTo")  # OSIRIS & co. → urn:aphp:conformsTo:<code>
+            if fallback:
+                conforms_to.append(fallback)
     license_ = props.get_string(ctx, entity, "fr.aphp.healthdcat.license", title, dataproduct_urn, issues)
     is_referenced_by = props.get_strings(ctx, entity, "fr.aphp.healthdcat.isReferencedBy", title, dataproduct_urn, issues)
 

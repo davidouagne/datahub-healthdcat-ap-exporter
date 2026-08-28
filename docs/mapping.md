@@ -49,7 +49,7 @@ vérifié par le SHACL de base · `⚙️` = dérivé/calculé, pas une saisie.
 | `dct:modified` | | `dataProductProperties.lastModified` | |
 | `dct:temporal` | | `temporalCoverageStart`/`End` | |
 | `dct:accrualPeriodicity` | | `publishingFrequency` → `Frequency` | |
-| `dct:conformsTo` | | `referenceSpecification`, enveloppé en URI si nécessaire | |
+| `dct:conformsTo` | | `referenceSpecification` → `ReferenceSpecification` (vocab d'auteur) ; code hors vocab → `urn:aphp:conformsTo:<code>` (ex. `OSIRIS`) | |
 | `dct:license` | | `license`, passage direct | |
 | `dct:isReferencedBy` | | `fr.aphp.healthdcat.isReferencedBy` | |
 | `healthdcatap:numberOfRecords`/`numberOfUniqueIndividuals`/`min|maxTypicalAge` | | `number` | |
@@ -100,7 +100,7 @@ valide avec la seule `dcat:accessURL`.
 
 12 fichiers vendus tels quels depuis
 `hdh/.../controlled_vocabulary/controled_voc_dicts/` (voir `vocab/README.md`
-pour la liste et la procédure de resynchronisation), plus deux fichiers
+pour la liste et la procédure de resynchronisation), plus trois fichiers
 d'auteur :
 
 - **`LegalBasis.yml`** — mapping des 12 codes `eu-gdpr:A6-1-*`/`eu-gdpr:A9-2-*`
@@ -109,6 +109,10 @@ d'auteur :
   (SNOMED-CT, LOINC, ICD-10/11, ATC : URIs canoniques stables ; CIP13, UCD,
   CCAM, NFS : espace de noms `https://aphp.fr/codesystem/*` local et
   explicitement non déréférençable, faute d'identifiant officiel ANS/HDH).
+- **`ReferenceSpecification.yml`** — `HL7-FHIR-R4` → `http://hl7.org/fhir/4.0.1`,
+  `OMOP-CDM-5.4` → page GitHub Pages OHDSI versionnée, `HL7v2` → `urn:hl7-org:v2xml`
+  (URIs vérifiées le 2026-08-28, cf. `docs/research/reference-specification-uris.md`).
+  Câblé dans `reader/dataproduct.py` ; code hors vocab → `urn:aphp:conformsTo:<code>`.
 
 Toute résolution échoue explicitement (`UnknownVocabularyValueError`) plutôt
 que de retomber sur un `skos:prefLabel "NA"@en` silencieux comme le fait le

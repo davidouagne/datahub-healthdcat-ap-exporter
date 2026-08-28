@@ -73,6 +73,8 @@ def _entities() -> dict[str, dict]:
                     _sp("fr.aphp.healthdcat.contactPointEmail", "eds-coord@aphp.fr"),
                     _sp("fr.aphp.healthdcat.contactPointUrl", "https://eds.aphp.fr"),
                     _sp("fr.aphp.healthdcat.license", "https://eds.aphp.fr/licence"),
+                    # referenceSpecification : un code du vocab + un code local (OSIRIS)
+                    _sp("fr.aphp.healthdcat.referenceSpecification", "HL7-FHIR-R4", "OSIRIS"),
                     _sp("fr.aphp.healthdcat.numberOfRecords", "1000000000"),  # string au lieu de number : coercition
                     _sp("fr.aphp.healthdcat.publishingFrequency", "DAILY"),
                     _sp(UNDECLARED_PROPERTY, "x"),
@@ -169,6 +171,7 @@ _DECLARED_QUALIFIED_NAMES = [
     "fr.aphp.healthdcat.provenance", "fr.aphp.healthdcat.purpose", "fr.aphp.healthdcat.contactPointName",
     "fr.aphp.healthdcat.contactPointEmail", "fr.aphp.healthdcat.contactPointUrl", "fr.aphp.healthdcat.license",
     "fr.aphp.healthdcat.numberOfRecords", "fr.aphp.healthdcat.publishingFrequency", "fr.aphp.healthdcat.accessUrl",
+    "fr.aphp.healthdcat.referenceSpecification",
     "fr.aphp.healthdcat.publisherName", "fr.aphp.healthdcat.publisherHomepage", "fr.aphp.healthdcat.publisherEmail",
     "fr.aphp.healthdcat.publisherType", "fr.aphp.healthdcat.publisherNote", "fr.aphp.healthdcat.trustedDataHolder",
     "fr.aphp.healthdcat.hdabName", "fr.aphp.healthdcat.hdabHomepage", "fr.aphp.healthdcat.hdabEmail",

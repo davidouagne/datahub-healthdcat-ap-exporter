@@ -95,6 +95,7 @@ LANGUAGE = _load("PublicationsEuropAuthorityLanguage")
 COUNTRY = _load("PublicationsEuropAuthorityCountry")
 LEGAL_BASIS = _load("LegalBasis")
 CODING_SYSTEM = _load("CodingSystem")
+REFERENCE_SPECIFICATION = _load("ReferenceSpecification")
 
 # dcat:theme n'a pas de dictionnaire dédié côté HDH (PublicationsEuropAuthorityTheme
 # existe mais sert au thème générique EU) ; HealthDCAT-AP impose la valeur HEAL a
