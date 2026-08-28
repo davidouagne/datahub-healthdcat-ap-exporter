@@ -1,5 +1,10 @@
 # datahub-healthdcat-ap-exporter
 
+[![CI](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/actions/workflows/ci.yml/badge.svg)](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/davidouagne/datahub-healthdcat-ap-exporter/graph/badge.svg)](https://codecov.io/gh/davidouagne/datahub-healthdcat-ap-exporter)
+[![PyPI](https://img.shields.io/pypi/v/dh-healthdcat.svg)](https://pypi.org/project/dh-healthdcat/)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+
 Exporte les métadonnées de l'Entrepôt de Données de Santé (EDS) AP-HP, cataloguées dans [DataHub](https://datahubproject.io/), vers le standard [HealthDCAT-AP](https://healthdcat-ap.github.io/) — en fichier Turtle ou directement vers l'API du [Catalogue de métadonnées de la Plateforme des Données de Santé](https://catalogue-metadonnees.health-data-hub.fr/).
 
 ## Principe
