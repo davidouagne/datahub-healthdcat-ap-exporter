@@ -12,7 +12,9 @@ on:
 permissions: {}
 
 concurrency:
-  group: commit-policy-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  # `github.event_name` dans la clé : sinon les déclencheurs pull_request et
+  # pull_request_target partagent le même groupe et s'annulent mutuellement.
+  group: commit-policy-${{ github.event_name }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
