@@ -1,0 +1,30 @@
+name: Dependabot auto-merge
+
+# Auto-merge des PR Dependabot (ADR-0003 / #24) : patch partout, minor pour
+# les dépendances de dev uniquement. `gh pr merge --auto` attend que les
+# checks requis soient verts et ne contourne aucune règle de branche.
+on: pull_request
+
+permissions: {}
+
+jobs:
+  auto-merge:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Métadonnées Dependabot
+        id: meta
+        uses: dependabot/fetch-metadata@v2
+
+      - name: Activer l'auto-merge
+        if: >-
+          steps.meta.outputs.update-type == 'version-update:semver-patch' ||
+          (steps.meta.outputs.update-type == 'version-update:semver-minor' &&
+          steps.meta.outputs.dependency-type == 'direct:development')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --auto --merge "$PR_URL"
