@@ -3,16 +3,17 @@
 ## Mise en place de l'environnement
 
 ```bash
-uv venv
-uv pip install -e ".[dev]"
+uv sync
 ```
 
-Sans `uv`, un `venv` standard fonctionne aussi :
+Cela crée `.venv/` et installe le projet en mode éditable avec le groupe de
+dépendances `dev` (PEP 735). Sans `uv`, un `venv` standard fonctionne aussi
+(pip ≥ 25.1 pour `--group`) :
 
 ```bash
 python -m venv .venv
 .venv/Scripts/activate  # ou source .venv/bin/activate sous Linux/macOS
-pip install -e ".[dev]"
+pip install -e . --group dev
 ```
 
 ## Lancer les tests
@@ -72,10 +73,34 @@ Ce dépôt suit le format [Conventional Commits](https://www.conventionalcommits
 <type>[scope optionnel]: <description>
 
 [corps optionnel]
+
+Signed-off-by: Prénom Nom <email>
 ```
 
-Types utilisés : `feat`, `fix`, `test`, `docs`, `chore`. Sujet à l'impératif,
-≤ 72 caractères, sans point final.
+Types autorisés : `feat`, `fix`, `test`, `docs`, `chore`, `build`. Sujet à
+l'impératif, ≤ 72 caractères, sans point final. Scopes libres.
+
+### Signoff DCO
+
+Chaque commit doit porter un trailer `Signed-off-by:` attestant du
+[Developer Certificate of Origin](https://developercertificate.org/). Il
+s'ajoute automatiquement avec :
+
+```bash
+git commit -s
+```
+
+### Historique de branche propre
+
+`main` n'accepte que le **merge par commit de merge** (pas de squash, pas de
+rebase-merge) : **tous** les commits de la branche atterrissent sur `main` et
+sont lus par release-please pour le calcul de version et le changelog. Avant
+d'ouvrir la PR, nettoyez l'historique de la branche (rebase interactif) pour
+que chaque commit soit atomique et son message exact.
+
+Vérifié en CI (`.github/workflows/commit-policy.yml`) : `commitlint` sur
+chaque commit non-merge, `dco` pour le signoff, et le titre de PR (futur
+sujet du commit de merge) doit lui aussi être un Conventional Commit valide.
 
 ## Avant de proposer une modification
 
