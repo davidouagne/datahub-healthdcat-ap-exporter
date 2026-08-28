@@ -31,7 +31,9 @@ jobs:
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
-          signoff: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          # signoff : porté par release-please-config.json (l'action v4
+          # n'expose pas cet input) — le commit chore(main): release … du bot
+          # porte ainsi un Signed-off-by et passe le check dco (ADR-0002).
 
   build:
     needs: release-please
