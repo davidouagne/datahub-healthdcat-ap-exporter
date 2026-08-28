@@ -15,15 +15,18 @@ Fichiers vendus : `AccessRights`, `ApplicableRegulations`, `Booleans`,
 `PersonalData`, `PublicationsEuropAuthorityCountry`,
 `PublicationsEuropAuthorityLanguage`, `PublisherType`.
 
-⚠️ `HealthCategories.yml` et `HealthTheme.yml` pointent sur un hôte de
-développement en dur côté HDH (`http://13.81.34.152:1101/...`) — vu tel quel
-dans les fichiers sources du HDH, donc pas une erreur de recopie de notre
-part. Ce n'est pas bloquant côté `dh-healthdcat` : la shape SHACL n'exige
-qu'une IRI pour `healthdcatap:healthCategory`/`healthTheme`
-(`sh:nodeKind sh:BlankNodeOrIRI`, aucun `sh:in` restreignant les valeurs
-autorisées), donc l'hôte exact ne fait pas échouer la validation. Si le HDH
-republie un jour ces dictionnaires sur un hôte de production, un simple
-resynchronisation de ces deux fichiers suffit — voir la politique ci-dessus.
+⚠️ `HealthCategories.yml` et `HealthTheme.yml` résolvent vers
+`http://healthdataportal.eu/resource/authority/{healthcategories,health-theme}/…`,
+le namespace SEMIC HealthDCAT-AP (le même que `PublisherType.yml`). Aucun hôte
+de vocabulaire **canonique** n'est publié à ce jour pour ces deux termes (le
+vocabulaire HealthDCAT-AP `healthCategory` n'est pas encore créé côté EC ; le
+Publications Office est pressenti à terme) — ces IRI ne sont donc pas encore
+déréférençables. Ce n'est pas bloquant : la shape SHACL n'exige qu'une IRI
+pour `healthdcatap:healthCategory`/`healthTheme` (`sh:nodeKind sh:BlankNodeOrIRI`,
+aucun `sh:in`), donc l'hôte exact ne fait pas échouer la validation. Les
+sources HDH portaient historiquement un hôte de dév en dur
+(`http://13.81.34.152:1101/…`), repointé ici (issue #6) ; resynchroniser ces
+deux fichiers quand un hôte officiel paraîtra.
 
 Trois fichiers sont d'auteur (pas vendus du HDH, qui ne publie pas de
 dictionnaire équivalent) :

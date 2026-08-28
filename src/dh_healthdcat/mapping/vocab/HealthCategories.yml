@@ -1,23 +1,23 @@
 HealthCategories:
   col: A
   vocabulary_list:
-    EHRS: http://13.81.34.152:1101/resource/authority/healthcategories/EHRS
-    DIOH: http://13.81.34.152:1101/resource/authority/healthcategories/DIOH
-    NRPE: http://13.81.34.152:1101/resource/authority/healthcategories/NRPE
-    RPDG: http://13.81.34.152:1101/resource/authority/healthcategories/RPDG
-    HRAD: http://13.81.34.152:1101/resource/authority/healthcategories/HRAD
-    HGPD: http://13.81.34.152:1101/resource/authority/healthcategories/HGPD
-    HPML: http://13.81.34.152:1101/resource/authority/healthcategories/HPML
-    PGEH: http://13.81.34.152:1101/resource/authority/healthcategories/PGEH
-    WELA: http://13.81.34.152:1101/resource/authority/healthcategories/WELA
-    IDHP: http://13.81.34.152:1101/resource/authority/healthcategories/IDHP
-    PHDR: http://13.81.34.152:1101/resource/authority/healthcategories/PHDR
-    MRMR: http://13.81.34.152:1101/resource/authority/healthcategories/MRMR
-    EHCT: http://13.81.34.152:1101/resource/authority/healthcategories/EHCT
-    EMRD: http://13.81.34.152:1101/resource/authority/healthcategories/EMRD
-    RMMD: http://13.81.34.152:1101/resource/authority/healthcategories/RMMD
-    RQSH: http://13.81.34.152:1101/resource/authority/healthcategories/RQSH
-    EINS: http://13.81.34.152:1101/resource/authority/healthcategories/EINS
+    EHRS: http://healthdataportal.eu/resource/authority/healthcategories/EHRS
+    DIOH: http://healthdataportal.eu/resource/authority/healthcategories/DIOH
+    NRPE: http://healthdataportal.eu/resource/authority/healthcategories/NRPE
+    RPDG: http://healthdataportal.eu/resource/authority/healthcategories/RPDG
+    HRAD: http://healthdataportal.eu/resource/authority/healthcategories/HRAD
+    HGPD: http://healthdataportal.eu/resource/authority/healthcategories/HGPD
+    HPML: http://healthdataportal.eu/resource/authority/healthcategories/HPML
+    PGEH: http://healthdataportal.eu/resource/authority/healthcategories/PGEH
+    WELA: http://healthdataportal.eu/resource/authority/healthcategories/WELA
+    IDHP: http://healthdataportal.eu/resource/authority/healthcategories/IDHP
+    PHDR: http://healthdataportal.eu/resource/authority/healthcategories/PHDR
+    MRMR: http://healthdataportal.eu/resource/authority/healthcategories/MRMR
+    EHCT: http://healthdataportal.eu/resource/authority/healthcategories/EHCT
+    EMRD: http://healthdataportal.eu/resource/authority/healthcategories/EMRD
+    RMMD: http://healthdataportal.eu/resource/authority/healthcategories/RMMD
+    RQSH: http://healthdataportal.eu/resource/authority/healthcategories/RQSH
+    EINS: http://healthdataportal.eu/resource/authority/healthcategories/EINS
   en:
     EHRS: Electronic Health Data from EHRs
     DIOH: Data on factors impacting on health, including socio-economic, environmental
