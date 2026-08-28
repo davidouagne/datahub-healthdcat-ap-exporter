@@ -207,6 +207,11 @@ def dataset_to_graph(dataset: HealthDataset, graph: Graph | None = None) -> Grap
     for pd in dataset.personal_data:
         graph.add((uri, DPV.hasPersonalData, URIRef(pd)))
 
+    # --- healthdcatap:hasStructuredData (xsd:boolean, cardinalité R7 1..1) :
+    # dérivé de la présence d'un schéma sur au moins un asset (cf.
+    # HealthDataset.has_structured_data) ; toujours émis, `false` compris. ---
+    graph.add((uri, HEALTHDCATAP.hasStructuredData, Literal(dataset.has_structured_data, datatype=XSD.boolean)))
+
     # --- Distributions / échantillons ---
     for distribution in dataset.distributions:
         distribution_mapping.add_distribution(graph, uri, distribution, dataset.title, dataset.issues)

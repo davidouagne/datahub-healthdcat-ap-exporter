@@ -200,3 +200,11 @@ class HealthDataset:
     @property
     def has_errors(self) -> bool:
         return any(i.severity is Severity.ERROR for i in self.issues)
+
+    @property
+    def has_structured_data(self) -> bool:
+        """healthdcatap:hasStructuredData — `true` ssi au moins un asset
+        (distribution ou échantillon) porte un schéma, c.-à-d. une `Table`
+        dérivée de `schemaMetadata` par le reader."""
+
+        return any(d.table is not None for d in (*self.distributions, *self.samples))
