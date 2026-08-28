@@ -51,6 +51,10 @@ def test_reference_specification_maps_standards_to_canonical_uris():
         v.REFERENCE_SPECIFICATION.resolve("OSIRIS")
 
 
-def test_health_category_and_theme_use_hdh_dev_host():
-    # Question ouverte Q1 de la spec : ne pas "corriger" cette URI par erreur.
-    assert v.HEALTH_CATEGORY.resolve("HRAD").startswith("http://13.81.34.152:1101/")
+def test_health_category_and_theme_use_semic_authority_host():
+    # Aucun hôte de vocab canonique n'existe encore pour healthCategory /
+    # healthTheme (vocab HealthDCAT-AP non publié). On aligne sur le namespace
+    # SEMIC healthdataportal.eu, comme PublisherType.yml — non déréférençable
+    # pour l'instant, mais un identifiant SEMIC plutôt qu'une IP de dev.
+    assert v.HEALTH_CATEGORY.resolve("HRAD") == "http://healthdataportal.eu/resource/authority/healthcategories/HRAD"
+    assert v.HEALTH_THEME.resolve("health_systems") == "http://healthdataportal.eu/resource/authority/health-theme/HEALTH_SYSTEMS"

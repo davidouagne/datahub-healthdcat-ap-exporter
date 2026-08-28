@@ -143,5 +143,5 @@ détail exact.
 | `prov:qualifiedAttribution` (dataController/dataProcessor) | Propriétés existantes non reprises, pas d'équivalent HealthDCAT-AP direct | P2 |
 | `dqv:hasQualityAnnotation` | Entités `ASSERTION` (quality-layer) non lues | P2 |
 | `fr.aphp.healthdcat.publishingFrequency` allowedValue `IRREGULAR` | Le vocabulaire HDH `Frequency` attend `IRREG` — écart détecté par `resolve_or_warn` (dégradé en avertissement, pas d'échec) | à corriger dans `assets.yml` |
-| `HealthCategories`/`HealthTheme` (URIs HDH) | Pointent sur un hôte de développement en dur (`http://13.81.34.152:1101/...`) côté HDH | à reconfirmer avant publication en production |
+| `HealthCategories`/`HealthTheme` (URIs) | Repointées de l'hôte de dév en dur (`13.81.34.152:1101`) vers le namespace SEMIC `http://healthdataportal.eu/resource/authority/...` (issue #6). Aucun hôte canonique publié à ce jour → IRI pas encore déréférençables | resynchroniser quand l'EC/HDH publiera le vocabulaire officiel |
 | `fr.aphp.healthdcat.retentionPeriod` (ancienne, texte ISO 8601) | Dépréciée au profit de `retentionPeriodStart`/`retentionPeriodEnd`, toujours déclarée dans `assets.yml` mais plus exportée | à retirer une fois la curation terminée |

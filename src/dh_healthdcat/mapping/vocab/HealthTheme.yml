@@ -1,26 +1,26 @@
 HealthTheme:
   col: A
   vocabulary_list:
-    climate_health: http://13.81.34.152:1101/resource/authority/health-theme/CLIMATE_HEALTH
-    antimicrobial_control: http://13.81.34.152:1101/resource/authority/health-theme/ANTIMICROBIAL_CONTROL
-    environmental_health: http://13.81.34.152:1101/resource/authority/health-theme/ENVIRONMENTAL_HEALTH
-    blood_infections: http://13.81.34.152:1101/resource/authority/health-theme/BLOOD_INFECTIONS
-    health_systems: http://13.81.34.152:1101/resource/authority/health-theme/HEALTH_SYSTEMS
-    sensory_health: http://13.81.34.152:1101/resource/authority/health-theme/SENSORY_HEALTH
-    respiratory_diseases: http://13.81.34.152:1101/resource/authority/health-theme/RESPIRATORY_DISEASES
-    lifecourse_health: http://13.81.34.152:1101/resource/authority/health-theme/LIFECOURSE_HEALTH
-    immunization_diseases: http://13.81.34.152:1101/resource/authority/health-theme/IMMUNIZATION_DISEASES
-    enteric_infections: http://13.81.34.152:1101/resource/authority/health-theme/ENTERIC_INFECTIONS
-    injury_prevention: http://13.81.34.152:1101/resource/authority/health-theme/INJURY_PREVENTION
-    emergency_settings: http://13.81.34.152:1101/resource/authority/health-theme/EMERGENCY_SETTINGS
-    cancer_disease: http://13.81.34.152:1101/resource/authority/health-theme/CANCER_DISEASE
-    vector_diseases: http://13.81.34.152:1101/resource/authority/health-theme/VECTOR_DISEASES
-    health_products: http://13.81.34.152:1101/resource/authority/health-theme/HEALTH_PRODUCTS
-    noncommunicable_diseases: http://13.81.34.152:1101/resource/authority/health-theme/NONCOMMUNICABLE_DISEASES
-    mental_health: http://13.81.34.152:1101/resource/authority/health-theme/MENTAL_HEALTH
-    reproductive_health: http://13.81.34.152:1101/resource/authority/health-theme/REPRODUCTIVE_HEALTH
-    nutrition_security: http://13.81.34.152:1101/resource/authority/health-theme/NUTRITION_SECURITY
-    tropical_diseases: http://13.81.34.152:1101/resource/authority/health-theme/TROPICAL_DISEASES
+    climate_health: http://healthdataportal.eu/resource/authority/health-theme/CLIMATE_HEALTH
+    antimicrobial_control: http://healthdataportal.eu/resource/authority/health-theme/ANTIMICROBIAL_CONTROL
+    environmental_health: http://healthdataportal.eu/resource/authority/health-theme/ENVIRONMENTAL_HEALTH
+    blood_infections: http://healthdataportal.eu/resource/authority/health-theme/BLOOD_INFECTIONS
+    health_systems: http://healthdataportal.eu/resource/authority/health-theme/HEALTH_SYSTEMS
+    sensory_health: http://healthdataportal.eu/resource/authority/health-theme/SENSORY_HEALTH
+    respiratory_diseases: http://healthdataportal.eu/resource/authority/health-theme/RESPIRATORY_DISEASES
+    lifecourse_health: http://healthdataportal.eu/resource/authority/health-theme/LIFECOURSE_HEALTH
+    immunization_diseases: http://healthdataportal.eu/resource/authority/health-theme/IMMUNIZATION_DISEASES
+    enteric_infections: http://healthdataportal.eu/resource/authority/health-theme/ENTERIC_INFECTIONS
+    injury_prevention: http://healthdataportal.eu/resource/authority/health-theme/INJURY_PREVENTION
+    emergency_settings: http://healthdataportal.eu/resource/authority/health-theme/EMERGENCY_SETTINGS
+    cancer_disease: http://healthdataportal.eu/resource/authority/health-theme/CANCER_DISEASE
+    vector_diseases: http://healthdataportal.eu/resource/authority/health-theme/VECTOR_DISEASES
+    health_products: http://healthdataportal.eu/resource/authority/health-theme/HEALTH_PRODUCTS
+    noncommunicable_diseases: http://healthdataportal.eu/resource/authority/health-theme/NONCOMMUNICABLE_DISEASES
+    mental_health: http://healthdataportal.eu/resource/authority/health-theme/MENTAL_HEALTH
+    reproductive_health: http://healthdataportal.eu/resource/authority/health-theme/REPRODUCTIVE_HEALTH
+    nutrition_security: http://healthdataportal.eu/resource/authority/health-theme/NUTRITION_SECURITY
+    tropical_diseases: http://healthdataportal.eu/resource/authority/health-theme/TROPICAL_DISEASES
   en:
     climate_health: Climate Health
     antimicrobial_control: Antimicrobial Control
