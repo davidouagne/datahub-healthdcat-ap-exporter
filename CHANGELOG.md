@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.3...v0.1.4) (2026-09-02)
+
+
+### Bug Fixes
+
+* **release:** garder fromJSON du sync uv.lock + dispatch de rattrapage ([ac29cd9](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/ac29cd92ec3880cdf25ae373a9d8784b2982fd00))
+* **release:** garder fromJSON du sync uv.lock + dispatch de rattrapage ([481b650](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/481b6501698a6901f071afdd1302db17181d1975))
+
 ## [0.1.3](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.2...v0.1.3) (2026-09-02)
 
 
