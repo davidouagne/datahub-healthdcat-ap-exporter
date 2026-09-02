@@ -65,6 +65,11 @@ Mode **manifeste** (`release-please-config.json` +
 
 - `[project].version` de `pyproject.toml` reste **statique**, bumpé nativement
   (PEP 621). Pas de `__version__` dans le code ; pas de `extra-files`.
+- `uv.lock` porte aussi la version du paquet racine (`[[package]]
+  name = "dh-healthdcat"`), que release-please ne bumpe pas → décalage
+  systématique à chaque release. Recalé par un step du job `release-please`
+  (`uv lock` + commit `chore(main)` signé DCO sur la branche de la PR de
+  release) plutôt que par un `extra-files` TOML fragile sur un fichier généré.
 - `bootstrap-sha` figé au HEAD d'adoption → aucun changelog rétroactif.
 - Pré-1.0 : `bump-minor-pre-major: true` (un breaking bumpe le minor, pas
   `1.0.0`), `bump-patch-for-minor-pre-major: false`. Passage à `1.0.0` =
