@@ -4,9 +4,20 @@ name: release
 # posé par release-please via GITHUB_TOKEN ne déclenche aucun workflow, donc
 # build / publish / smoke sont des jobs de CE workflow, gardés par
 # `release_created == 'true'` et exécutés dans le contexte push/main.
+#
+# `workflow_dispatch` (input `publish_tag`) : filet de rattrapage quand le run
+# automatique d'une release a échoué APRÈS la pose du tag (job `release-please`
+# rouge => build / publish jamais exécutés). Rejoue build → publish → smoke
+# sur un tag déjà existant.
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      publish_tag:
+        description: "Tag existant (ex. v0.1.3) à (re)construire et publier sur PyPI."
+        type: string
+        required: true
 
 permissions: {}
 
@@ -39,11 +50,16 @@ jobs:
       # racine dans `uv.lock` (`[[package]] name = "dh-healthdcat"`), d'où un
       # décalage de version systématique à chaque release. On réaligne le
       # lockfile directement sur la branche de la PR de release.
+      #
+      # `steps.release.outputs.pr` vaut `''` sur un run qui FUSIONNE la PR de
+      # release : le `&& … || ''` court-circuite `fromJSON('')` (qui lèverait
+      # « Error reading JToken »). Le `if:` seul ne suffit pas — GitHub évalue
+      # le `env:` d'un step même quand son `if:` est faux.
       - name: Checkout de la branche de la PR de release
         if: ${{ steps.release.outputs.pr }}
         uses: actions/checkout@v7
         with:
-          ref: ${{ fromJSON(steps.release.outputs.pr).headBranchName }}
+          ref: ${{ steps.release.outputs.pr && fromJSON(steps.release.outputs.pr).headBranchName || '' }}
 
       - name: Installer uv
         if: ${{ steps.release.outputs.pr }}
@@ -54,7 +70,7 @@ jobs:
       - name: Synchroniser uv.lock avec pyproject.toml
         if: ${{ steps.release.outputs.pr }}
         env:
-          RELEASE_BRANCH: ${{ fromJSON(steps.release.outputs.pr).headBranchName }}
+          RELEASE_BRANCH: ${{ steps.release.outputs.pr && fromJSON(steps.release.outputs.pr).headBranchName || '' }}
         run: |
           set -euo pipefail
 
@@ -76,14 +92,17 @@ jobs:
 
   build:
     needs: release-please
-    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    # push d'une release taguée, OU rattrapage manuel sur un tag existant.
+    if: ${{ needs.release-please.outputs.release_created == 'true' || inputs.publish_tag }}
     runs-on: ubuntu-latest
     permissions:
       contents: write # gh release upload
+    env:
+      TAG: ${{ inputs.publish_tag || needs.release-please.outputs.tag_name }}
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ needs.release-please.outputs.tag_name }}
+          ref: ${{ inputs.publish_tag || needs.release-please.outputs.tag_name }}
           persist-credentials: false
 
       - uses: astral-sh/setup-uv@v7
@@ -99,7 +118,7 @@ jobs:
       - name: Attacher les artefacts à la GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ needs.release-please.outputs.tag_name }}" dist/*
+        run: gh release upload "$TAG" dist/*
 
       - uses: actions/upload-artifact@v7
         with:
@@ -132,8 +151,9 @@ jobs:
     steps:
       - name: Installer depuis PyPI et fumer la CLI
         env:
-          VERSION: ${{ needs.release-please.outputs.version }}
+          TAG: ${{ inputs.publish_tag || needs.release-please.outputs.tag_name }}
         run: |
+          VERSION="${TAG#v}"
           python -m venv /tmp/smoke
           for i in 1 2 3 4 5; do
             /tmp/smoke/bin/pip install "dh-healthdcat==$VERSION" && break
