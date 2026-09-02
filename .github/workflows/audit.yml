@@ -2,6 +2,11 @@ name: Audit dépendances
 
 # Veille de fond, complémentaire de la barrière PR (`ci.yml`) : rejoue
 # `pip-audit` chaque semaine contre le lockfile verrouillé. ADR-0003 / #18.
+#
+# Design : le job `audit` reste VERT tant que `pip-audit` s'exécute
+# correctement — une vulnérabilité connue est un constat, pas un échec de CI,
+# et se signale par une issue `dependencies`. Le job ne rougit que si
+# `pip-audit` lui-même échoue (réseau, résolution, rapport illisible).
 on:
   schedule:
     - cron: "0 6 * * 1" # lundi 06:00 UTC
@@ -15,10 +20,13 @@ concurrency:
 
 jobs:
   audit:
-    name: pip-audit (bloquant)
+    name: pip-audit
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      vulns: ${{ steps.audit.outputs.vulns }}
+      summary: ${{ steps.audit.outputs.summary }}
     steps:
       - uses: actions/checkout@v7
 
@@ -32,12 +40,46 @@ jobs:
         run: uv sync --frozen
 
       - name: pip-audit
-        run: uv run pip-audit
+        id: audit
+        run: |
+          set -euo pipefail
+
+          # pip-audit sort en code 1 aussi bien sur « vulnérabilité trouvée »
+          # que sur erreur fatale : on ne se fie pas au code retour mais au
+          # rapport JSON. Pas de rapport lisible => vraie panne => job rouge.
+          set +e
+          uv run pip-audit --format json --output audit.json --progress-spinner off
+          rc=$?
+          set -e
+
+          if ! jq -e . audit.json > /dev/null 2>&1; then
+            echo "::error::pip-audit n'a pas produit de rapport JSON exploitable (code retour $rc)."
+            exit 1
+          fi
+
+          vulns=$(jq '[.dependencies[]? | (.vulns // [])[]] | length' audit.json)
+          echo "vulns=$vulns" >> "$GITHUB_OUTPUT"
+
+          if [ "$vulns" -eq 0 ]; then
+            echo "Aucune vulnérabilité connue dans les dépendances verrouillées."
+            exit 0
+          fi
+
+          summary=$(jq -r '
+            [ .dependencies[]? as $d
+              | ($d.vulns // [])[]
+              | "\($d.name) \($d.version) → \(.id) (corrigé en \((.fix_versions // ["?"]) | join(", ")))"
+            ] | unique | join("; ")' audit.json)
+          echo "summary=$summary" >> "$GITHUB_OUTPUT"
+
+          echo "$vulns vulnérabilité(s) connue(s) :"
+          jq -r '.dependencies[]? | select((.vulns // []) | length > 0)
+            | .name + " " + .version + " : " + ([.vulns[].id] | unique | join(", "))' audit.json
 
   open-issue:
-    name: Ouvrir une issue à l'échec
+    name: Ouvrir une issue si vulnérabilité
     needs: audit
-    if: failure()
+    if: needs.audit.outputs.vulns != '' && needs.audit.outputs.vulns != '0'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -45,9 +87,15 @@ jobs:
       - name: Créer l'issue « dependencies » (dédoublonnée par titre)
         env:
           GH_TOKEN: ${{ github.token }}
+          # gh déduit sinon le dépôt du `git remote` local : ce job n'a pas de
+          # checkout, d'où l'échec « not a git repository » (run 33396751174).
+          GH_REPO: ${{ github.repository }}
           TITLE: "pip-audit : vulnérabilité connue dans les dépendances"
+          SUMMARY: ${{ needs.audit.outputs.summary }}
           RUN_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         run: |
+          set -euo pipefail
+
           gh label create dependencies \
             --color BFD4F2 \
             --description "Sécurité et mises à jour de dépendances" \
@@ -66,8 +114,10 @@ jobs:
           gh issue create \
             --title "$TITLE" \
             --label dependencies \
-            --body "Le workflow \`audit.yml\` a échoué : \`pip-audit\` a trouvé au moins une vulnérabilité connue dans les dépendances verrouillées.
+            --body "\`pip-audit\` (workflow \`audit.yml\`) a trouvé au moins une vulnérabilité connue dans les dépendances verrouillées.
 
-          Détail dans les logs du run : $RUN_URL
+          $SUMMARY
+
+          Détail complet dans les logs du run : $RUN_URL
 
           Cette issue est dédoublonnée par titre — elle ne sera pas rouverte tant qu'elle reste ouverte."
