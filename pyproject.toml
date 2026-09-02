@@ -1,6 +1,6 @@
 [project]
 name = "dh-healthdcat"
-version = "0.1.2"
+version = "0.1.3"
 description = "Exporteur DataHub -> HealthDCAT-AP (fichier Turtle et API du catalogue HDH)"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.3](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.2...v0.1.3) (2026-09-02)
+
+
+### Bug Fixes
+
+* **audit:** job pip-audit vert + signalement par issue fiabilisé ([63d878e](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/63d878e28d7d31c2cc76c68360d84a5f5fcefe1d))
+* **audit:** job vert + issue seule, et répare le signalement ([c1d2705](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/c1d270574b0b36c0ebf7dab8a8b244aa365e5837))
+* **release:** recaler uv.lock sur le bump de version ([d06155c](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/d06155c906d99bb3393c1be1e4ec6b77afb3b301))
+* **release:** recaler uv.lock sur le bump de version ([dd2a2f5](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/dd2a2f5ef738cef6a3ffbbfce0cc66b05ccfdfe5))
+
 ## [0.1.2](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.1...v0.1.2) (2026-08-28)
 
 
