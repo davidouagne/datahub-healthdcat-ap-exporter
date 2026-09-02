@@ -46,8 +46,12 @@ Le plafond de la matrice Python est calé sur la fourchette supportée par
 `ignore: ["tests/**"]`.
 
 **Audit** : `pip-audit` advisory à chaque PR + workflow dédié
-`.github/workflows/audit.yml` (cron hebdomadaire lundi 06:00 UTC, **bloquant**,
-ouvre une issue `dependencies` à l'échec, dédoublonnée par titre).
+`.github/workflows/audit.yml` (cron hebdomadaire lundi 06:00 UTC). Le job
+`audit` reste **vert** tant que `pip-audit` s'exécute correctement ; une
+vulnérabilité connue est un constat, pas un échec de CI, et ouvre une issue
+`dependencies` dédoublonnée par titre (job `open-issue` conditionné au nombre
+de vulnérabilités du rapport JSON, `issues: write` isolé). Le job ne rougit
+que si `pip-audit` lui-même échoue (réseau, résolution, rapport illisible).
 
 `.pre-commit-config.yaml` de base fourni (`ruff` en `language: system` via
 `uv run` pour aligner les versions sur `uv.lock` ; `mypy` exclu), **non imposé**
