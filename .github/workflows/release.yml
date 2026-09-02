@@ -35,6 +35,45 @@ jobs:
           # n'expose pas cet input) — le commit chore(main): release … du bot
           # porte ainsi un Signed-off-by et passe le check dco (ADR-0002).
 
+      # release-please bumpe `pyproject.toml` mais ignore l'entrée du paquet
+      # racine dans `uv.lock` (`[[package]] name = "dh-healthdcat"`), d'où un
+      # décalage de version systématique à chaque release. On réaligne le
+      # lockfile directement sur la branche de la PR de release.
+      - name: Checkout de la branche de la PR de release
+        if: ${{ steps.release.outputs.pr }}
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ fromJSON(steps.release.outputs.pr).headBranchName }}
+
+      - name: Installer uv
+        if: ${{ steps.release.outputs.pr }}
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+
+      - name: Synchroniser uv.lock avec pyproject.toml
+        if: ${{ steps.release.outputs.pr }}
+        env:
+          RELEASE_BRANCH: ${{ fromJSON(steps.release.outputs.pr).headBranchName }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # `uv lock` sans --upgrade : recale la seule version du paquet racine
+          # sur pyproject.toml, sans reresoudre les dépendances.
+          uv lock
+
+          if git diff --quiet -- uv.lock; then
+            echo "uv.lock déjà synchrone — rien à faire."
+            exit 0
+          fi
+
+          git add uv.lock
+          git commit -s -m "chore(main): synchroniser uv.lock avec pyproject.toml"
+          git push origin "HEAD:$RELEASE_BRANCH"
+
   build:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created == 'true' }}
