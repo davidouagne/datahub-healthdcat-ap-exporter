@@ -83,16 +83,21 @@ Mode **manifeste** (`release-please-config.json` +
 
 ## 3. Publication PyPI (`.github/workflows/release.yml`)
 
-Un seul workflow, `on: push: branches: [main]`, `permissions: {}`,
-`concurrency: { group: release, cancel-in-progress: false }`. Quatre jobs
-enchaînés, tous gardés par
-`if: needs.release-please.outputs.release_created == 'true'` :
+Un seul workflow, `on: push: branches: [main]` (+ `workflow_dispatch`),
+`permissions: {}`, `concurrency: { group: release, cancel-in-progress: false }`.
+Quatre jobs enchaînés, `build` → `publish` → `smoke` gardés par
+`if: needs.release-please.outputs.release_created == 'true' || inputs.publish_tag` :
 
 `release-please` → `build` → `publish` → `smoke`.
 
 - **Pas de PAT ni de GitHub App** : le tag posé par `GITHUB_TOKEN` ne déclenchant
   aucun workflow, le job `publish` vit dans le même workflow, gardé par la sortie
   `release_created` (et non par un trigger `on: release` ou `on: push: tags`).
+- **Rattrapage** : `workflow_dispatch` avec input `publish_tag` (ex. `v0.1.3`)
+  rejoue `build` → `publish` → `smoke` sur un tag déjà posé, pour le cas où le
+  run automatique a échoué *après* le tag (job `release-please` rouge). Sans
+  ce filet, une version tagguée mais non publiée n'a aucun chemin de reprise
+  (`release_created` n'est vrai qu'au run qui crée la release).
 - `build` (`contents: write`) : checkout du tag (`ref: tag_name`,
   `persist-credentials: false`), `uv build --no-sources`, `uvx twine check`,
   `gh release upload` des artefacts sur la Release créée par release-please,
