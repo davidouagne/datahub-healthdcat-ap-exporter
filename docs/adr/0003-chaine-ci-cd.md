@@ -41,9 +41,16 @@ Outils de dev déplacés de `[project.optional-dependencies].dev` vers
 Le plafond de la matrice Python est calé sur la fourchette supportée par
 `acryl-datahub` — à rouvrir quand la CLI DataHub monte à 3.13.
 
-**Couverture** : pas de `--cov-fail-under`. La barrière est **Codecov** —
-`project: auto` (anti-régression) et `patch: 80 %`, tous deux bloquants ;
-`ignore: ["tests/**"]`.
+**Couverture** *(révisé par [#65](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/65) /
+[#69](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/69), alignement sur
+`datahub-yaml-source`)* : la barrière réelle est `pytest --cov-fail-under=80`
+dans le job `test` (les trois legs de la matrice). Codecov redevient
+**purement informatif** — `project` et `patch` en `informational: true` dans
+`codecov.yml` — pour qu'une panne Codecov ou une PR de fork sans jeton OIDC ne
+puisse plus faire échouer la CI. `ignore: ["tests/**"]` inchangé. L'upload
+Codecov (`fail_ci_if_error: false`, `if: always()`) tente toujours d'envoyer
+le rapport, y compris quand `pytest` a déjà fait échouer le job sur la
+barrière de couverture.
 
 **Audit** : `pip-audit` advisory à chaque PR + workflow dédié
 `.github/workflows/audit.yml` (cron hebdomadaire lundi 06:00 UTC). Le job
@@ -153,29 +160,44 @@ hebdomadaire ; pas de `lockFileMaintenance`.
 - Hygiène des secrets : `config.py` refuse déjà toute `api_key` en clair dans le
   fichier de configuration versionnable (`api_key_env` uniquement) ; `.env` est
   gitignoré. Rien à corriger.
-- Rulesets GitHub : `main` (voir *Conséquences*) et `v*` (création / suppression
-  de tags restreintes, bypass `Repository admin` + `GitHub Actions`).
+- Protection de branche `main` (voir *Conséquences*) et ruleset `v*` (création /
+  suppression de tags restreintes, bypass `Repository admin` + `GitHub Actions`).
   Environnement `pypi` : *required reviewer* `davidouagne`,
   *deployment branches* = `main` (le job `publish` s'exécute dans le contexte
   `push`/`main`, pas sur une ref de tag).
+- CodeQL *default setup* activé
+  ([#65](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/65) /
+  [#68](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/68),
+  alignement sur `datahub-yaml-source`) : `languages: [python, actions]`,
+  `query_suite: default`, `threat_model: remote`, `schedule: weekly`. Non
+  ajouté aux checks requis de la protection de branche (traitement non
+  bloquant, identique au dépôt jumeau).
 
 **Hors périmètre** (à rouvrir seulement si l'ambition est redessinée, comme
-effort neuf) : CodeQL / SAST, OpenSSF Scorecard, épinglage SHA généralisé,
-provenance SLSA `actions/attest-build-provenance`. Les attestations PEP 740
-natives de `gh-action-pypi-publish` restent, elles, dans le périmètre (§3).
+effort neuf) : OpenSSF Scorecard, épinglage SHA généralisé, provenance SLSA
+`actions/attest-build-provenance`. Les attestations PEP 740 natives de
+`gh-action-pypi-publish` restent, elles, dans le périmètre (§3).
 
 ## Conséquences
 
-- **Dix checks requis** sur `main` : `lint`, `typecheck`, `test (3.10)`,
-  `test (3.11)`, `test (3.12)`, `build`, `dco`, `commitlint`, `pr-title`,
-  `dependency-review`. Un check n'est ajoutable au ruleset qu'après l'avoir vu
-  tourner une fois → la mise en place est séquencée (voir l'issue de checklist
-  d'implémentation liée à cet ADR).
-- Ruleset `main` : PR obligatoire sans revue requise (0 approbation ; pas de
-  `CODEOWNERS` — l'auto-merge Dependabot en dépend), `strict` / up-to-date
-  désactivé, `Require conversation resolution` activé, force-push et suppression
-  bloqués, `Require linear history` désactivé (ADR-0002 §1), bypass
-  `Repository admin`.
+- **Révisé par [#65](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/65) /
+  [#67](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/67)**,
+  alignement sur `datahub-yaml-source` : plutôt que dix checks individuels sur
+  un ruleset, un job d'agrégation `CI status`
+  ([#66](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/66))
+  `needs: [lint, typecheck, test, build]` donne un seul contexte stable,
+  insensible aux noms de legs de la matrice `test`.
+- Protection de branche classique (API `branches/{branch}/protection`, pas un
+  ruleset) sur `main` : `required_status_checks.contexts = ["CI status",
+  "dependency-review"]`, `strict: false`, pas de revue de PR requise (0
+  approbation ; pas de `CODEOWNERS` — l'auto-merge Dependabot en dépend),
+  `enforce_admins: false`, force-push et suppression bloqués, `Require
+  conversation resolution` **désactivé** (pas dans le périmètre de #67),
+  `Require linear history` désactivé (ADR-0002 §1). `dco` / `commitlint` /
+  `pr-title` continuent de tourner sur chaque PR (`commit-policy.yml`,
+  ADR-0002) mais ne font pas partie des contextes requis — posture inchangée,
+  `main` n'ayant jamais eu de protection avant #67 (hors périmètre explicite
+  de #65).
 - Fichiers à créer : `.github/workflows/{ci.yml (modifié), commit-policy.yml,
   audit.yml, release.yml, dependabot-auto-merge.yml}`, `.github/dependabot.yml`,
   `release-please-config.json`, `.release-please-manifest.json`, `SECURITY.md`,
