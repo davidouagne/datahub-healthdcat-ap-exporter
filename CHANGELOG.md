@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.5](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.4...v0.1.5) (2026-09-14)
+
+
+### Documentation
+
+* publish the shared CI/CD, security & quality standard ([f73b400](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/f73b400e2a4f7650075b721116422ede591f1528))
+* publish the shared CI/CD, security & quality standard ([af84194](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/af8419482a577273bb3a9a1da28b7ca334da519d))
+* reconcile ADR-0003 with the CI/CD standardization pass ([965e086](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/965e0864ab30b581b760e5fde1b86707c11a58d7))
+* reconcile ADR-0003 with the CI/CD standardization pass ([500112e](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/500112eee4a4e9b6f921ecf3a9dad5c4e006641a))
+
 ## [0.1.4](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.3...v0.1.4) (2026-09-02)
 
 
