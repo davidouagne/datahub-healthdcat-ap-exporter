@@ -85,15 +85,15 @@ jobs:
         run: uv sync --frozen
 
       - name: pytest + couverture
-        run: uv run pytest --cov=dh_healthdcat --cov-report=xml
+        run: uv run pytest --cov=dh_healthdcat --cov-report=xml --cov-fail-under=80
 
       - name: Upload couverture vers Codecov
-        if: matrix.python-version == '3.12'
+        if: always() && matrix.python-version == '3.12'
         uses: codecov/codecov-action@v7
         with:
           use_oidc: true
           files: ./coverage.xml
-          fail_ci_if_error: true
+          fail_ci_if_error: false
 
   build:
     name: build

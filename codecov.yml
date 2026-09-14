@@ -1,15 +1,19 @@
-# Barrière de couverture (ADR-0003 / #18).
-# - project: auto → anti-régression sans chiffre magique (bloquant).
-# - patch: 80% → le code neuf d'une PR doit être couvert (bloquant).
+# Barrière de couverture (ADR-0003 / #18, informational : #65 / #69).
+# Codecov est purement informatif : la vraie barrière (80%) tourne dans
+# `pytest --cov-fail-under=80` (ci.yml, job `test`), pas ici. Une panne
+# Codecov ou une PR de fork sans jeton OIDC ne peut donc plus faire
+# échouer la CI pour une raison étrangère à la couverture réelle.
 coverage:
   status:
     project:
       default:
         target: auto
         threshold: 0%
+        informational: true
     patch:
       default:
         target: 80%
+        informational: true
 
 ignore:
   - "tests/**"
