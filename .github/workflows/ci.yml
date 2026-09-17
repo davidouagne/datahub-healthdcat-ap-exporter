@@ -137,22 +137,6 @@ jobs:
           print('Données embarquées (vocab + shapes SHACL) chargées avec succès.')
           "
 
-  dependency-review:
-    name: dependency-review
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Revue des dépendances de la PR
-        uses: actions/dependency-review-action@v5
-        with:
-          fail-on-severity: high
-          # Projet Apache-2.0 : refuse l'entrée de dépendances sous copyleft fort.
-          deny-licenses: "GPL-2.0-only, GPL-2.0-or-later, GPL-3.0-only, GPL-3.0-or-later, AGPL-3.0-only, AGPL-3.0-or-later"
-
   ci-status:
     name: CI status
     runs-on: ubuntu-latest

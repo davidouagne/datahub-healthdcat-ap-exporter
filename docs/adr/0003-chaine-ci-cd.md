@@ -24,7 +24,10 @@ Jobs parallèles, `permissions: {}` au niveau workflow, élévation minimale par
 | `typecheck` | `mypy` strict sur `src/dh_healthdcat` (`tests/` allégé) |
 | `test` | matrice Python 3.10 / 3.11 / 3.12 ; `pytest` + `pytest-cov` → `coverage.xml` (upload Codecov depuis le leg 3.12) |
 | `build` | `uv build` + fumée du wheel non-éditable (job existant, conservé) |
-| `dependency-review` | `actions/dependency-review-action`, `fail-on-severity: high` + contrôle de licences, **bloquant** |
+
+`dependency-review` a été extrait dans son propre workflow,
+`.github/workflows/dependency-review.yml` — voir §1bis — alignement sur
+`datahub-yaml-source` ([#83](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/83)).
 
 Config `ruff` : `select = [E, F, W, I, UP, B, SIM, C4, RUF, PL]`, `line-length = 100`,
 `target-version = "py310"`, `per-file-ignores` (`tests/**` → `PLR2004`,
@@ -65,6 +68,24 @@ que si `pip-audit` lui-même échoue (réseau, résolution, rapport illisible).
 `.pre-commit-config.yaml` de base fourni (`ruff` en `language: system` via
 `uv run` pour aligner les versions sur `uv.lock` ; `mypy` exclu), **non imposé**
 en CI.
+
+## 1bis. Revue de dépendances (`.github/workflows/dependency-review.yml`)
+
+*(Extrait de `ci.yml` par [#83](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/83),
+alignement sur `datahub-yaml-source`, qui l'a en workflow dédié plutôt qu'en
+job de `ci.yml`.)* `actions/dependency-review-action`, `fail-on-severity: high`
++ contrôle de licences (refuse GPL/AGPL, incompatibles avec la licence
+Apache-2.0 du dépôt), déclenché sur PR vers `main`. Le nom du job
+(`dependency-review`) est inchangé — c'est lui, indépendamment du fichier qui
+le porte, que référence le contexte requis dans la protection de branche
+`main` (voir *Conséquences*).
+
+**Noms des workflows** *(alignés sur `datahub-yaml-source` par
+[#83](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/83))* :
+`audit.yml` (« Audit dependencies »), `commit-policy.yml` (« Commit policy »)
+et `release.yml` (« Release ») portaient un `name:` différent du dépôt
+jumeau ; `ci.yml` (« CI ») et `dependabot-auto-merge.yml` (« Dependabot
+auto-merge ») étaient déjà alignés. Contenu des jobs inchangé.
 
 ## 2. Versioning et changelog : release-please
 

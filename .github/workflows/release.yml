@@ -1,4 +1,4 @@
-name: release
+name: Release
 
 # Mono-workflow (ADR-0003 / #25 / #26). Pas de PAT ni de GitHub App : le tag
 # posé par release-please via GITHUB_TOKEN ne déclenche aucun workflow, donc

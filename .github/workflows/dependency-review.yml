@@ -1,0 +1,37 @@
+name: Dependency review
+
+# Extrait de ci.yml (ADR-0003 / #20) dans son propre workflow, comme le
+# dépôt jumeau datahub-yaml-source : le nom du job (`dependency-review`)
+# est inchangé, c'est lui que la protection de branche `main` référence
+# comme contexte requis, indépendamment du fichier qui le porte.
+#
+# Barrière PR : `actions/dependency-review-action` diffe le graphe de
+# dépendances entre la base et la tête de la PR, et fait échouer le check
+# si la PR introduirait une dépendance vulnérable de sévérité haute ou
+# pire, ou sous une licence copyleft incompatible avec la licence
+# Apache-2.0 du dépôt.
+on:
+  pull_request:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: dependency-review-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-review:
+    name: dependency-review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Revue des dépendances de la PR
+        uses: actions/dependency-review-action@v5
+        with:
+          fail-on-severity: high
+          # Projet Apache-2.0 : refuse l'entrée de dépendances sous copyleft fort.
+          deny-licenses: "GPL-2.0-only, GPL-2.0-or-later, GPL-3.0-only, GPL-3.0-or-later, AGPL-3.0-only, AGPL-3.0-or-later"
