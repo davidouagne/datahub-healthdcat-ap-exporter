@@ -1,4 +1,4 @@
-name: Politique de commits
+name: Commit policy
 
 # ADR-0002 : chaque commit non-merge d'une PR est un Conventional Commit
 # signé DCO ; le titre de PR (futur sujet du commit de merge) est vérifié à

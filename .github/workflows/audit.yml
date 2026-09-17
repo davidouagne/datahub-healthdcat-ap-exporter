@@ -1,4 +1,4 @@
-name: Audit dépendances
+name: Audit dependencies
 
 # Veille de fond, complémentaire de la barrière PR (`ci.yml`) : rejoue
 # `pip-audit` chaque semaine contre le lockfile verrouillé. ADR-0003 / #18.
