@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.6](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.5...v0.1.6) (2026-09-17)
+
+
+### Documentation
+
+* add Python versions badge to README ([48ff23e](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/48ff23e2165a3bb15eda22ef8391ffbbc5506fff))
+* switch the Python versions badge to a static one ([3d90788](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/3d9078894ac49ea5f077fc8a9d45c9af6fdde0f2))
+* switch the Python versions badge to a static one ([8497abb](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/8497abb620f614978a008906ba117495699ee7e8))
+
 ## [0.1.5](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.4...v0.1.5) (2026-09-14)
 
 
