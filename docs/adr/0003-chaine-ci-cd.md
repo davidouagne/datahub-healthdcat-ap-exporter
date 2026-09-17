@@ -43,14 +43,16 @@ Le plafond de la matrice Python est calé sur la fourchette supportée par
 
 **Couverture** *(révisé par [#65](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/65) /
 [#69](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/69), alignement sur
-`datahub-yaml-source`)* : la barrière réelle est `pytest --cov-fail-under=80`
-dans le job `test` (les trois legs de la matrice). Codecov redevient
-**purement informatif** — `project` et `patch` en `informational: true` dans
-`codecov.yml` — pour qu'une panne Codecov ou une PR de fork sans jeton OIDC ne
-puisse plus faire échouer la CI. `ignore: ["tests/**"]` inchangé. L'upload
-Codecov (`fail_ci_if_error: false`, `if: always()`) tente toujours d'envoyer
-le rapport, y compris quand `pytest` a déjà fait échouer le job sur la
-barrière de couverture.
+`datahub-yaml-source` ; seuil monté à 90% par
+[#79](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/79))* :
+la barrière réelle est `pytest --cov-fail-under=90` dans le job `test` (les
+trois legs de la matrice). Codecov redevient **purement informatif** —
+`project` et `patch` en `informational: true` dans `codecov.yml` (`patch`
+aligné sur 90% par cohérence) — pour qu'une panne Codecov ou une PR de fork
+sans jeton OIDC ne puisse plus faire échouer la CI. `ignore: ["tests/**"]`
+inchangé. L'upload Codecov (`fail_ci_if_error: false`, `if: always()`) tente
+toujours d'envoyer le rapport, y compris quand `pytest` a déjà fait échouer
+le job sur la barrière de couverture.
 
 **Audit** : `pip-audit` advisory à chaque PR + workflow dédié
 `.github/workflows/audit.yml` (cron hebdomadaire lundi 06:00 UTC). Le job
