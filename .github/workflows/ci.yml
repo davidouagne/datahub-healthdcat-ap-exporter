@@ -85,7 +85,7 @@ jobs:
         run: uv sync --frozen
 
       - name: pytest + couverture
-        run: uv run pytest --cov=dh_healthdcat --cov-report=xml --cov-fail-under=80
+        run: uv run pytest --cov=dh_healthdcat --cov-report=xml --cov-fail-under=90
 
       - name: Upload couverture vers Codecov
         if: always() && matrix.python-version == '3.12'

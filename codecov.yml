@@ -1,7 +1,7 @@
-# Barrière de couverture (ADR-0003 / #18, informational : #65 / #69).
-# Codecov est purement informatif : la vraie barrière (80%) tourne dans
-# `pytest --cov-fail-under=80` (ci.yml, job `test`), pas ici. Une panne
-# Codecov ou une PR de fork sans jeton OIDC ne peut donc plus faire
+# Barrière de couverture (ADR-0003 / #18, informational : #65 / #69,
+# seuil 90% : #79). Codecov est purement informatif : la vraie barrière (90%)
+# tourne dans `pytest --cov-fail-under=90` (ci.yml, job `test`), pas ici. Une
+# panne Codecov ou une PR de fork sans jeton OIDC ne peut donc plus faire
 # échouer la CI pour une raison étrangère à la couverture réelle.
 coverage:
   status:
@@ -12,7 +12,7 @@ coverage:
         informational: true
     patch:
       default:
-        target: 80%
+        target: 90%
         informational: true
 
 ignore:
