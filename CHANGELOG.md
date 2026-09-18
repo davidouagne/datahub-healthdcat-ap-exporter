@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.7](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.6...v0.1.7) (2026-09-18)
+
+
+### Documentation
+
+* flag PersonalData.yml namespace mix and Death term vs DPV-PD spec ([a44355c](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/a44355cede3e1fa2964d2d6931ec846acbc11c7a))
+* flag PersonalData.yml namespace mix and Death term vs DPV-PD spec ([c702260](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/c70226070fc4e1071c4dadd6bd368e3f4ff8a168))
+* revert local Death removal, consolidate HDH vs HealthDCAT-AP gaps ([1a86b4d](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/1a86b4d474811cb04a025585039e2d53ccced3ce))
+* revert local Death removal, consolidate HDH vs HealthDCAT-AP gaps ([6380124](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/638012485e3a7b7bdb07f226b73afcc969f1d2ec))
+
 ## [0.1.6](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.5...v0.1.6) (2026-09-17)
 
 
