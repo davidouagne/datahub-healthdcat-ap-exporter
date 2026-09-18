@@ -36,7 +36,10 @@ _Avoid_: custom vocab, vocabulaire local
 
 **Vocabulaire vendu**:
 Un fichier `mapping/vocab/*.yml` copié verbatim des dictionnaires du Catalogue HDH. En cas
-de divergence, le HDH fait foi.
+de divergence avec HealthDCAT-AP/DPV, le HDH fait foi — jamais corrigé localement, même
+quand l'écart est avéré (le HDH est responsable de sa propre conformité auprès de
+l'écosystème européen). Écarts connus consolidés dans
+`docs/research/hdh-healthdcat-ap-gaps.md`, pour signalement côté HDH.
 _Avoid_: vocabulaire importé, vocabulaire miroir
 
 **HDAB**:
