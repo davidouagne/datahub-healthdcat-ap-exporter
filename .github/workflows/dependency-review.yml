@@ -2,8 +2,8 @@ name: Dependency review
 
 # Extrait de ci.yml (ADR-0003 / #20) dans son propre workflow, comme le
 # dépôt jumeau datahub-yaml-source : le nom du job (`dependency-review`)
-# est inchangé, c'est lui que la protection de branche `main` référence
-# comme contexte requis, indépendamment du fichier qui le porte.
+# est inchangé, c'est lui que le ruleset `main` référence comme
+# contexte requis, indépendamment du fichier qui le porte.
 #
 # Barrière PR : `actions/dependency-review-action` diffe le graphe de
 # dépendances entre la base et la tête de la PR, et fait échouer le check

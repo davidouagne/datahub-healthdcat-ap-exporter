@@ -45,12 +45,18 @@ baseline throughout — see [Scope & baseline](#scope--baseline).
   (whatever the repo's actual job set is), `if: always()`, fails if any
   dependency didn't succeed. Gives branch protection one stable check-run name
   instead of depending on brittle per-matrix-leg names.
-- **Branch protection on `main`**: classic branch protection (not a GitHub
-  ruleset, unless a repo has a specific reason to prefer one).
-  `required_status_checks.contexts` includes at minimum the `CI status`
-  aggregate context, plus `dependency-review` where that job exists;
-  `strict: false`; no required PR reviews; `enforce_admins: false`. A context
-  is only addable once it has run at least once — sequence accordingly.
+- **Protection of `main`**: a single GitHub ruleset (not classic branch
+  protection — never stack both: they apply cumulatively and drift apart).
+  `required_status_checks` includes at minimum the `CI status` aggregate
+  context, plus `dependency-review` where that job exists, plus the
+  commit-policy checks where the repo has them; `strict: false`; PR required
+  with no required approvals; repository-admin bypass; force-push and deletion
+  blocked. A context is only addable once it has run at least once — sequence
+  accordingly. `CI status` aggregates only the jobs of the CI workflow; checks
+  from other workflows stay separate required contexts.
+  *(Revised in `datahub-healthdcat-ap-exporter`: this repo moved from classic
+  protection to the `main` ruleset, see ADR-0003 § Conséquences;
+  `datahub-yaml-source` may still be on classic protection.)*
 - **`dependency-review-action`** on every PR (`fail-on-severity: high`, plus a
   license deny-list matching the repo's own license — e.g. GPL-2.0/3.0 and
   AGPL-3.0 variants for an Apache-2.0 project).
@@ -74,7 +80,7 @@ baseline throughout — see [Scope & baseline](#scope--baseline).
   workflow file): `languages` scoped to the repo's actual languages
   (`python` + `actions` at minimum), `query_suite: default`,
   `threat_model: remote`, `schedule: weekly`.
-- **Not added to branch protection's required contexts** — advisory/
+- **Not added to the `main` ruleset's required contexts** — advisory/
   non-blocking by design on both repos.
 
 ## Dependency management
