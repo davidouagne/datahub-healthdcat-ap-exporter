@@ -56,7 +56,8 @@ baseline throughout — see [Scope & baseline](#scope--baseline).
   from other workflows stay separate required contexts.
   *(Revised in `datahub-healthdcat-ap-exporter`: this repo moved from classic
   protection to the `main` ruleset, see ADR-0003 § Conséquences;
-  `datahub-yaml-source` may still be on classic protection.)*
+  `datahub-yaml-source` was verified live on 2026-09-20 to carry the same
+  ruleset-only configuration.)*
 - **`dependency-review-action`** on every PR (`fail-on-severity: high`, plus a
   license deny-list matching the repo's own license — e.g. GPL-2.0/3.0 and
   AGPL-3.0 variants for an Apache-2.0 project).
