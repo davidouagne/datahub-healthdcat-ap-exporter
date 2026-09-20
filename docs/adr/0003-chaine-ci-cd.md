@@ -183,8 +183,9 @@ hebdomadaire ; pas de `lockFileMaintenance`.
 - Hygiène des secrets : `config.py` refuse déjà toute `api_key` en clair dans le
   fichier de configuration versionnable (`api_key_env` uniquement) ; `.env` est
   gitignoré. Rien à corriger.
-- Ruleset `main` (voir *Conséquences*) et ruleset `v*` (création /
-  suppression de tags restreintes, bypass `Repository admin` + `GitHub Actions`).
+- Ruleset `main` (voir *Conséquences*) et ruleset `tags-v` (`refs/tags/v*` :
+  suppression et mise à jour non fast-forward bloquées, pas de règle de
+  création ; bypass `Repository admin` seul — `docs/rulesets/tags-v.json`).
   Environnement `pypi` : *required reviewer* `davidouagne`,
   *deployment branches* = `main` (le job `publish` s'exécute dans le contexte
   `push`/`main`, pas sur une ref de tag).
@@ -227,9 +228,9 @@ effort neuf) : OpenSSF Scorecard, épinglage SHA généralisé, provenance SLSA
   matrice) et `build` : les contrôles de politique de commits
   (`commit-policy.yml`, ADR-0002) et `dependency-review` restent des contextes
   distincts. Cette posture remplace celle décrite jusqu'ici (« pas un ruleset »,
-  contextes `CI status` + `dependency-review` seuls) ; elle diverge du dépôt
-  jumeau `datahub-yaml-source`, aligné sur la protection classique par
-  #65 / #67 — sa situation actuelle n'est pas revérifiée ici.
+  contextes `CI status` + `dependency-review` seuls). Le dépôt jumeau
+  `datahub-yaml-source` porte la même configuration (ruleset seul, mêmes cinq
+  contextes, protection classique absente) — vérifié en direct le 2026-09-20.
 - Fichiers à créer : `.github/workflows/{ci.yml (modifié), commit-policy.yml,
   audit.yml, release.yml, dependabot-auto-merge.yml}`, `.github/dependabot.yml`,
   `release-please-config.json`, `.release-please-manifest.json`, `SECURITY.md`,
