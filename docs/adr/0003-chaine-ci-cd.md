@@ -77,8 +77,8 @@ job de `ci.yml`.)* `actions/dependency-review-action`, `fail-on-severity: high`
 + contrôle de licences (refuse GPL/AGPL, incompatibles avec la licence
 Apache-2.0 du dépôt), déclenché sur PR vers `main`. Le nom du job
 (`dependency-review`) est inchangé — c'est lui, indépendamment du fichier qui
-le porte, que référence le contexte requis dans la protection de branche
-`main` (voir *Conséquences*).
+le porte, que référence le contexte requis dans le ruleset `main` (voir
+*Conséquences*).
 
 **Noms des workflows** *(alignés sur `datahub-yaml-source` par
 [#83](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/83))* :
@@ -183,7 +183,7 @@ hebdomadaire ; pas de `lockFileMaintenance`.
 - Hygiène des secrets : `config.py` refuse déjà toute `api_key` en clair dans le
   fichier de configuration versionnable (`api_key_env` uniquement) ; `.env` est
   gitignoré. Rien à corriger.
-- Protection de branche `main` (voir *Conséquences*) et ruleset `v*` (création /
+- Ruleset `main` (voir *Conséquences*) et ruleset `v*` (création /
   suppression de tags restreintes, bypass `Repository admin` + `GitHub Actions`).
   Environnement `pypi` : *required reviewer* `davidouagne`,
   *deployment branches* = `main` (le job `publish` s'exécute dans le contexte
@@ -193,7 +193,7 @@ hebdomadaire ; pas de `lockFileMaintenance`.
   [#68](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/68),
   alignement sur `datahub-yaml-source`) : `languages: [python, actions]`,
   `query_suite: default`, `threat_model: remote`, `schedule: weekly`. Non
-  ajouté aux checks requis de la protection de branche (traitement non
+  ajouté aux checks requis du ruleset `main` (traitement non
   bloquant, identique au dépôt jumeau).
 
 **Hors périmètre** (à rouvrir seulement si l'ambition est redessinée, comme
@@ -210,17 +210,26 @@ effort neuf) : OpenSSF Scorecard, épinglage SHA généralisé, provenance SLSA
   ([#66](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/66))
   `needs: [lint, typecheck, test, build]` donne un seul contexte stable,
   insensible aux noms de legs de la matrice `test`.
-- Protection de branche classique (API `branches/{branch}/protection`, pas un
-  ruleset) sur `main` : `required_status_checks.contexts = ["CI status",
-  "dependency-review"]`, `strict: false`, pas de revue de PR requise (0
-  approbation ; pas de `CODEOWNERS` — l'auto-merge Dependabot en dépend),
-  `enforce_admins: false`, force-push et suppression bloqués, `Require
-  conversation resolution` **désactivé** (pas dans le périmètre de #67),
-  `Require linear history` désactivé (ADR-0002 §1). `dco` / `commitlint` /
-  `pr-title` continuent de tourner sur chaque PR (`commit-policy.yml`,
-  ADR-0002) mais ne font pas partie des contextes requis — posture inchangée,
-  `main` n'ayant jamais eu de protection avant #67 (hors périmètre explicite
-  de #65).
+- **Révisé par le passage de la protection classique au ruleset `main`** : après
+  #67, `main` était protégé à la fois par la protection de branche classique
+  (API `branches/{branch}/protection`) et par le ruleset `main` hérité de #27,
+  qui exigeait encore les dix contextes individuels. Les deux s'appliquaient
+  cumulativement et se contredisaient sur trois points (`dco` / `commitlint` /
+  `pr-title` requis ou non, résolution des conversations, noms de legs de la
+  matrice). La protection classique est **supprimée** ; le ruleset `main`
+  (`docs/rulesets/main.json`) est l'unique protection de `main`, avec :
+  PR obligatoire (0 approbation ; pas de `CODEOWNERS` — l'auto-merge Dependabot
+  en dépend), `required_status_checks` = `CI status`, `dco`, `commitlint`,
+  `pr-title`, `dependency-review` (`strict: false`), résolution des
+  conversations **requise**, force-push (`non_fast_forward`) et suppression
+  bloqués, bypass `Repository admin`. `Require linear history` reste désactivé
+  (ADR-0002 §1). `CI status` n'agrège que `lint`, `typecheck`, `test` (toute la
+  matrice) et `build` : les contrôles de politique de commits
+  (`commit-policy.yml`, ADR-0002) et `dependency-review` restent des contextes
+  distincts. Cette posture remplace celle décrite jusqu'ici (« pas un ruleset »,
+  contextes `CI status` + `dependency-review` seuls) ; elle diverge du dépôt
+  jumeau `datahub-yaml-source`, aligné sur la protection classique par
+  #65 / #67 — sa situation actuelle n'est pas revérifiée ici.
 - Fichiers à créer : `.github/workflows/{ci.yml (modifié), commit-policy.yml,
   audit.yml, release.yml, dependabot-auto-merge.yml}`, `.github/dependabot.yml`,
   `release-please-config.json`, `.release-please-manifest.json`, `SECURITY.md`,
