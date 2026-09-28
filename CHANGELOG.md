@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.8](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.7...v0.1.8) (2026-09-20)
+
+
+### Documentation
+
+* corriger l'état du ruleset tags-v et du dépôt jumeau ([495efa9](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/495efa90c4b9a2f9a918848fedb7ca0c52593d83))
+* corriger l'état du ruleset tags-v et du dépôt jumeau ([3e32e23](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/3e32e23cffbe999696df669bc536726f29a8a568))
+* ruleset main comme unique protection de branche ([9a757ab](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/9a757ab46f6dd4860ef2a02c02a074a3ad8aa960))
+* ruleset main comme unique protection de branche ([6b87bea](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/6b87bea3e7d316d377d887c121f0762f16aecf77))
+
 ## [0.1.7](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.6...v0.1.7) (2026-09-18)
 
 
