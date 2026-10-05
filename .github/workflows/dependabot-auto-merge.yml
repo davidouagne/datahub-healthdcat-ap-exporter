@@ -4,7 +4,21 @@ name: Dependabot auto-merge
 # les dépendances de dev uniquement. `gh pr merge --auto` attend que les
 # checks requis soient verts et ne contourne aucune règle de branche.
 # `--rebase` : seule méthode de merge autorisée sur `main` (ADR-0002 §1).
-on: pull_request
+#
+# Jeton (ADR-0003 §4) : l'auto-merge est activé avec le PAT fine-grained du
+# mainteneur, stocké en secret *Dependabot* AUTO_MERGE_TOKEN (un workflow
+# déclenché par Dependabot ne voit que les secrets Dependabot, pas les
+# secrets Actions). Le merge est alors attribué au mainteneur : son push sur
+# `main` déclenche release.yml (release-please met à jour la PR de release)
+# et ci.yml. Avec GITHUB_TOKEN, GitHub ne déclenche aucun workflow sur ce
+# push. Secret absent : repli sur GITHUB_TOKEN avec un avertissement — la PR
+# est toujours mergée, mais release-please attend le prochain push sur main.
+#
+# `branches: [main]` : le PAT n'agit que sur des PR visant la branche
+# couverte par le ruleset `main` et ses checks requis.
+on:
+  pull_request:
+    branches: [main]
 
 permissions: {}
 
@@ -26,6 +40,14 @@ jobs:
           (steps.meta.outputs.update-type == 'version-update:semver-minor' &&
           steps.meta.outputs.dependency-type == 'direct:development')
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUTO_MERGE_TOKEN: ${{ secrets.AUTO_MERGE_TOKEN }}
+          GITHUB_TOKEN_FALLBACK: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
-        run: gh pr merge --auto --rebase "$PR_URL"
+        run: |
+          if [ -n "$AUTO_MERGE_TOKEN" ]; then
+            export GH_TOKEN="$AUTO_MERGE_TOKEN"
+          else
+            echo "::warning::Secret Dependabot AUTO_MERGE_TOKEN absent — repli sur GITHUB_TOKEN ; le merge ne déclenchera pas release.yml (ADR-0003 §4)."
+            export GH_TOKEN="$GITHUB_TOKEN_FALLBACK"
+          fi
+          gh pr merge --auto --rebase "$PR_URL"

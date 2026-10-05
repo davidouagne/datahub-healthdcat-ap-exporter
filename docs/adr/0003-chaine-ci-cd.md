@@ -120,7 +120,9 @@ Quatre jobs enchaînés, `build` → `publish` → `smoke` gardés par
 
 `release-please` → `build` → `publish` → `smoke`.
 
-- **Pas de PAT ni de GitHub App** : le tag posé par `GITHUB_TOKEN` ne déclenchant
+- **Pas de PAT ni de GitHub App** pour release-please (le PAT de l'auto-merge
+  Dependabot, §4, sert seulement à ce que ses merges déclenchent ce workflow) :
+  le tag posé par `GITHUB_TOKEN` ne déclenchant
   aucun workflow, le job `publish` vit dans le même workflow, gardé par la sortie
   `release_created` (et non par un trigger `on: release` ou `on: push: tags`).
 - **Rattrapage** : `workflow_dispatch` avec input `publish_tag` (ex. `v0.1.3`)
@@ -158,7 +160,10 @@ Groupes : `dev-dependencies` (tout le dev en une PR), `prod-minor-patch`,
 
 Auto-merge via `.github/workflows/dependabot-auto-merge.yml`
 (`dependabot/fetch-metadata` + `gh pr merge --auto --rebase`, ADR-0002 §1) : `semver-patch`
-partout + `semver-minor` pour les seules dev-deps.
+partout + `semver-minor` pour les seules dev-deps. *(Révisé le 2026-10-05, voir
+Conséquences)* : `gh pr merge` s'authentifie avec le secret **Dependabot**
+`AUTO_MERGE_TOKEN` (PAT fine-grained) plutôt qu'avec `GITHUB_TOKEN`, et le
+déclencheur est borné à `pull_request: branches: [main]`.
 
 `uv.lock` est désormais **versionné** (retiré de `.gitignore`) — préalable à
 l'écosystème `uv` de Dependabot, à `pip-audit`, et aux builds reproductibles.
@@ -260,6 +265,29 @@ effort neuf) : OpenSSF Scorecard, épinglage SHA généralisé, provenance SLSA
   (setuptools sous `acryl-datahub`,
   [#56](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/56))
   n'est pas corrigée ; seul le bump du parent par les version updates la règle.
+- **Révisé par le passage de l'auto-merge Dependabot à un PAT** (2026-10-05,
+  alignement sur `datahub-yaml-source`, son ADR-0006) : un merge programmé par
+  `gh pr merge --auto` avec `GITHUB_TOKEN` est attribué à ce jeton, et GitHub ne
+  déclenche aucun workflow sur les événements qu'il produit (hors
+  `workflow_dispatch` / `repository_dispatch`). Le push sur `main` d'une PR
+  Dependabot auto-mergée ne lançait donc ni `release.yml` (release-please ne
+  mettait pas la PR de release à jour) ni `ci.yml`. Constaté sur le dépôt
+  jumeau : deux bumps auto-mergés absents de sa PR de release jusqu'au push
+  suivant. Désormais, `gh pr merge` utilise le secret **Dependabot**
+  `AUTO_MERGE_TOKEN` (un workflow déclenché par Dependabot ne lit pas les
+  secrets Actions) : PAT fine-grained limité à ce dépôt, permissions
+  *Contents*, *Pull requests* et *Workflows* en lecture/écriture (*Workflows*
+  car les PR Dependabot `github-actions` modifient `.github/workflows/`). Le
+  merge est attribué au mainteneur et déclenche `release.yml` et `ci.yml`
+  comme un merge manuel. Secret absent ou vide : avertissement et repli sur
+  `GITHUB_TOKEN` (comportement antérieur). Le PAT expire : le renouveler avant
+  échéance, sinon `gh pr merge` échoue et la PR attend un merge manuel. Le
+  déclencheur est borné à `branches: [main]` pour que le PAT n'agisse que sous
+  les checks requis du ruleset `main`. Alternatives écartées : `schedule`
+  quotidien sur `release.yml` (PR de release en retard d'un jour, `ci.yml`
+  toujours absent sur `main`), token de GitHub App (même effet, plus de pièces
+  à maintenir pour un mainteneur unique). La règle « pas de PAT » du §3 vaut
+  toujours pour release-please lui-même.
 - Fichiers à créer : `.github/workflows/{ci.yml (modifié), commit-policy.yml,
   audit.yml, release.yml, dependabot-auto-merge.yml}`, `.github/dependabot.yml`,
   `release-please-config.json`, `.release-please-manifest.json`, `SECURITY.md`,

@@ -92,7 +92,11 @@ baseline throughout — see [Scope & baseline](#scope--baseline).
 - **Auto-merge**, where adopted: patch bumps everywhere and minor bumps for
   dev-only dependencies, gated on required checks being green. Majors and
   minor bumps to production dependencies always get manual review. This is a
-  per-repo choice (see [Scope & baseline](#scope--baseline)).
+  per-repo choice (see [Scope & baseline](#scope--baseline)). Enable it with a
+  fine-grained PAT stored as a **Dependabot** secret (both repos:
+  `AUTO_MERGE_TOKEN`), not `GITHUB_TOKEN`: a merge attributed to
+  `GITHUB_TOKEN` triggers no workflow, so release-please never refreshes the
+  release PR and CI never runs on the merged commit.
 - **Weekly SCA job** (e.g. `pip-audit`), independent of Dependabot's own
   schedule, opening or deduping a labeled issue on a real finding. The job
   itself only turns red if the tool fails to execute (network, resolution),
