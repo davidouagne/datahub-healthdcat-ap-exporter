@@ -92,15 +92,17 @@ git commit -s
 
 ### Historique de branche propre
 
-`main` n'accepte que le **merge par commit de merge** (pas de squash, pas de
-rebase-merge) : **tous** les commits de la branche atterrissent sur `main` et
-sont lus par release-please pour le calcul de version et le changelog. Avant
-d'ouvrir la PR, nettoyez l'historique de la branche (rebase interactif) pour
-que chaque commit soit atomique et son message exact.
+`main` n'accepte que le **merge par rebase** (ni commit de merge, ni squash ;
+historique linéaire exigé) : **tous** les commits de la branche atterrissent
+tels quels sur `main` et sont lus par release-please pour le calcul de version
+et le changelog. Avant d'ouvrir la PR, nettoyez l'historique de la branche
+(rebase interactif) pour que chaque commit soit atomique et son message exact.
+Pour rattraper `main`, rebasez la branche (« Update with rebase ») plutôt que
+d'y fusionner `main`.
 
 Vérifié en CI (`.github/workflows/commit-policy.yml`) : `commitlint` sur
-chaque commit non-merge, `dco` pour le signoff, et le titre de PR (futur
-sujet du commit de merge) doit lui aussi être un Conventional Commit valide.
+chaque commit, `dco` pour le signoff. Le titre de PR n'est pas vérifié : il
+n'entre pas dans l'historique.
 
 ## Avant de proposer une modification
 

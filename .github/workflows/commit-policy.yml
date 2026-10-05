@@ -1,26 +1,22 @@
 name: Commit policy
 
-# ADR-0002 : chaque commit non-merge d'une PR est un Conventional Commit
-# signé DCO ; le titre de PR (futur sujet du commit de merge) est vérifié à
-# part. Bornage BASE..HEAD → non rétroactif.
+# ADR-0002 : chaque commit d'une PR est un Conventional Commit signé DCO.
+# Merge par rebase : ces commits atterrissent tels quels sur `main`, le titre
+# de PR n'entre pas dans l'historique et n'est donc pas vérifié.
+# Bornage BASE..HEAD → non rétroactif.
 on:
   pull_request:
     branches: [main]
-  pull_request_target:
-    types: [opened, edited, reopened, synchronize]
 
 permissions: {}
 
 concurrency:
-  # `github.event_name` dans la clé : sinon les déclencheurs pull_request et
-  # pull_request_target partagent le même groupe et s'annulent mutuellement.
-  group: commit-policy-${{ github.event_name }}-${{ github.event.pull_request.number }}
+  group: commit-policy-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   dco:
     name: dco
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -45,7 +41,6 @@ jobs:
 
   commitlint:
     name: commitlint
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -57,25 +52,3 @@ jobs:
       - uses: wagoid/commitlint-github-action@v6
         with:
           configFile: commitlint.config.mjs
-
-  pr-title:
-    name: pr-title
-    if: github.event_name == 'pull_request_target'
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
-    steps:
-      # Ne lit que le titre de la PR via l'API — pas de checkout du code non
-      # fiable (pull_request_target).
-      - uses: amannn/action-semantic-pull-request@v6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          types: |
-            feat
-            fix
-            test
-            docs
-            chore
-            build
-          requireScope: false

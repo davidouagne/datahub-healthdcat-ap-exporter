@@ -3,6 +3,7 @@ name: Dependabot auto-merge
 # Auto-merge des PR Dependabot (ADR-0003 / #24) : patch partout, minor pour
 # les dépendances de dev uniquement. `gh pr merge --auto` attend que les
 # checks requis soient verts et ne contourne aucune règle de branche.
+# `--rebase` : seule méthode de merge autorisée sur `main` (ADR-0002 §1).
 on: pull_request
 
 permissions: {}
@@ -27,4 +28,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
-        run: gh pr merge --auto --merge "$PR_URL"
+        run: gh pr merge --auto --rebase "$PR_URL"
