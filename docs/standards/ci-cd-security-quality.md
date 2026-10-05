@@ -112,9 +112,14 @@ baseline throughout — see [Scope & baseline](#scope--baseline).
 ## Commit & PR hygiene
 
 - **Conventional Commits** enforced via `commitlint` against a
-  `commitlint.config.mjs`, plus a semantic-PR-title check
-  (`amannn/action-semantic-pull-request` or equivalent) — both real CI gates,
-  not just documented conventions.
+  `commitlint.config.mjs` — a real CI gate, not just a documented convention.
+  A semantic-PR-title check (`amannn/action-semantic-pull-request` or
+  equivalent) is required **only where the PR title lands in `main`'s history**
+  (squash merge, or a merge commit carrying the title). Under rebase-only
+  merging (`datahub-healthdcat-ap-exporter`, ADR-0002) the title never reaches
+  history and the check is dropped. Beware: with merge commits, release-please
+  reads the PR title in the merge commit in addition to the branch commits, so
+  every changelog entry appears twice.
 - **DCO**, where enforced: a check on every non-merge commit in the PR for a
   `Signed-off-by:` trailer. Repo-specific — see
   [Scope & baseline](#scope--baseline).

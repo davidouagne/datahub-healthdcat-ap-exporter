@@ -157,7 +157,7 @@ Groupes : `dev-dependencies` (tout le dev en une PR), `prod-minor-patch`,
 `labels: [dependencies]`, `assignees: [davidouagne]`.
 
 Auto-merge via `.github/workflows/dependabot-auto-merge.yml`
-(`dependabot/fetch-metadata` + `gh pr merge --auto --merge`) : `semver-patch`
+(`dependabot/fetch-metadata` + `gh pr merge --auto --rebase`, ADR-0002 §1) : `semver-patch`
 partout + `semver-minor` pour les seules dev-deps.
 
 `uv.lock` est désormais **versionné** (retiré de `.gitignore`) — préalable à
@@ -239,6 +239,13 @@ effort neuf) : OpenSSF Scorecard, épinglage SHA généralisé, provenance SLSA
   contextes `CI status` + `dependency-review` seuls). Le dépôt jumeau
   `datahub-yaml-source` porte la même configuration (ruleset seul, mêmes cinq
   contextes, protection classique absente) — vérifié en direct le 2026-09-20.
+- **Révisé par le passage au merge par rebase** (2026-10-05, ADR-0002 §1) : le
+  ruleset `main` n'autorise plus que le rebase (`allowed_merge_methods:
+  ["rebase"]`), exige un historique linéaire (`required_linear_history`) et ne
+  requiert plus le contexte `pr-title`. Contextes requis : `CI status`, `dco`,
+  `commitlint`, `dependency-review`. La description ci-dessus (cinq contextes,
+  `Require linear history` désactivé) est remplacée. Ce changement est propre à
+  ce dépôt : `datahub-yaml-source` n'est pas modifié.
 - **Révisé par l'activation des Dependabot *security updates*** (2026-10-05) :
   elles étaient laissées désactivées comme « doublon avec §4 ». Ce doublon
   n'existe que pour les dépendances directes : les version updates ignorent

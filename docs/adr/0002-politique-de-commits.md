@@ -1,4 +1,4 @@
-# Politique de commits : merge-commit, Conventional Commits par commit, signoff DCO
+# Politique de commits : merge par rebase, Conventional Commits par commit, signoff DCO
 
 Status: accepted
 
@@ -8,25 +8,39 @@ Contexte : carte wayfinder [#17](https://github.com/davidouagne/datahub-healthdc
 Décision prise pour permettre l'automatisation de version et de changelog
 (release-please, voir ADR-0003) et une provenance explicite des contributions.
 
-## 1. Stratégie de merge : merge-commit uniquement
+## 1. Stratégie de merge : rebase uniquement
 
-`main` n'accepte que le merge par **commit de merge**. `Squash and merge` et
-`Rebase and merge` sont désactivés au niveau du dépôt. Conséquence : tous les
-commits d'une branche de PR atterrissent sur `main` et sont lus par release-please
-pour le calcul de version et le changelog.
+*(Révisé le 2026-10-05 — voir Conséquences : le merge-commit d'origine dupliquait
+chaque entrée du changelog.)*
 
-Alternative écartée : **squash-only**. Plus simple pour un historique linéaire,
-mais aurait fait dépendre le changelog du seul titre de PR. Le choix merge-commit
-préserve un journal de Conventional Commits granulaire, au prix d'une exigence
-d'historique de branche propre (§2).
+`main` n'accepte que le **merge par rebase** (`Rebase and merge`). Le commit de
+merge et `Squash and merge` sont désactivés au niveau du dépôt et du ruleset
+`main` (`allowed_merge_methods: ["rebase"]`), qui exige en outre un historique
+linéaire. Conséquence : tous les commits d'une branche de PR atterrissent tels
+quels sur `main`, sans commit de merge, et sont lus par release-please pour le
+calcul de version et le changelog. Une branche se met à jour par rebase
+(« Update with rebase »), pas en y fusionnant `main`.
+
+Alternatives écartées :
+
+- **squash-only** : aurait fait dépendre le changelog du seul titre de PR. Le
+  rebase préserve un journal de Conventional Commits granulaire, au prix d'une
+  exigence d'historique de branche propre (§2).
+- **merge-commit** (choix initial) : GitHub place toujours le titre de PR dans le
+  commit de merge (en sujet ou en corps : les seules combinaisons acceptées sont
+  `PR_TITLE`/`PR_BODY`, `PR_TITLE`/`BLANK`, `MERGE_MESSAGE`/`PR_TITLE`).
+  release-please y lit un Conventional Commit en plus de ceux de la branche et
+  n'offre aucune option pour ignorer les commits de merge : chaque entrée du
+  changelog apparaissait en double (0.1.3 à 0.1.9).
 
 ## 2. Conventional Commits vérifiés par commit
 
 Puisque chaque commit fusionné nourrit le changelog, **chaque commit** d'une PR
-(hors commit de merge) doit être un Conventional Commit valide. Vérifié en CI par
-`commitlint` (`wagoid/commitlint-github-action`) sur
-`git rev-list --no-merges BASE..HEAD`. Le titre de PR est vérifié séparément
-(`amannn/action-semantic-pull-request`) car il devient le corps du commit de merge.
+doit être un Conventional Commit valide. Vérifié en CI par `commitlint`
+(`wagoid/commitlint-github-action`) sur `git rev-list --no-merges BASE..HEAD`.
+Le titre de PR n'entre pas dans l'historique (merge par rebase, §1) : il n'est
+plus vérifié (contrôle `pr-title` / `amannn/action-semantic-pull-request`
+retiré le 2026-10-05).
 
 Config `commitlint` : `type-enum = [feat, fix, test, docs, chore, build]`,
 `header-max-length: 72`, `subject-full-stop: never`, `type-empty` /
@@ -53,15 +67,25 @@ bots ou faits via l'UI GitHub sont déjà « Verified » par GitHub.
 - **Dependabot** : ses commits portent déjà `Signed-off-by: dependabot[bot]` ;
   son `commit-message.prefix` est maintenu dans le `type-enum` (`build(deps): …`).
 
-Aucun contournement `if:` : humains et robots passent par les trois mêmes checks
-(`dco`, `commitlint`, `pr-title`).
+Aucun contournement `if:` : humains et robots passent par les deux mêmes checks
+(`dco`, `commitlint`).
 
 ## Conséquences
 
-- `Require linear history` est incompatible avec merge-commit → désactivé sur le
-  ruleset `main`.
+- `Require linear history` est **activé** sur le ruleset `main`
+  (`required_linear_history`) depuis le passage au rebase ; il était désactivé
+  tant que le merge-commit s'appliquait.
 - Les workflows de politique de commits vivent dans
-  `.github/workflows/commit-policy.yml` (3 jobs).
+  `.github/workflows/commit-policy.yml` (2 jobs : `dco`, `commitlint` ; le job
+  `pr-title` et le déclencheur `pull_request_target` sont retirés).
+- **Révisé le 2026-10-05 (merge-commit → rebase)** : les releases 0.1.3 à 0.1.9
+  listaient chaque entrée de changelog deux fois, une fois pour le commit de
+  branche et une fois pour le commit de merge, dont le titre de PR était lu par
+  release-please. Le rebase supprime le commit de merge et, avec lui, la raison
+  d'être du contrôle `pr-title` (retiré du workflow et des contextes requis du
+  ruleset). Les commits rebasés sont réécrits par GitHub (nouveaux SHA) mais
+  conservent leur trailer `Signed-off-by`. L'auto-merge Dependabot passe à
+  `gh pr merge --auto --rebase` (ADR-0003 §4).
 - `CONTRIBUTING.md` § « Style de commit » et un nouveau
   `.github/PULL_REQUEST_TEMPLATE.md` documentent `git commit -s` et l'exigence
   d'historique propre.
