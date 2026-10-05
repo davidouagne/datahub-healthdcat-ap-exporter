@@ -5,8 +5,12 @@
 
 ### Documentation
 
-* activer les Dependabot security updates (ADR-0003) ([9c49608](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/9c496081250c7bcba63f339c1664be4a95c0443b))
 * activer les Dependabot security updates (ADR-0003) ([4dd6140](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/4dd61405cf265b3e480bf4748e26f31cd86ace6c))
+
+
+### Dependencies
+
+* urllib3 2.7.0 → 2.8.0 : corrige PYSEC-2026-4175, PYSEC-2026-4176 et PYSEC-2026-4177 ([6b3940b](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/6b3940b6efae5f1739b647f4e85d5aa9b218dd23))
 
 ## [0.1.8](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.7...v0.1.8) (2026-09-20)
 
