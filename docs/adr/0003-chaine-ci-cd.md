@@ -163,8 +163,15 @@ partout + `semver-minor` pour les seules dev-deps.
 `uv.lock` est désormais **versionné** (retiré de `.gitignore`) — préalable à
 l'écosystème `uv` de Dependabot, à `pip-audit`, et aux builds reproductibles.
 
-Le drift des dépendances transitives est couvert par le `pip-audit`
-hebdomadaire ; pas de `lockFileMaintenance`.
+**Transitives** *(révisé après [#56](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/56) /
+[#98](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/98))* :
+les version updates ne touchent que les dépendances déclarées dans
+`pyproject.toml`. Une transitive **vulnérable** est corrigée par les
+Dependabot *security updates* (§5) ; le `pip-audit` hebdomadaire reste le
+filet de détection, notamment quand le correctif est bloqué par la contrainte
+d'un parent (Dependabot ne met pas à jour une transitive si cela exige de
+monter le parent). Pas de `lockFileMaintenance` : les transitives non
+vulnérables ne sont pas suivies.
 
 ## 5. Sécurité
 
@@ -172,8 +179,9 @@ hebdomadaire ; pas de `lockFileMaintenance`.
   signalement via le *private vulnerability reporting* GitHub ; pas de SLA
   (mainteneur unique).
 - Fonctionnalités dépôt activées : private vulnerability reporting, secret
-  scanning + push protection, Dependabot **alerts**. Dependabot *security
-  updates* laissé **désactivé** (doublon avec §4).
+  scanning + push protection, Dependabot **alerts** et Dependabot *security
+  updates* *(activé après [#98](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/98),
+  voir Conséquences)*.
 - Chaque workflow déclare un `permissions:` explicite, minimal, par job.
   `default_workflow_permissions` du dépôt reste `read`.
 - Épinglage des Actions : `@vN` (tag majeur), **sauf**
@@ -231,6 +239,20 @@ effort neuf) : OpenSSF Scorecard, épinglage SHA généralisé, provenance SLSA
   contextes `CI status` + `dependency-review` seuls). Le dépôt jumeau
   `datahub-yaml-source` porte la même configuration (ruleset seul, mêmes cinq
   contextes, protection classique absente) — vérifié en direct le 2026-09-20.
+- **Révisé par l'activation des Dependabot *security updates*** (2026-10-05) :
+  elles étaient laissées désactivées comme « doublon avec §4 ». Ce doublon
+  n'existe que pour les dépendances directes : les version updates ignorent
+  les transitives, et `pip-audit` détecte sans corriger. Cas observé : urllib3
+  2.7.0, transitive vulnérable ([#98](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/98)),
+  sans PR Dependabot alors que le correctif 2.8.0 était publié depuis le
+  2026-09-15. Les security updates réutilisent `labels`, `commit-message` et
+  `assignees` de `.github/dependabot.yml`, ignorent le `cooldown` et ne
+  comptent pas dans `open-pull-requests-limit`. Leurs PR sur une transitive
+  (`dependency-type: indirect`) ne sont pas auto-mergées et passent en revue
+  humaine. Limite connue : une transitive bloquée par la contrainte d'un parent
+  (setuptools sous `acryl-datahub`,
+  [#56](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/56))
+  n'est pas corrigée ; seul le bump du parent par les version updates la règle.
 - Fichiers à créer : `.github/workflows/{ci.yml (modifié), commit-policy.yml,
   audit.yml, release.yml, dependabot-auto-merge.yml}`, `.github/dependabot.yml`,
   `release-please-config.json`, `.release-please-manifest.json`, `SECURITY.md`,
