@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.9](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.8...v0.1.9) (2026-10-05)
+
+
+### Documentation
+
+* activer les Dependabot security updates (ADR-0003) ([9c49608](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/9c496081250c7bcba63f339c1664be4a95c0443b))
+* activer les Dependabot security updates (ADR-0003) ([4dd6140](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/4dd61405cf265b3e480bf4748e26f31cd86ace6c))
+
 ## [0.1.8](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.7...v0.1.8) (2026-09-20)
 
 
