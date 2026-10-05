@@ -120,4 +120,4 @@ jobs:
 
           Détail complet dans les logs du run : $RUN_URL
 
-          Cette issue est dédoublonnée par titre — elle ne sera pas rouverte tant qu'elle reste ouverte."
+          Tant que cette issue reste ouverte, les audits suivants n'en créent pas de nouvelle (dédoublonnage par titre) : la fermer une fois corrigée pour que l'audit puisse signaler les prochaines vulnérabilités."
