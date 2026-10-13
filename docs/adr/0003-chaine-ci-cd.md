@@ -160,7 +160,9 @@ Groupes : `dev-dependencies` (tout le dev en une PR), `prod-minor-patch`,
 
 Auto-merge via `.github/workflows/dependabot-auto-merge.yml`
 (`dependabot/fetch-metadata` + `gh pr merge --auto --rebase`, ADR-0002 §1) : `semver-patch`
-partout + `semver-minor` pour les seules dev-deps. *(Révisé le 2026-10-05, voir
+partout + `semver-minor` pour les dev-deps et, *(révisé le 2026-10-13, #110)*,
+pour les transitives (`dependency-type: indirect`, toujours des security
+updates). *(Révisé le 2026-10-05, voir
 Conséquences)* : `gh pr merge` s'authentifie avec le secret **Dependabot**
 `AUTO_MERGE_TOKEN` (PAT fine-grained) plutôt qu'avec `GITHUB_TOKEN`, et le
 déclencheur est borné à `pull_request: branches: [main]`.
@@ -261,7 +263,7 @@ effort neuf) : OpenSSF Scorecard, épinglage SHA généralisé, provenance SLSA
   `assignees` de `.github/dependabot.yml`, ignorent le `cooldown` et ne
   comptent pas dans `open-pull-requests-limit`. Leurs PR sur une transitive
   (`dependency-type: indirect`) ne sont pas auto-mergées et passent en revue
-  humaine. Limite connue : une transitive bloquée par la contrainte d'un parent
+  humaine *(remplacé le 2026-10-13, voir ci-dessous)*. Limite connue : une transitive bloquée par la contrainte d'un parent
   (setuptools sous `acryl-datahub`,
   [#56](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/56))
   n'est pas corrigée ; seul le bump du parent par les version updates la règle.
@@ -288,6 +290,20 @@ effort neuf) : OpenSSF Scorecard, épinglage SHA généralisé, provenance SLSA
   toujours absent sur `main`), token de GitHub App (même effet, plus de pièces
   à maintenir pour un mainteneur unique). La règle « pas de PAT » du §3 vaut
   toujours pour release-please lui-même.
+- **Révisé par l'auto-merge des security updates transitives** (2026-10-13,
+  [#110](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/110)) :
+  la PR #109 (multidict 6.7.1 → 6.9.1, correctif de GHSA-54p9-h82j-f925),
+  `indirect` et `semver-minor`, est restée ouverte malgré des checks verts. Le
+  job `auto-merge` affichait un succès alors que l'étape d'activation était
+  sautée. Les montées patch et minor des transitives sont désormais
+  auto-mergées. Les version updates ignorent les transitives, donc ces PR sont
+  toujours des security updates. Justification : une vulnérabilité corrigée
+  qui attend une revue reste ouverte, et `uv.lock` n'est pas inclus dans le
+  wheel. Le bump ne touche donc que l'environnement de CI/dev, celui que les
+  checks requis valident. Risque accepté : les security updates ignorent le
+  `cooldown`, mais visent la version désignée par l'advisory et non la
+  dernière publiée. Les majors et les montées minor des dépendances de prod
+  directes restent en revue humaine (inchangé).
 - Fichiers à créer : `.github/workflows/{ci.yml (modifié), commit-policy.yml,
   audit.yml, release.yml, dependabot-auto-merge.yml}`, `.github/dependabot.yml`,
   `release-please-config.json`, `.release-please-manifest.json`, `SECURITY.md`,

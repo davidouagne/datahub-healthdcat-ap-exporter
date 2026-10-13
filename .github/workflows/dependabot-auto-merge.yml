@@ -1,7 +1,9 @@
 name: Dependabot auto-merge
 
 # Auto-merge des PR Dependabot (ADR-0003 / #24) : patch partout, minor pour
-# les dépendances de dev uniquement. `gh pr merge --auto` attend que les
+# les dépendances de dev et les transitives (#110). Les version updates
+# ignorent les transitives : une PR `indirect` est toujours une security
+# update. Les majors restent en revue humaine. `gh pr merge --auto` attend que les
 # checks requis soient verts et ne contourne aucune règle de branche.
 # `--rebase` : seule méthode de merge autorisée sur `main` (ADR-0002 §1).
 #
@@ -38,7 +40,8 @@ jobs:
         if: >-
           steps.meta.outputs.update-type == 'version-update:semver-patch' ||
           (steps.meta.outputs.update-type == 'version-update:semver-minor' &&
-          steps.meta.outputs.dependency-type == 'direct:development')
+          (steps.meta.outputs.dependency-type == 'direct:development' ||
+          steps.meta.outputs.dependency-type == 'indirect'))
         env:
           AUTO_MERGE_TOKEN: ${{ secrets.AUTO_MERGE_TOKEN }}
           GITHUB_TOKEN_FALLBACK: ${{ secrets.GITHUB_TOKEN }}

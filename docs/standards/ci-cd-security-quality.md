@@ -92,7 +92,10 @@ baseline throughout — see [Scope & baseline](#scope--baseline).
 - **Auto-merge**, where adopted: patch bumps everywhere and minor bumps for
   dev-only dependencies, gated on required checks being green. Majors and
   minor bumps to production dependencies always get manual review. This is a
-  per-repo choice (see [Scope & baseline](#scope--baseline)). Enable it with a
+  per-repo choice (see [Scope & baseline](#scope--baseline)):
+  `datahub-healthdcat-ap-exporter` also auto-merges minor bumps to transitive
+  dependencies, which only arrive as security updates (ADR-0003, #110).
+  Enable it with a
   fine-grained PAT stored as a **Dependabot** secret (both repos:
   `AUTO_MERGE_TOKEN`), not `GITHUB_TOKEN`: a merge attributed to
   `GITHUB_TOKEN` triggers no workflow, so release-please never refreshes the
