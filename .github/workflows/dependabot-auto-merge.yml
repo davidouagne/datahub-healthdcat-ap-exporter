@@ -5,6 +5,11 @@ name: Dependabot auto-merge
 # ignorent les transitives : une PR `indirect` est toujours une security
 # update. Les majors restent en revue humaine. `gh pr merge --auto` attend que les
 # checks requis soient verts et ne contourne aucune règle de branche.
+#
+# Type de montée : sur une security update `indirect`, le message de commit
+# ne porte pas la version précédente et fetch-metadata rend un `update-type`
+# vide (#113). On le déduit alors du titre « from X to Y » en comparant les
+# deux premiers composants de version ; titre non reconnu → pas d'auto-merge.
 # `--rebase` : seule méthode de merge autorisée sur `main` (ADR-0002 §1).
 #
 # Jeton (ADR-0003 §4) : l'auto-merge est activé avec le PAT fine-grained du
@@ -36,10 +41,33 @@ jobs:
         id: meta
         uses: dependabot/fetch-metadata@v3
 
+      - name: Type de montée
+        id: bump
+        env:
+          META_UPDATE_TYPE: ${{ steps.meta.outputs.update-type }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          update_type="$META_UPDATE_TYPE"
+          [ "$update_type" = "null" ] && update_type=""
+          pattern=' from ([0-9][^ ]*) to ([0-9][^ ]*)( in .*)?$'
+          if [ -z "$update_type" ] && [[ "$PR_TITLE" =~ $pattern ]]; then
+            IFS=. read -r old_major old_minor _ <<< "${BASH_REMATCH[1]}"
+            IFS=. read -r new_major new_minor _ <<< "${BASH_REMATCH[2]}"
+            if [ "$old_major" != "$new_major" ]; then
+              update_type="version-update:semver-major"
+            elif [ "$old_minor" != "$new_minor" ]; then
+              update_type="version-update:semver-minor"
+            else
+              update_type="version-update:semver-patch"
+            fi
+            echo "update-type déduit du titre : $update_type"
+          fi
+          echo "update-type=$update_type" >> "$GITHUB_OUTPUT"
+
       - name: Activer l'auto-merge
         if: >-
-          steps.meta.outputs.update-type == 'version-update:semver-patch' ||
-          (steps.meta.outputs.update-type == 'version-update:semver-minor' &&
+          steps.bump.outputs.update-type == 'version-update:semver-patch' ||
+          (steps.bump.outputs.update-type == 'version-update:semver-minor' &&
           (steps.meta.outputs.dependency-type == 'direct:development' ||
           steps.meta.outputs.dependency-type == 'indirect'))
         env:

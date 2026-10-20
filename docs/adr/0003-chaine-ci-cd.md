@@ -304,6 +304,13 @@ effort neuf) : OpenSSF Scorecard, épinglage SHA généralisé, provenance SLSA
   `cooldown`, mais visent la version désignée par l'advisory et non la
   dernière publiée. Les majors et les montées minor des dépendances de prod
   directes restent en revue humaine (inchangé).
+  Complément (2026-10-20, PR #113, aiohttp 3.14.3 → 3.14.4, patch) : sur une
+  security update `indirect`, le message de commit de Dependabot ne porte que
+  `dependency-version`, et `fetch-metadata` rend un `update-type` vide — même
+  un patch n'était pas auto-mergé (cause probable de #101 et #109). Le
+  workflow déduit alors le type de montée du titre « from X to Y » (deux
+  premiers composants de version) ; un titre non reconnu reste en revue
+  humaine, et un major déduit aussi.
 - Fichiers à créer : `.github/workflows/{ci.yml (modifié), commit-policy.yml,
   audit.yml, release.yml, dependabot-auto-merge.yml}`, `.github/dependabot.yml`,
   `release-please-config.json`, `.release-please-manifest.json`, `SECURITY.md`,

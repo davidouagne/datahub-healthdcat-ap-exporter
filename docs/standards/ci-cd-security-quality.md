@@ -95,6 +95,10 @@ baseline throughout — see [Scope & baseline](#scope--baseline).
   per-repo choice (see [Scope & baseline](#scope--baseline)):
   `datahub-healthdcat-ap-exporter` also auto-merges minor bumps to transitive
   dependencies, which only arrive as security updates (ADR-0003, #110).
+  Pitfall: for an `indirect` security update, `dependabot/fetch-metadata`
+  returns an empty `update-type` (the commit metadata lacks the previous
+  version), so a policy keyed on it silently skips even patches; derive the
+  bump from the PR title's "from X to Y" when it is empty.
   Enable it with a
   fine-grained PAT stored as a **Dependabot** secret (both repos:
   `AUTO_MERGE_TOKEN`), not `GITHUB_TOKEN`: a merge attributed to
