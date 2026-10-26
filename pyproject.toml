@@ -3,7 +3,7 @@ name = "dh-healthdcat"
 version = "0.1.9"
 description = "Exporteur DataHub -> HealthDCAT-AP (fichier Turtle et API du catalogue HDH)"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 dependencies = [
     # Épinglé pour rester compatible avec acryl-datahub[rdf], voir
@@ -42,7 +42,7 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100  # URIs RDF + libellés de vocabulaire longs
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "RUF", "PL"]
@@ -66,7 +66,7 @@ ignore = [
 extend-immutable-calls = ["typer.Argument", "typer.Option"]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.11"
 strict = true
 files = ["src/dh_healthdcat"]
 
