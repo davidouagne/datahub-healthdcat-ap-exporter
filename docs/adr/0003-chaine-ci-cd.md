@@ -22,7 +22,7 @@ Jobs parallèles, `permissions: {}` au niveau workflow, élévation minimale par
 |---|---|
 | `lint` | `ruff check` + `ruff format --check` ; puis `pip-audit` advisory (`continue-on-error`) |
 | `typecheck` | `mypy` strict sur `src/dh_healthdcat` (`tests/` allégé) |
-| `test` | matrice Python 3.10 / 3.11 / 3.12 ; `pytest` + `pytest-cov` → `coverage.xml` (upload Codecov depuis le leg 3.12) |
+| `test` | matrice Python 3.11 / 3.12 *(3.10 retiré le 2026-10-26, fin de vie)* ; `pytest` + `pytest-cov` → `coverage.xml` (upload Codecov depuis le leg 3.12) |
 | `build` | `uv build` + fumée du wheel non-éditable (job existant, conservé) |
 
 `dependency-review` a été extrait dans son propre workflow,
@@ -30,10 +30,10 @@ Jobs parallèles, `permissions: {}` au niveau workflow, élévation minimale par
 `datahub-yaml-source` ([#83](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/83)).
 
 Config `ruff` : `select = [E, F, W, I, UP, B, SIM, C4, RUF, PL]`, `line-length = 100`,
-`target-version = "py310"`, `per-file-ignores` (`tests/**` → `PLR2004`,
+`target-version = "py311"`, `per-file-ignores` (`tests/**` → `PLR2004`,
 `**/__init__.py` → `F401`). Remplace flake8 + isort + black.
 
-Config `mypy` : `strict = true`, `python_version = "3.10"`, périmètre
+Config `mypy` : `strict = true`, `python_version = "3.11"`, périmètre
 `src/dh_healthdcat` ; override `tests/**` (`disallow_untyped_defs = false`) ;
 `ignore_missing_imports` par module pour `acryl-datahub` / `pyshacl` / `rdflib`.
 CI uniquement (pas de hook pre-commit).
