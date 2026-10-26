@@ -8,10 +8,12 @@ updates:
     open-pull-requests-limit: 5
     cooldown:
       default-days: 3
+    # `deps` (prod, transitives comprises) est un type releasable pour
+    # release-please : bump patch + section « Dependencies ». Le dev reste en
+    # `build`, masqué. Pas de scope : le type distingue déjà prod et dev.
     commit-message:
-      prefix: "build"
+      prefix: "deps"
       prefix-development: "build"
-      include: "scope"
     labels: ["dependencies"]
     assignees: ["davidouagne"]
     groups:
