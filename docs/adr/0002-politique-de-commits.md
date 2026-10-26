@@ -42,7 +42,7 @@ Le titre de PR n'entre pas dans l'historique (merge par rebase, §1) : il n'est
 plus vérifié (contrôle `pr-title` / `amannn/action-semantic-pull-request`
 retiré le 2026-10-05).
 
-Config `commitlint` : `type-enum = [feat, fix, test, docs, chore, build]`,
+Config `commitlint` : `type-enum = [feat, fix, test, docs, chore, build, deps]`,
 `header-max-length: 72`, `subject-full-stop: never`, `type-empty` /
 `subject-empty: never`, scopes libres, pas de `subject-case`. Le contributeur
 nettoie l'historique de sa branche (rebase interactif) avant d'ouvrir la PR.
@@ -65,7 +65,9 @@ bots ou faits via l'UI GitHub sont déjà « Verified » par GitHub.
 - **release-please** : l'option `signoff` de l'action ajoute le trailer à son
   commit `chore(main): release …` → passe le check `dco` sans exception.
 - **Dependabot** : ses commits portent déjà `Signed-off-by: dependabot[bot]` ;
-  son `commit-message.prefix` est maintenu dans le `type-enum` (`build(deps): …`).
+  ses préfixes `commit-message` sont maintenus dans le `type-enum` : `deps: …`
+  (prod et transitives) et `build: …` (dev, GitHub Actions), *révisé le
+  2026-10-26* — auparavant `build(deps): …` partout, voir ADR-0003 §2.
 
 Aucun contournement `if:` : humains et robots passent par les deux mêmes checks
 (`dco`, `commitlint`).
