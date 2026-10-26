@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date, datetime
-from enum import Enum
+from enum import StrEnum
 
 
 @dataclass(frozen=True, slots=True)
@@ -100,7 +100,7 @@ class Distribution:
     source_urn: str = ""  # URN DataHub du Dataset source, pour les messages d'erreur
 
 
-class Severity(str, Enum):
+class Severity(StrEnum):
     ERROR = "error"  # propriété obligatoire manquante (SHACL sh:Violation)
     WARNING = "warning"  # coercition de type, vocabulaire inconnu, valeur douteuse
 

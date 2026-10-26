@@ -9,7 +9,7 @@ rights, applicableLegislation — voir mapping/distribution.py).
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from dh_healthdcat.mapping import vocabularies as v
@@ -24,7 +24,7 @@ SAMPLE_TAG_URN = "urn:li:tag:dcat:sample"
 def _millis_to_datetime(millis: int | None) -> datetime | None:
     if not millis:
         return None
-    return datetime.fromtimestamp(millis / 1000, tz=timezone.utc)
+    return datetime.fromtimestamp(millis / 1000, tz=UTC)
 
 
 def is_sample_asset(ctx: ReadContext, dataset_urn: str) -> bool:
