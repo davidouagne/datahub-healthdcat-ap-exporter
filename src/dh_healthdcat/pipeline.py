@@ -27,7 +27,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 from rdflib import Graph
 
@@ -101,7 +101,7 @@ def prepare(
         yield Prepared(urn=urn, dataset=dataset, graph=graph, shacl=shacl)
 
 
-class PushAction(str, Enum):
+class PushAction(StrEnum):
     CREATED = "created"
     UPDATED = "updated"
 
