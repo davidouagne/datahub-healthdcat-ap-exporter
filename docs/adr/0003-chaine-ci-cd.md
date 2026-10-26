@@ -108,6 +108,20 @@ Mode **manifeste** (`release-please-config.json` +
   (`feat` / `fix` / `perf` / `deps` / `revert` / `docs` visibles ; `test` /
   `chore` / `build` / `ci` masqués → le bruit Dependabot et les `test:` restent
   hors changelog). Pas de clé `changelog-sections`.
+- *Révisé le 2026-10-26* : les montées de dépendances de prod déclenchent une
+  release patch. Le 2026-10-26, quatre PR Dependabot (dont `acryl-datahub`
+  1.7.0.14 → 1.7.0.16) ont été fusionnées sans proposition de release : toutes
+  en `build(deps)`, type masqué donc non releasable. Dependabot préfixe
+  désormais les dépendances `uv` de prod en `deps` (visible, bump patch,
+  section « Dependencies ») et garde `build` pour le dev et les GitHub
+  Actions ; plus de `include: scope`, le type suffisant à distinguer. `deps`
+  rejoint le `type-enum` (ADR-0002). Limite assumée : `pyproject.toml` ne
+  porte que des planchers et `uv.lock` n'est pas dans le wheel, donc une
+  telle release ne change pas ce qu'installe un utilisateur ; elle date et
+  documente la version de DataHub contre laquelle la CI a validé l'exporter.
+  Relever le plancher à chaque bump (`versioning-strategy: increase`) est
+  écarté : il imposerait le dernier client DataHub, qui doit suivre la
+  version du serveur de l'utilisateur.
 - `include-component-in-tag: false` → tags `vX.Y.Z`.
 - Option `signoff` activée (ADR-0002 §4).
 
@@ -155,7 +169,8 @@ lundi, `open-pull-requests-limit: 5`.
 
 Groupes : `dev-dependencies` (tout le dev en une PR), `prod-minor-patch`,
 `actions` ; les majors de prod restent en PR individuelles à revue humaine.
-`commit-message.prefix: "build"`, `cooldown.default-days: 3`,
+`commit-message.prefix: "build"` *(révisé le 2026-10-26 : `deps` pour la prod
+`uv`, voir §2)*, `cooldown.default-days: 3`,
 `labels: [dependencies]`, `assignees: [davidouagne]`.
 
 Auto-merge via `.github/workflows/dependabot-auto-merge.yml`
