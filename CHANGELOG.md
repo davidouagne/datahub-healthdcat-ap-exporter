@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.2.0](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.9...v0.2.0) (2026-10-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* Python 3.11 minimum. Les utilisateurs en 3.10 restent sur la série 0.1.x.
+
+### Features
+
+* abandonner Python 3.10, en fin de vie ([22bef55](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/22bef552828682d639dcb3c69055bccac33f0dd6))
+
+
+### Dependencies
+
+* acryl-datahub 1.7.0.14 → 1.7.0.16, certifi 2026.7.22 → 2026.10.19 ([3fba98c](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/3fba98c1e4137972d2436144d0ad42cab934257c))
+* Bump acryl-datahub from 1.7.0.16 to 1.7.0.17 ([9b6d757](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/9b6d7574db80fba02b57e9c056a454c4ca7dbd0a))
+
+
+### Documentation
+
+* **adr:** release patch sur montée de dépendance de prod ([3fba98c](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/3fba98c1e4137972d2436144d0ad42cab934257c))
+
 ## [0.1.9](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.8...v0.1.9) (2026-10-05)
 
 
