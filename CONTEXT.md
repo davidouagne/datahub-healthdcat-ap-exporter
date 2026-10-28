@@ -17,10 +17,22 @@ Un Dataset DataHub membre d'un DataProduct. Devient une `dcat:distribution`, ou 
 _Avoid_: distribution (c'est la sortie, pas la source), fichier
 
 **Structured property (SP)**:
-Un champ typé `fr.aphp.healthdcat.*` porté par un DataProduct ou un asset, contenant une
-valeur HealthDCAT-AP (code de vocabulaire, date, texte). Seule forme d'extension fiable
-avec le connecteur d'ingestion AP-HP.
+Un champ typé `healthdcatap.*` porté par un DataProduct ou un asset, contenant une
+valeur HealthDCAT-AP (code de vocabulaire, date, texte). Ce projet publie les définitions
+canoniques des SP ; chaque adoptant les crée dans son propre DataHub. L'ancien préfixe
+`fr.aphp.healthdcat.*` n'est plus lu.
 _Avoid_: custom property, propriété personnalisée, tag
+
+**Adoptant**:
+Une organisation qui exploite l'exporteur sur son propre DataHub. L'AP-HP est l'adoptant
+d'origine, pas un cas particulier du code.
+_Avoid_: client, utilisateur (ambigu avec la personne qui lance la CLI), établissement
+
+**URI de base**:
+L'espace de noms HTTP appartenant à l'adoptant, sous lequel l'exporteur forge les
+identifiants qu'aucun vocabulaire ne fournit (`dct:identifier`, spécifications de
+référence non résolues). Toujours déclarée explicitement, jamais devinée.
+_Avoid_: base URL, namespace, domaine
 
 **Version DataHub supportée**:
 Une version du *serveur* DataHub (GMS) contre laquelle l'exporteur est vérifié et garanti
