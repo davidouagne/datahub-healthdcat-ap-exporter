@@ -22,6 +22,13 @@ valeur HealthDCAT-AP (code de vocabulaire, date, texte). Seule forme d'extension
 avec le connecteur d'ingestion AP-HP.
 _Avoid_: custom property, propriété personnalisée, tag
 
+**Version DataHub supportée**:
+Une version du *serveur* DataHub (GMS) contre laquelle l'exporteur est vérifié et garanti
+fonctionner. La plage annoncée ne contient que des versions vérifiées ; une version à
+venir n'en fait partie qu'après vérification. La version de la bibliothèque cliente n'est
+pas un engagement.
+_Avoid_: version de DataHub (ambigu serveur/client), version acryl-datahub
+
 ### Côté HealthDCAT-AP / RDF
 
 **Modèle pivot**:
