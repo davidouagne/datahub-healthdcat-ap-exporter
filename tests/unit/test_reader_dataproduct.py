@@ -6,6 +6,7 @@ adms:sample n'en a pas besoin)."""
 
 from __future__ import annotations
 
+import copy
 from datetime import UTC, datetime
 from types import SimpleNamespace as NS
 
@@ -265,3 +266,58 @@ def test_glossary_term_label_becomes_a_keyword():
 
     assert "Séjour hospitalier" in dataset.keywords
     assert ctx.graph.requested_aspects[term_urn] == ["glossaryTermInfo"]
+
+
+INTERNAL_URN = "urn:li:dataset:(urn:li:dataPlatform:postgres,stg_ehr__patient,PROD)"
+
+
+def _with_internal_asset(ctx, *, output_ports: tuple[str, ...] = ()) -> None:
+    """Ajoute un asset interne (table de staging, sans accessUrl : il lèverait
+    des ERREURS s'il était exporté) et marque `output_ports` comme ports."""
+
+    entity = copy.deepcopy(ctx.graph._entities[ASSET_URN])
+    entity["datasetProperties"].name = "stg_ehr__patient"
+    entity["structuredProperties"] = NS(properties=[])
+    ctx.graph._entities[INTERNAL_URN] = entity
+    dp = ctx.graph._entities[DATAPRODUCT_URN]["dataProductProperties"]
+    dp.assets.append(NS(destinationUrn=INTERNAL_URN, outputPort=False))
+    for association in dp.assets:
+        association.outputPort = association.destinationUrn in output_ports
+
+
+def test_without_output_port_every_asset_is_exported():
+    """ADR-0006 §6 : aucun port déclaré → comportement inchangé."""
+
+    ctx = build_context()
+    _with_internal_asset(ctx)
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+
+    assert [d.source_urn for d in dataset.distributions] == [ASSET_URN, INTERNAL_URN]
+    assert [s.source_urn for s in dataset.samples] == [SAMPLE_URN]
+
+
+def test_output_ports_choose_the_distributions():
+    """ADR-0006 §6-7 : un asset hors port n'existe pas pour l'export — ni
+    distribution, ni anomalie, ni contribution à dct:modified."""
+
+    ctx = build_context()
+    _with_internal_asset(ctx, output_ports=(ASSET_URN,))
+    _set_asset_last_modified(ctx, INTERNAL_URN, 1_790_000_000_000)
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+
+    assert [d.source_urn for d in dataset.distributions] == [ASSET_URN]
+    assert [i for i in dataset.issues if i.dataset_urn == INTERNAL_URN] == []
+    assert dataset.modified is None
+
+
+def test_sample_is_kept_whether_or_not_it_is_a_port():
+    """ADR-0006 §8 : le tag dcat:sample est indépendant des ports."""
+
+    ctx = build_context()
+    _with_internal_asset(ctx, output_ports=(ASSET_URN,))
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+
+    assert [s.source_urn for s in dataset.samples] == [SAMPLE_URN]

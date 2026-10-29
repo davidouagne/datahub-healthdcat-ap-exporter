@@ -10,7 +10,7 @@ Exporte les métadonnées de l'Entrepôt de Données de Santé (EDS) AP-HP, cata
 
 ## Principe
 
-Un **DataProduct** DataHub devient un `dcat:Dataset` HealthDCAT-AP. Ses assets (Datasets DataHub) deviennent des `dcat:distribution` — ou des `adms:sample` s'ils portent le tag `dcat:sample`. Le schéma de chaque asset (`schemaMetadata`) devient une `csvw:Table`/`csvw:Column`.
+Un **DataProduct** DataHub devient un `dcat:Dataset` HealthDCAT-AP. Ses assets (Datasets DataHub) deviennent des `dcat:distribution` — ou des `adms:sample` s'ils portent le tag `dcat:sample`. Si le DataProduct déclare des output ports, seuls ces ports deviennent des distributions. Le schéma de chaque asset (`schemaMetadata`) devient une `csvw:Table`/`csvw:Column`.
 
 Le mapping complet, avec ses justifications et les corrections apportées en cours d'implémentation (vérifiées contre les shapes SHACL réelles du HDH), est documenté dans [`docs/mapping.md`](docs/mapping.md).
 

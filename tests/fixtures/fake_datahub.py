@@ -52,7 +52,10 @@ def _entities() -> dict[str, dict]:
             "dataProductProperties": NS(
                 name="Venues et sejours des patients",
                 description="Enregistrements de venues et sejours.",
-                assets=[NS(destinationUrn=ASSET_URN), NS(destinationUrn=SAMPLE_URN)],
+                assets=[
+                    NS(destinationUrn=ASSET_URN, outputPort=False),
+                    NS(destinationUrn=SAMPLE_URN, outputPort=False),
+                ],
                 externalUrl=None,
             ),
             "ownership": NS(
