@@ -32,8 +32,9 @@ dictionnaire équivalent) :
   été vérifiés terme à terme contre cette source le 2026-08-14 ; à revalider si
   le DPV publie une nouvelle version majeure.
 - `CodingSystem.yml` : les 9 codes de `healthdcatap.coding` (URIs
-  canoniques HL7/OMS/WHO-CC stables ; `CIP13`/`UCD`/`CCAM`/`NFS` en espace de
-  noms AP-HP local non déréférençable, faute d'identifiant officiel ANS/HDH).
+  canoniques HL7/OMS/WHO-CC stables ; `CIP13`/`UCD`/`CCAM`/`NABM` vers les
+  `CodeSystem.url` du SMT de l'ANS, vérifiées le 2026-10-29 — voir
+  `docs/research/coding-system-uris.md`).
 - `ReferenceSpecification.yml` : `HL7-FHIR-R4` / `OMOP-CDM-5.4` / `HL7v2` de
   `healthdcatap.referenceSpecification` (→ `dct:conformsTo`) vers leurs
   URIs canoniques, vérifiées contre les sources primaires le 2026-08-28 (voir

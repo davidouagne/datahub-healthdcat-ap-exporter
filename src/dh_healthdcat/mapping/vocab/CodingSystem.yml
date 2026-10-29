@@ -1,12 +1,11 @@
 # Vocabulaire d'auteur (dh-healthdcat), pas vendu du HDH — le HDH ne publie pas
 # de dictionnaire "systèmes de codage" parmi ses 19 vocabulaires contrôlés.
 #
-# Couvre les valeurs de `healthdcatap.coding` déclarées dans assets.yml.
-# Les URI HL7/OMS/WHO-CC sont des systèmes canoniques stables. CIP13/UCD/CCAM/NFS
-# n'ont pas d'URI internationale de référence : on utilise un espace de noms
-# AP-HP local, explicitement non déréférençable, en attendant un identifiant
-# officiel ANS/HDH — ce n'est PAS une erreur de saisie si ces quatre-là
-# ressemblent à un placeholder.
+# Couvre les valeurs de `healthdcatap.coding`.
+# Les URI HL7/OMS/WHO-CC sont des systèmes canoniques stables. CIP13/UCD/CCAM/NABM
+# sont les CodeSystem.url du Serveur Multi-Terminologies de l'ANS, vérifiées le
+# 2026-10-29 (docs/research/coding-system-uris.md). CIP13 et UCD partagent
+# volontairement la même URI : l'ANS les publie dans un seul référentiel CIP/UCD.
 CodingSystem:
   vocabulary_list:
     SNOMED-CT: "http://snomed.info/sct"
@@ -14,10 +13,10 @@ CodingSystem:
     ICD-10: "http://hl7.org/fhir/sid/icd-10"
     ICD-11: "http://id.who.int/icd/release/11/mms"
     ATC: "http://www.whocc.no/atc"
-    CIP13: "https://aphp.fr/codesystem/cip13"
-    UCD: "https://aphp.fr/codesystem/ucd"
-    CCAM: "https://aphp.fr/codesystem/ccam"
-    NFS: "https://aphp.fr/codesystem/nfs"
+    CIP13: "https://smt.esante.gouv.fr/terminologie-cip_ucd"
+    UCD: "https://smt.esante.gouv.fr/terminologie-cip_ucd"
+    CCAM: "https://smt.esante.gouv.fr/terminologie-ccam"
+    NABM: "https://smt.esante.gouv.fr/terminologie-nabm"
   fr:
     SNOMED-CT: "SNOMED CT"
     LOINC: "LOINC"
@@ -27,4 +26,4 @@ CodingSystem:
     CIP13: "Code CIP13 (médicament, France)"
     UCD: "Code UCD (unité commune de dispensation)"
     CCAM: "Classification Commune des Actes Médicaux"
-    NFS: "Nomenclature française (biologie)"
+    NABM: "Nomenclature des actes de biologie médicale (NABM)"
