@@ -34,7 +34,7 @@ from rdflib import Graph
 from dh_healthdcat.emit.hdh_client import HdhClientError, HdhTarget
 from dh_healthdcat.emit.state import PushState
 from dh_healthdcat.mapping.dataset import dataset_to_graph
-from dh_healthdcat.model import HealthDataset
+from dh_healthdcat.model import HealthDataset, Severity, ValidationIssue
 from dh_healthdcat.reader.dataproduct import DEFAULT_BASE_URI, read_data_product
 from dh_healthdcat.reader.graph import ReadContext
 from dh_healthdcat.validate.shacl import ShaclResult, validate_graph
@@ -79,6 +79,8 @@ def prepare(
     base_uri: str = DEFAULT_BASE_URI,
     strict: bool = True,
 ) -> Iterator[Outcome]:
+    # URN d'asset → (URN, titre) du 1ᵉʳ DataProduct de la sélection qui l'exporte
+    first_owner: dict[str, tuple[str, str]] = {}
     for urn in urns:
         try:
             dataset = read_data_product(ctx, urn, base_uri=base_uri)
@@ -86,6 +88,7 @@ def prepare(
             yield Unreadable(urn=urn, reason=str(exc))
             continue
 
+        _warn_shared_assets(dataset, first_owner)
         graph = dataset_to_graph(dataset)
         shacl = validate_graph(graph)
 
@@ -99,6 +102,34 @@ def prepare(
             continue
 
         yield Prepared(urn=urn, dataset=dataset, graph=graph, shacl=shacl)
+
+
+def _warn_shared_assets(dataset: HealthDataset, first_owner: dict[str, tuple[str, str]]) -> None:
+    """Signale un asset déjà exporté par un DataProduct précédent de la
+    sélection. Chaque DataProduct en reçoit sa propre distribution (voir
+    `mapping/distribution.py::add_distribution`), mais le steward doit savoir
+    que la même donnée est décrite deux fois, éventuellement avec des licences
+    héritées différentes."""
+
+    for distribution in (*dataset.distributions, *dataset.samples):
+        asset = distribution.source_urn
+        if not asset:
+            continue
+        owner_urn, owner_title = first_owner.setdefault(asset, (dataset.source_urn, dataset.title))
+        if owner_urn != dataset.source_urn:
+            dataset.issues.append(
+                ValidationIssue(
+                    severity=Severity.WARNING,
+                    dataset_name=dataset.title,
+                    dataset_urn=dataset.source_urn,
+                    rdf_property="dcat:distribution",
+                    datahub_field="dataProductProperties.assets",
+                    message=(
+                        f'asset {asset} partagé avec le DataProduct "{owner_title}" — '
+                        "exporté comme distribution distincte de chacun"
+                    ),
+                )
+            )
 
 
 class PushAction(StrEnum):
