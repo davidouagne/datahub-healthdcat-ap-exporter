@@ -1,4 +1,4 @@
-"""pipeline.push — spec/spec-feature-export-pipeline.md.
+"""pipeline.push — docs/specs/feature-export-pipeline.md.
 
 La poussée (créer ou mettre à jour, puis enregistrer l'id) fait partie du
 pipeline, pas de la CLI : c'est cette séquence précise qui porte le risque de

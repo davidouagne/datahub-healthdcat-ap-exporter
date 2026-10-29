@@ -1,4 +1,4 @@
-"""pipeline.prepare — spec/spec-feature-export-pipeline.md.
+"""pipeline.prepare — docs/specs/feature-export-pipeline.md.
 
 `prepare()` est le seam unique traversé par `export-file`, `push-hdh` et les
 tests : lecture -> mapping -> validation SHACL -> décision, produisant une

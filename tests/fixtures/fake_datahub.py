@@ -229,7 +229,7 @@ class FakeGraph:
     `get_entity_semityped_calls` et `last_extra_or_filters` instrumentent le
     double pour tests/unit/test_selection.py : ils permettent de prouver que
     `select_data_product_urns` ne fait plus d'appel par entité (N+1, voir
-    spec/spec-feature-tag-filtering.md) et de vérifier quel filtre a
+    docs/specs/feature-tag-filtering.md) et de vérifier quel filtre a
     effectivement été transmis à `get_urns_by_filter`."""
 
     def __init__(self) -> None:
