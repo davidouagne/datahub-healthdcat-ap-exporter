@@ -11,6 +11,7 @@ G4/P0-6.
 from __future__ import annotations
 
 from typing import Any
+from urllib.parse import urlsplit
 
 from dh_healthdcat import sp
 from dh_healthdcat.mapping import vocabularies as v
@@ -136,6 +137,53 @@ def _as_uri(value: str | None, urn_namespace: str) -> str | None:
     return f"urn:{urn_namespace}:{value}"
 
 
+def _absolute_iri_or_warn(
+    value: str | None,
+    rdf_property: str,
+    datahub_field: str,
+    title: str,
+    urn: str,
+    issues: list[ValidationIssue],
+) -> str | None:
+    """`value` s'il est utilisable comme IRI absolue (schéma présent, aucun
+    espace), sinon None et un WARNING : une URL mal saisie dans DataHub ne
+    doit pas faire échouer l'export d'un DataProduct par ailleurs valide."""
+
+    if not value or not value.strip():
+        return None
+    candidate = value.strip()
+    if urlsplit(candidate).scheme and not any(c.isspace() for c in candidate):
+        return candidate
+    issues.append(
+        ValidationIssue(
+            severity=Severity.WARNING,
+            dataset_name=title,
+            dataset_urn=urn,
+            rdf_property=rdf_property,
+            datahub_field=datahub_field,
+            message=f"IRI absolue attendue, valeur ignorée ({value!r})",
+        )
+    )
+    return None
+
+
+def _read_pages(
+    entity: SemitypedEntity, title: str, urn: str, issues: list[ValidationIssue]
+) -> tuple[str, ...]:
+    """foaf:page : un par lien de `institutionalMemory` (documentation du
+    DataProduct), dans l'ordre DataHub, sans doublon."""
+
+    memory = entity.get("institutionalMemory")
+    pages: list[str] = []
+    for element in memory.elements if memory else []:
+        page = _absolute_iri_or_warn(
+            element.url, "foaf:page", "institutionalMemory.elements[].url", title, urn, issues
+        )
+        if page and page not in pages:
+            pages.append(page)
+    return tuple(pages)
+
+
 def _read_keywords(ctx: ReadContext, entity: SemitypedEntity) -> list[str]:
     """Mots-clés : tags « porteurs de sens » (hors dcat:sample) + libellés des
     glossary terms (ou leur id local à défaut de glossaryTermInfo.name)."""
@@ -253,6 +301,15 @@ def read_data_product(
     _warn_undeclared_properties(ctx, entity, title, dataproduct_urn, issues)
 
     keywords = _read_keywords(ctx, entity)
+    landing_page = _absolute_iri_or_warn(
+        dp.externalUrl,
+        "dcat:landingPage",
+        "dataProductProperties.externalUrl",
+        title,
+        dataproduct_urn,
+        issues,
+    )
+    pages = _read_pages(entity, title, dataproduct_urn, issues)
 
     # --- Champs structured properties, valeurs simples ---
     acronym = props.get_string(ctx, entity, "acronym", title, dataproduct_urn, issues)
@@ -429,6 +486,8 @@ def read_data_product(
         conforms_to=tuple(c for c in conforms_to if c),
         license=license_,
         is_referenced_by=is_referenced_by,
+        landing_page=landing_page,
+        pages=pages,
         distributions=tuple(distributions),
         samples=tuple(samples),
         issues=issues,

@@ -219,6 +219,8 @@ def _add_optional_metadata(graph: Graph, uri: URIRef, dataset: HealthDataset) ->
         graph.add((uri, DCT.isReferencedBy, URIRef(ref)))
     for conforms in dataset.conforms_to:
         graph.add((uri, DCT.conformsTo, URIRef(conforms)))
+    if dataset.landing_page:
+        graph.add((uri, DCAT.landingPage, URIRef(dataset.landing_page)))
     for page in dataset.pages:
         graph.add((uri, FOAF.page, URIRef(page)))
 
