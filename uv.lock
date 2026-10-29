@@ -855,6 +855,7 @@ source = { editable = "." }
 dependencies = [
     { name = "acryl-datahub" },
     { name = "httpx" },
+    { name = "packaging" },
     { name = "pyshacl" },
     { name = "pyyaml" },
     { name = "rdflib" },
@@ -875,6 +876,7 @@ dev = [
 requires-dist = [
     { name = "acryl-datahub", specifier = ">=1.7,<1.8" },
     { name = "httpx", specifier = ">=0.27" },
+    { name = "packaging", specifier = ">=23.0" },
     { name = "pyshacl", specifier = ">=0.25,<0.41" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "rdflib", specifier = "==7.6.0" },

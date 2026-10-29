@@ -19,6 +19,9 @@ dependencies = [
     # une mineure n'y entre que par une PR d'élargissement.
     "acryl-datahub>=1.7,<1.8",
     "pyyaml>=6.0",
+    # Contrôle de la version serveur (datahub_version.py) : plage relue des
+    # métadonnées du paquet.
+    "packaging>=23.0",
 ]
 
 [project.scripts]
