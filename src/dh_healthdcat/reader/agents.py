@@ -2,7 +2,7 @@
 
 `dct:publisher`, `dct:creator` et `healthdcatap:hdab` sont portés par des
 structured properties **plates, directement sur le DataProduct**
-(`fr.aphp.healthdcat.publisherName/.publisherHomepage/...`) — pas par un
+(SP `publisherName`, `publisherHomepage`, …) — pas par un
 CorpGroup référencé via un `ownershipType` personnalisé.
 
 Ce choix n'est pas arbitraire : la première conception (CorpGroup +
@@ -24,6 +24,7 @@ cette version plate, plus simple et surtout réellement chargeable.
 
 from __future__ import annotations
 
+from dh_healthdcat import sp
 from dh_healthdcat.mapping import vocabularies as v
 from dh_healthdcat.mapping.vocabularies import resolve_or_warn
 from dh_healthdcat.model import Agent, ContactPoint, ValidationIssue
@@ -40,19 +41,13 @@ def _read_base_agent(
     *,
     prefix: str,
 ) -> Agent | None:
-    """Lit `fr.aphp.healthdcat.{prefix}Name/.{prefix}Homepage/.{prefix}Email`.
+    """Lit les SP `{prefix}Name`, `{prefix}Homepage` et `{prefix}Email`.
     Retourne None si aucune des trois n'est renseignée (rôle non utilisé sur
     ce DataProduct — ex. `dct:creator`, souvent absent)."""
 
-    name = props.get_string(
-        ctx, entity, f"fr.aphp.healthdcat.{prefix}Name", dataset_name, dataset_urn, issues
-    )
-    homepage = props.get_string(
-        ctx, entity, f"fr.aphp.healthdcat.{prefix}Homepage", dataset_name, dataset_urn, issues
-    )
-    email = props.get_string(
-        ctx, entity, f"fr.aphp.healthdcat.{prefix}Email", dataset_name, dataset_urn, issues
-    )
+    name = props.get_string(ctx, entity, f"{prefix}Name", dataset_name, dataset_urn, issues)
+    homepage = props.get_string(ctx, entity, f"{prefix}Homepage", dataset_name, dataset_urn, issues)
+    email = props.get_string(ctx, entity, f"{prefix}Email", dataset_name, dataset_urn, issues)
     if not (name or homepage or email):
         return None
     return Agent(name=name or "", homepage=homepage or "", mbox=email or "")
@@ -75,21 +70,21 @@ def read_publisher(
         return None
 
     publisher_type_code = props.get_string(
-        ctx, entity, "fr.aphp.healthdcat.publisherType", dataset_name, dataset_urn, issues
+        ctx, entity, "publisherType", dataset_name, dataset_urn, issues
     )
     publisher_type = resolve_or_warn(
         v.PUBLISHER_TYPE,
         publisher_type_code,
         dataset_name=dataset_name,
         dataset_urn=dataset_urn,
-        datahub_field="fr.aphp.healthdcat.publisherType",
+        datahub_field=sp.qualified("publisherType"),
         issues=issues,
     )
     publisher_note = props.get_string(
-        ctx, entity, "fr.aphp.healthdcat.publisherNote", dataset_name, dataset_urn, issues
+        ctx, entity, "publisherNote", dataset_name, dataset_urn, issues
     )
     trusted_data_holder = props.get_bool(
-        entity, "fr.aphp.healthdcat.trustedDataHolder", dataset_name, dataset_urn, issues
+        entity, "trustedDataHolder", dataset_name, dataset_urn, issues
     )
 
     return Agent(
@@ -135,15 +130,9 @@ def read_contact_point(
 ) -> ContactPoint | None:
     """dcat:contactPoint — point de contact opérationnel, distinct du publisher."""
 
-    name = props.get_string(
-        ctx, entity, "fr.aphp.healthdcat.contactPointName", dataset_name, dataset_urn, issues
-    )
-    email = props.get_string(
-        ctx, entity, "fr.aphp.healthdcat.contactPointEmail", dataset_name, dataset_urn, issues
-    )
+    name = props.get_string(ctx, entity, "contactPointName", dataset_name, dataset_urn, issues)
+    email = props.get_string(ctx, entity, "contactPointEmail", dataset_name, dataset_urn, issues)
     if not name and not email:
         return None
-    url = props.get_string(
-        ctx, entity, "fr.aphp.healthdcat.contactPointUrl", dataset_name, dataset_urn, issues
-    )
+    url = props.get_string(ctx, entity, "contactPointUrl", dataset_name, dataset_urn, issues)
     return ContactPoint(name=name or dataset_name, email=email or "", url=url)

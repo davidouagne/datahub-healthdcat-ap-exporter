@@ -12,6 +12,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Any
 
+from dh_healthdcat import sp
 from dh_healthdcat.mapping import vocabularies as v
 from dh_healthdcat.mapping.vocabularies import resolve_or_warn
 from dh_healthdcat.model import Column, Distribution, Severity, Table, ValidationIssue
@@ -37,7 +38,7 @@ def is_sample_asset(ctx: ReadContext, dataset_urn: str) -> bool:
 
 def _infer_format_code(dataset_name: str) -> str:
     """Dérive un code FileType à partir de l'extension du nom d'asset quand
-    `fr.aphp.healthdcat.distributionFormat` n'est pas renseignée."""
+    la SP `distributionFormat` n'est pas renseignée."""
 
     lowered = dataset_name.lower()
     for suffix, code in (
@@ -92,18 +93,18 @@ def read_distribution(
     )
 
     access_url = props.get_string(
-        ctx, entity, "fr.aphp.healthdcat.accessUrl", parent_dataset_name, dataset_urn, issues
+        ctx, entity, "accessUrl", parent_dataset_name, dataset_urn, issues
     )
     if not access_url and dp and dp.externalUrl:
         access_url = dp.externalUrl
     download_url = props.get_string(
-        ctx, entity, "fr.aphp.healthdcat.downloadUrl", parent_dataset_name, dataset_urn, issues
+        ctx, entity, "downloadUrl", parent_dataset_name, dataset_urn, issues
     )
 
     format_code = props.get_string(
         ctx,
         entity,
-        "fr.aphp.healthdcat.distributionFormat",
+        "distributionFormat",
         parent_dataset_name,
         dataset_urn,
         issues,
@@ -117,7 +118,7 @@ def read_distribution(
                     dataset_name=parent_dataset_name,
                     dataset_urn=dataset_urn,
                     rdf_property="dct:format",
-                    datahub_field="fr.aphp.healthdcat.distributionFormat",
+                    datahub_field=sp.qualified("distributionFormat"),
                     message=(
                         '".ndjson" absent du vocabulaire FileType du HDH — repli '
                         f'sur "{v.FILE_TYPE_NDJSON_FALLBACK}"'
@@ -132,7 +133,7 @@ def read_distribution(
         format_code,
         dataset_name=parent_dataset_name,
         dataset_urn=dataset_urn,
-        datahub_field="fr.aphp.healthdcat.distributionFormat",
+        datahub_field=sp.qualified("distributionFormat"),
         issues=issues,
     )
 
@@ -143,14 +144,14 @@ def read_distribution(
         props.get_string(
             ctx,
             entity,
-            "fr.aphp.healthdcat.distributionStatus",
+            "distributionStatus",
             parent_dataset_name,
             dataset_urn,
             issues,
         ),
         dataset_name=parent_dataset_name,
         dataset_urn=dataset_urn,
-        datahub_field="fr.aphp.healthdcat.distributionStatus",
+        datahub_field=sp.qualified("distributionStatus"),
         issues=issues,
     )
     if deprecation is not None and deprecation.deprecated:

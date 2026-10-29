@@ -18,6 +18,7 @@ from __future__ import annotations
 from rdflib import RDF, XSD, Graph, Literal, URIRef
 from rdflib.namespace import RDFS
 
+from dh_healthdcat import sp
 from dh_healthdcat.mapping.namespaces import ADMS, CSVW, DCAT, DCATAP, DCT
 from dh_healthdcat.mapping.nodes import node_uri
 from dh_healthdcat.model import Distribution, Severity, Table, ValidationIssue
@@ -96,7 +97,7 @@ def _add_distribution_properties(
             dataset_name,
             dataset_urn_or_source(distribution),
             "dcat:accessURL",
-            f"fr.aphp.healthdcat.accessUrl (Dataset {distribution.title})",
+            f"{sp.qualified('accessUrl')} (Dataset {distribution.title})",
         )
 
     # Prédicats optionnels pointant vers une IRI unique.
@@ -150,7 +151,7 @@ def _check_health_distribution_required(
             dataset_name,
             urn,
             "dcatap:applicableLegislation",
-            "hérité du DataProduct — vérifier fr.aphp.healthdcat.applicableLegislation",
+            f"hérité du DataProduct — vérifier {sp.qualified('applicableLegislation')}",
         )
     if distribution.byte_size is None:
         _missing(
@@ -166,7 +167,7 @@ def _check_health_distribution_required(
             dataset_name,
             urn,
             "dct:format",
-            f"fr.aphp.healthdcat.distributionFormat (Dataset {distribution.title})",
+            f"{sp.qualified('distributionFormat')} (Dataset {distribution.title})",
         )
     if not distribution.rights:
         _missing(
@@ -174,7 +175,7 @@ def _check_health_distribution_required(
             dataset_name,
             urn,
             "dct:rights",
-            "fr.aphp.healthdcat.license (DataProduct, hérité)",
+            f"{sp.qualified('license')} (DataProduct, hérité)",
         )
 
 

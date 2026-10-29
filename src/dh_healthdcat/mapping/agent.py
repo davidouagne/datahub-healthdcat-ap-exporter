@@ -24,6 +24,7 @@ from __future__ import annotations
 from rdflib import RDF, XSD, Graph, Literal, URIRef
 from rdflib.namespace import RDFS
 
+from dh_healthdcat import sp
 from dh_healthdcat.mapping.namespaces import DCAT, DCT, FOAF, HEALTHDCATAP, VCARD
 from dh_healthdcat.mapping.nodes import node_uri
 from dh_healthdcat.model import (
@@ -76,7 +77,7 @@ def add_publisher(
             dataset_name,
             dataset_urn,
             "healthdcatap:publisherType",
-            "fr.aphp.healthdcat.publisherType (CorpGroup)",
+            f"{sp.qualified('publisherType')} (CorpGroup)",
         )
 
     if agent.publisher_note:
@@ -87,7 +88,7 @@ def add_publisher(
             dataset_name,
             dataset_urn,
             "healthdcatap:publisherNote",
-            "fr.aphp.healthdcat.publisherNote (CorpGroup)",
+            f"{sp.qualified('publisherNote')} (CorpGroup)",
         )
 
     if agent.trusted_data_holder is not None:
@@ -104,7 +105,7 @@ def add_publisher(
             dataset_name,
             dataset_urn,
             "healthdcatap:trustedDataHolder",
-            "fr.aphp.healthdcat.trustedDataHolder (CorpGroup)",
+            f"{sp.qualified('trustedDataHolder')} (CorpGroup)",
         )
 
     return node
@@ -171,7 +172,7 @@ def _add_base_agent(
             dataset_name,
             dataset_urn,
             "foaf:homepage",
-            f"fr.aphp.healthdcat.agentHomepage (CorpGroup {role})",
+            f"{sp.qualified('agentHomepage')} (CorpGroup {role})",
         )
 
     if agent.mbox:
@@ -182,7 +183,7 @@ def _add_base_agent(
             dataset_name,
             dataset_urn,
             "foaf:mbox",
-            f"fr.aphp.healthdcat.agentEmail (CorpGroup {role})",
+            f"{sp.qualified('agentEmail')} (CorpGroup {role})",
         )
 
 
@@ -204,9 +205,7 @@ def add_contact_point(
     if cp.url:
         graph.add((node, VCARD.hasURL, URIRef(cp.url)))
     else:
-        _missing(
-            issues, dataset_name, dataset_urn, "vcard:hasURL", "fr.aphp.healthdcat.contactPointUrl"
-        )
+        _missing(issues, dataset_name, dataset_urn, "vcard:hasURL", sp.qualified("contactPointUrl"))
     return node
 
 

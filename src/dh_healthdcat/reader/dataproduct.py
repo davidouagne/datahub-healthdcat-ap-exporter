@@ -13,6 +13,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
+from dh_healthdcat import sp
 from dh_healthdcat.mapping import vocabularies as v
 from dh_healthdcat.mapping.vocabularies import (
     UnknownVocabularyValueError,
@@ -163,9 +164,7 @@ def _read_spatial(
     sinon le code brut (URI d'un autre référentiel, ou code régional FR-75)."""
 
     spatial: list[str] = []
-    for code in props.get_strings(
-        ctx, entity, "fr.aphp.healthdcat.spatialCoverage", title, urn, issues
-    ):
+    for code in props.get_strings(ctx, entity, "spatialCoverage", title, urn, issues):
         if code.startswith("http"):
             spatial.append(code)
             continue
@@ -183,9 +182,7 @@ def _read_conforms_to(
     enveloppé en urn:aphp:conformsTo:<code> (OSIRIS & co.)."""
 
     conforms_to: list[str] = []
-    for code in props.get_strings(
-        ctx, entity, "fr.aphp.healthdcat.referenceSpecification", title, urn, issues
-    ):
+    for code in props.get_strings(ctx, entity, "referenceSpecification", title, urn, issues):
         try:
             conforms_to.append(v.REFERENCE_SPECIFICATION.resolve(code))
         except UnknownVocabularyValueError:
@@ -203,7 +200,7 @@ def _read_period(
     urn: str,
     issues: list[ValidationIssue],
 ) -> PeriodOfTime | None:
-    """PeriodOfTime à partir d'un couple de structured properties date ;
+    """PeriodOfTime à partir d'un couple de SP date (noms locaux) ;
     None si les deux bornes sont absentes."""
 
     start = props.get_date(entity, start_prop, title, urn, issues)
@@ -259,144 +256,110 @@ def read_data_product(
     keywords = _read_keywords(ctx, entity)
 
     # --- Champs structured properties, valeurs simples ---
-    acronym = props.get_string(
-        ctx, entity, "fr.aphp.healthdcat.acronym", title, dataproduct_urn, issues
-    )
+    acronym = props.get_string(ctx, entity, "acronym", title, dataproduct_urn, issues)
     dataset_type = _resolve_one(
         v.DATASET_TYPE,
-        props.get_string(
-            ctx, entity, "fr.aphp.healthdcat.datasetType", title, dataproduct_urn, issues
-        ),
+        props.get_string(ctx, entity, "datasetType", title, dataproduct_urn, issues),
         title,
         dataproduct_urn,
-        "fr.aphp.healthdcat.datasetType",
+        sp.qualified("datasetType"),
         issues,
     )
     access_rights = _resolve_one(
         v.ACCESS_RIGHTS,
-        props.get_string(
-            ctx, entity, "fr.aphp.healthdcat.accessRights", title, dataproduct_urn, issues
-        ),
+        props.get_string(ctx, entity, "accessRights", title, dataproduct_urn, issues),
         title,
         dataproduct_urn,
-        "fr.aphp.healthdcat.accessRights",
+        sp.qualified("accessRights"),
         issues,
     )
     applicable_legislation = _resolve_many(
         v.APPLICABLE_REGULATIONS,
-        props.get_strings(
-            ctx, entity, "fr.aphp.healthdcat.applicableLegislation", title, dataproduct_urn, issues
-        ),
+        props.get_strings(ctx, entity, "applicableLegislation", title, dataproduct_urn, issues),
         title,
         dataproduct_urn,
-        "fr.aphp.healthdcat.applicableLegislation",
+        sp.qualified("applicableLegislation"),
         issues,
     )
     health_category = _resolve_many(
         v.HEALTH_CATEGORY,
-        props.get_strings(
-            ctx, entity, "fr.aphp.healthdcat.healthCategory", title, dataproduct_urn, issues
-        ),
+        props.get_strings(ctx, entity, "healthCategory", title, dataproduct_urn, issues),
         title,
         dataproduct_urn,
-        "fr.aphp.healthdcat.healthCategory",
+        sp.qualified("healthCategory"),
         issues,
     )
     health_theme = _resolve_many(
         v.HEALTH_THEME,
-        props.get_strings(
-            ctx, entity, "fr.aphp.healthdcat.healthTheme", title, dataproduct_urn, issues
-        ),
+        props.get_strings(ctx, entity, "healthTheme", title, dataproduct_urn, issues),
         title,
         dataproduct_urn,
-        "fr.aphp.healthdcat.healthTheme",
+        sp.qualified("healthTheme"),
         issues,
     )
     personal_data = _resolve_many(
         v.PERSONAL_DATA,
-        props.get_strings(
-            ctx, entity, "fr.aphp.healthdcat.personalData", title, dataproduct_urn, issues
-        ),
+        props.get_strings(ctx, entity, "personalData", title, dataproduct_urn, issues),
         title,
         dataproduct_urn,
-        "fr.aphp.healthdcat.personalData",
+        sp.qualified("personalData"),
         issues,
     )
     language = _resolve_many(
         v.LANGUAGE,
-        props.get_strings(
-            ctx, entity, "fr.aphp.healthdcat.language", title, dataproduct_urn, issues
-        ),
+        props.get_strings(ctx, entity, "language", title, dataproduct_urn, issues),
         title,
         dataproduct_urn,
-        "fr.aphp.healthdcat.language",
+        sp.qualified("language"),
         issues,
     )
     legal_basis = _resolve_many(
         v.LEGAL_BASIS,
-        props.get_strings(
-            ctx, entity, "fr.aphp.healthdcat.legalBasis", title, dataproduct_urn, issues
-        ),
+        props.get_strings(ctx, entity, "legalBasis", title, dataproduct_urn, issues),
         title,
         dataproduct_urn,
-        "fr.aphp.healthdcat.legalBasis",
+        sp.qualified("legalBasis"),
         issues,
     )
     coding_system = _resolve_many(
         v.CODING_SYSTEM,
-        props.get_strings(ctx, entity, "fr.aphp.healthdcat.coding", title, dataproduct_urn, issues),
+        props.get_strings(ctx, entity, "coding", title, dataproduct_urn, issues),
         title,
         dataproduct_urn,
-        "fr.aphp.healthdcat.coding",
+        sp.qualified("coding"),
         issues,
     )
     accrual_periodicity = _resolve_one(
         v.FREQUENCY,
-        props.get_string(
-            ctx, entity, "fr.aphp.healthdcat.publishingFrequency", title, dataproduct_urn, issues
-        ),
+        props.get_string(ctx, entity, "publishingFrequency", title, dataproduct_urn, issues),
         title,
         dataproduct_urn,
-        "fr.aphp.healthdcat.publishingFrequency",
+        sp.qualified("publishingFrequency"),
         issues,
     )
 
     spatial = _read_spatial(ctx, entity, title, dataproduct_urn, issues)
     conforms_to = _read_conforms_to(ctx, entity, title, dataproduct_urn, issues)
-    license_ = props.get_string(
-        ctx, entity, "fr.aphp.healthdcat.license", title, dataproduct_urn, issues
-    )
+    license_ = props.get_string(ctx, entity, "license", title, dataproduct_urn, issues)
     is_referenced_by = tuple(
         _doi_to_uri(ref)
-        for ref in props.get_strings(
-            ctx, entity, "fr.aphp.healthdcat.isReferencedBy", title, dataproduct_urn, issues
-        )
+        for ref in props.get_strings(ctx, entity, "isReferencedBy", title, dataproduct_urn, issues)
     )
 
-    number_of_records = props.get_int(
-        entity, "fr.aphp.healthdcat.numberOfRecords", title, dataproduct_urn, issues
-    )
+    number_of_records = props.get_int(entity, "numberOfRecords", title, dataproduct_urn, issues)
     number_of_unique_individuals = props.get_int(
-        entity, "fr.aphp.healthdcat.numberOfUniqueIndividuals", title, dataproduct_urn, issues
+        entity, "numberOfUniqueIndividuals", title, dataproduct_urn, issues
     )
-    min_typical_age = props.get_int(
-        entity, "fr.aphp.healthdcat.minTypicalAge", title, dataproduct_urn, issues
-    )
-    max_typical_age = props.get_int(
-        entity, "fr.aphp.healthdcat.maxTypicalAge", title, dataproduct_urn, issues
-    )
+    min_typical_age = props.get_int(entity, "minTypicalAge", title, dataproduct_urn, issues)
+    max_typical_age = props.get_int(entity, "maxTypicalAge", title, dataproduct_urn, issues)
     population_coverage = props.get_string(
-        ctx, entity, "fr.aphp.healthdcat.populationCoverage", title, dataproduct_urn, issues
+        ctx, entity, "populationCoverage", title, dataproduct_urn, issues
     )
-    provenance = props.get_string(
-        ctx, entity, "fr.aphp.healthdcat.provenance", title, dataproduct_urn, issues
-    )
-    purpose = props.get_string(
-        ctx, entity, "fr.aphp.healthdcat.purpose", title, dataproduct_urn, issues
-    )
+    provenance = props.get_string(ctx, entity, "provenance", title, dataproduct_urn, issues)
+    purpose = props.get_string(ctx, entity, "purpose", title, dataproduct_urn, issues)
 
     issued = props.get_date(
-        entity, "fr.aphp.healthdcat.issued", title, dataproduct_urn, issues
+        entity, "issued", title, dataproduct_urn, issues
     )  # date, émis en xsd:date
     modified = (
         datetime.fromtimestamp(dp.lastModified.time / 1000)
@@ -406,16 +369,16 @@ def read_data_product(
 
     temporal = _read_period(
         entity,
-        "fr.aphp.healthdcat.temporalCoverageStart",
-        "fr.aphp.healthdcat.temporalCoverageEnd",
+        "temporalCoverageStart",
+        "temporalCoverageEnd",
         title,
         dataproduct_urn,
         issues,
     )
     retention_period = _read_period(
         entity,
-        "fr.aphp.healthdcat.retentionPeriodStart",
-        "fr.aphp.healthdcat.retentionPeriodEnd",
+        "retentionPeriodStart",
+        "retentionPeriodEnd",
         title,
         dataproduct_urn,
         issues,

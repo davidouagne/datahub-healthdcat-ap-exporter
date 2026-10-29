@@ -2,7 +2,7 @@
 
 `PrimitivePropertyValue` (le type PDL sur le fil) n'est qu'une union
 `string | double` — une propriété déclarée `number` ou `date` peut donc
-arriver en chaîne (cas avéré sur `fr.aphp.healthdcat.numberOfRecords`,
+arriver en chaîne (cas avéré sur la SP `numberOfRecords`,
 stocké `"1000000000"` dans dataproduct-layer/assets.yml). Ce module coerce
 selon la *définition* de la propriété (résolue une fois via
 `ReadContext.property_definitions`), pas selon le type Python reçu, et
@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from datetime import date
 
+from dh_healthdcat import sp
 from dh_healthdcat.model import Severity, ValidationIssue
 from dh_healthdcat.reader.graph import ReadContext, SemitypedEntity
 
@@ -40,14 +41,14 @@ def _warn(
     )
 
 
-def raw_values(entity: SemitypedEntity, qualified_name: str) -> list[str | float]:
-    """Valeurs brutes (non coercées) d'une structured property sur une entité,
-    ou `[]` si absente."""
+def raw_values(entity: SemitypedEntity, name: str) -> list[str | float]:
+    """Valeurs brutes (non coercées) de la SP de nom local `name` sur une
+    entité, ou `[]` si absente."""
 
     aspect = entity.get("structuredProperties")
     if aspect is None:
         return []
-    target_urn = STRUCTURED_PROPERTY_PREFIX + qualified_name
+    target_urn = STRUCTURED_PROPERTY_PREFIX + sp.qualified(name)
     values: list[str | float] = []
     for assignment in aspect.properties:
         if assignment.propertyUrn == target_urn:
@@ -162,80 +163,84 @@ def _coerce_bool(
 def get_strings(
     ctx: ReadContext,
     entity: SemitypedEntity,
-    qualified_name: str,
+    name: str,
     dataset_name: str,
     dataset_urn: str,
     issues: list[ValidationIssue],
 ) -> tuple[str, ...]:
     """Toutes les valeurs (string/urn/rich_text), coercées en texte."""
 
-    values = raw_values(entity, qualified_name)
+    qualified_name = sp.qualified(name)
+    values = raw_values(entity, name)
     return tuple(_coerce_str(ctx, values, qualified_name, dataset_name, dataset_urn, issues))
 
 
 def get_string(
     ctx: ReadContext,
     entity: SemitypedEntity,
-    qualified_name: str,
+    name: str,
     dataset_name: str,
     dataset_urn: str,
     issues: list[ValidationIssue],
 ) -> str | None:
-    values = get_strings(ctx, entity, qualified_name, dataset_name, dataset_urn, issues)
+    values = get_strings(ctx, entity, name, dataset_name, dataset_urn, issues)
     return values[0] if values else None
 
 
 def get_ints(
     entity: SemitypedEntity,
-    qualified_name: str,
+    name: str,
     dataset_name: str,
     dataset_urn: str,
     issues: list[ValidationIssue],
 ) -> tuple[int, ...]:
-    values = raw_values(entity, qualified_name)
+    qualified_name = sp.qualified(name)
+    values = raw_values(entity, name)
     return tuple(_coerce_int(values, qualified_name, dataset_name, dataset_urn, issues))
 
 
 def get_int(
     entity: SemitypedEntity,
-    qualified_name: str,
+    name: str,
     dataset_name: str,
     dataset_urn: str,
     issues: list[ValidationIssue],
 ) -> int | None:
-    values = get_ints(entity, qualified_name, dataset_name, dataset_urn, issues)
+    values = get_ints(entity, name, dataset_name, dataset_urn, issues)
     return values[0] if values else None
 
 
 def get_dates(
     entity: SemitypedEntity,
-    qualified_name: str,
+    name: str,
     dataset_name: str,
     dataset_urn: str,
     issues: list[ValidationIssue],
 ) -> tuple[date, ...]:
-    values = raw_values(entity, qualified_name)
+    qualified_name = sp.qualified(name)
+    values = raw_values(entity, name)
     return tuple(_coerce_date(values, qualified_name, dataset_name, dataset_urn, issues))
 
 
 def get_date(
     entity: SemitypedEntity,
-    qualified_name: str,
+    name: str,
     dataset_name: str,
     dataset_urn: str,
     issues: list[ValidationIssue],
 ) -> date | None:
-    values = get_dates(entity, qualified_name, dataset_name, dataset_urn, issues)
+    values = get_dates(entity, name, dataset_name, dataset_urn, issues)
     return values[0] if values else None
 
 
 def get_bool(
     entity: SemitypedEntity,
-    qualified_name: str,
+    name: str,
     dataset_name: str,
     dataset_urn: str,
     issues: list[ValidationIssue],
 ) -> bool | None:
-    values = raw_values(entity, qualified_name)
+    qualified_name = sp.qualified(name)
+    values = raw_values(entity, name)
     coerced = _coerce_bool(values, qualified_name, dataset_name, dataset_urn, issues)
     return coerced[0] if coerced else None
