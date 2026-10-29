@@ -1,6 +1,6 @@
 """Pipeline unifié : lecture -> mapping -> rapport d'issues -> validation
 SHACL -> décision. Seam unique traversé par `export-file`, `push-hdh` et les
-tests (spec/spec-feature-export-pipeline.md) — `cli.py` ne fait plus que
+tests (docs/specs/feature-export-pipeline.md) — `cli.py` ne fait plus que
 traduire les outcomes produits ici en présentation terminal.
 
 `prepare()` produit une séquence d'outcomes typés, un par DataProduct

@@ -1,5 +1,5 @@
-"""État de poussée (emit/state.py) — spec/spec-feature-export-pipeline.md et
-spec/spec-feature-catalogue-instance-config.md (cloisonnement par instance,
+"""État de poussée (emit/state.py) — docs/specs/feature-export-pipeline.md et
+docs/specs/feature-catalogue-instance-config.md (cloisonnement par instance,
 REQ-008/009).
 
 `PushState` remplace les cinq fonctions de module par un objet qui possède son

@@ -1,4 +1,4 @@
-"""Sélection des DataProducts (selection.py) — spec/spec-feature-tag-filtering.md.
+"""Sélection des DataProducts (selection.py) — docs/specs/feature-tag-filtering.md.
 
 Le filtrage est désormais évalué côté serveur (une requête `get_urns_by_filter`
 avec `extra_or_filters`), plus par énumération + test de chaque DataProduct

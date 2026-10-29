@@ -2,7 +2,7 @@
 `push-hdh` (cli.py) pour que les deux commandes filtrent (--urn/--domain/--tag)
 de façon identique.
 
-Voir spec/spec-feature-tag-filtering.md : le filtre est évalué côté serveur
+Voir docs/specs/feature-tag-filtering.md : le filtre est évalué côté serveur
 (une seule requête `get_urns_by_filter`), pas en énumérant tout le catalogue
 puis en testant chaque DataProduct un par un (coût en O(N) du v0, corrigé
 ici) — d'où la séparation entre `build_selection_query` (pure, testable hors
@@ -28,7 +28,7 @@ __all__ = [
 
 _URN_PRECEDENCE_WARNING = (
     "--urn a été fourni : --domain/--tag/--exclude-tag sont ignorés "
-    "(--urn est prioritaire, voir spec/spec-feature-tag-filtering.md)."
+    "(--urn est prioritaire, voir docs/specs/feature-tag-filtering.md)."
 )
 
 

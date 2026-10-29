@@ -1,5 +1,5 @@
 """Résolution de l'instance du Catalogue de métadonnées —
-spec/spec-feature-catalogue-instance-config.md.
+docs/specs/feature-catalogue-instance-config.md.
 
 Sépare strictement l'I/O (`find_config_file`, `load_config`) de la décision
 (`resolve_target`) : c'est ce qui rend la précédence
