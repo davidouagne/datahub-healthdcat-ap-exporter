@@ -231,6 +231,11 @@ class FakeGraph:
         self._entities = _entities()
         self.get_entity_semityped_calls: list[str] = []
         self.requested_aspects: dict[str, list[str]] = {}
+        # Réponse de /config ; une Exception simule un /config inaccessible.
+        self.config: dict | Exception = {
+            "versions": {"acryldata/datahub": {"version": "v1.7.0.1"}},
+            "datahub": {"serverEnv": "core"},
+        }
         self.last_extra_or_filters: object = None
 
     def get_entity_semityped(self, urn: str, aspects: list[str] | None = None) -> dict:
@@ -251,6 +256,11 @@ class FakeGraph:
         if entity_types == ["dataProduct"]:
             return list(ALL_DATAPRODUCT_URNS)
         return []
+
+    def get_config(self) -> dict:
+        if isinstance(self.config, Exception):
+            raise self.config
+        return self.config
 
     def get_latest_timeseries_value(self, entity_urn, aspect_type, filter_criteria_map):
         return _PROFILES.get(entity_urn)

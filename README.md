@@ -42,6 +42,11 @@ celle du serveur visé suivent la même plage. Elle ne contient que des versions
 vérifiées ; une mineure plus récente n'y entre qu'après vérification (voir
 `docs/adr/0004-support-versions-datahub.md`).
 
+Au démarrage, `export-file` et `push-hdh` lisent la version du serveur sur
+`/config`. Hors plage, version non reconnue ou DataHub Cloud : un
+avertissement, et la commande continue. Avec `--strict-version`, ces mêmes cas
+la font échouer (code 1), avant toute lecture du catalogue.
+
 ### Configuration DataHub
 
 `dh-healthdcat` se connecte au GMS via `DataHubGraph.get_default_graph()` — exactement la même résolution que la CLI `datahub` elle-même. Si `datahub` (ou tout script `acryl-datahub`) fonctionne déjà sur ce poste, `dh-healthdcat` fonctionnera sans configuration supplémentaire.

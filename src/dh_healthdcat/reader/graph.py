@@ -60,6 +60,19 @@ class GraphLike(Protocol):
         self, entity_urn: str, aspect_type: Any, filter_criteria_map: dict[str, str]
     ) -> Any: ...
 
+    def get_config(self) -> dict[str, Any]: ...
+
+
+@dataclass(frozen=True, slots=True)
+class ServerInfo:
+    """Ce que l'exporteur retient de `/config` : la version brute du serveur
+    (ex. `v1.7.0.1`, None si absente ou `/config` inaccessible) et s'il s'agit
+    de DataHub Cloud (`datahub.serverEnv` autre que `core`)."""
+
+    version: str | None
+    is_cloud: bool = False
+    unreachable: bool = False
+
 
 @dataclass(slots=True)
 class PropertyDefinition:
@@ -203,6 +216,25 @@ class ReadContext:
         profile = self.graph.get_latest_timeseries_value(dataset_urn, DatasetProfileClass, {})
         self._profile_cache[dataset_urn] = profile
         return profile
+
+    def server_info(self) -> ServerInfo:
+        """Version du serveur DataHub, lue sur `/config` (ADR-0004 §5).
+
+        Lit le dict brut de `get_config()` plutôt que `RestServiceConfig`, dont
+        le module a changé entre deux clients de la plage. Un échec de lecture
+        n'interrompt rien : la version est alors simplement inconnue."""
+
+        try:
+            config = self.graph.get_config()
+        except Exception:  # réseau, authentification, réponse illisible
+            return ServerInfo(version=None, unreachable=True)
+        versions = config.get("versions") or {}
+        version = (versions.get("acryldata/datahub") or {}).get("version")
+        server_env = (config.get("datahub") or {}).get("serverEnv")
+        return ServerInfo(
+            version=version if isinstance(version, str) and version else None,
+            is_cloud=bool(server_env) and server_env != "core",
+        )
 
     def find_data_product_urns(self, query: DataProductQuery) -> list[str]:
         """URN des DataProducts satisfaisant `query`, en une seule requête de

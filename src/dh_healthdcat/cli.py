@@ -69,6 +69,21 @@ def _resolve_target_or_exit(
         raise typer.Exit(code=2) from exc
 
 
+def _check_server_version_or_exit(ctx: ReadContext, *, strict_version: bool) -> None:
+    """Compare la version du serveur DataHub à la plage supportée (ADR-0004 §5) :
+    avertit et continue, ou échoue avec `--strict-version`."""
+
+    from dh_healthdcat import datahub_version
+
+    message = datahub_version.check(ctx.server_info(), datahub_version.supported_range())
+    if message is None:
+        return
+    if strict_version:
+        typer.secho(f"{message} (--strict-version)", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+    typer.secho(message, fg=typer.colors.YELLOW, err=True)
+
+
 def _select_or_exit(
     ctx: ReadContext,
     *,
@@ -134,12 +149,18 @@ def export_file(
         "--strict/--no-strict",
         help="Échoue si un jeu a une ERREUR SHACL (désactiver pour un export exploratoire)",
     ),
+    strict_version: bool = typer.Option(
+        False,
+        "--strict-version",
+        help="Échoue si le serveur DataHub est hors de la plage supportée ou non reconnu",
+    ),
 ) -> None:
     """Exporte le catalogue DataHub (DataProducts) en HealthDCAT-AP."""
 
     from dh_healthdcat.emit.turtle import write_graph
 
     ctx = from_env()
+    _check_server_version_or_exit(ctx, strict_version=strict_version)
     selected = _select_or_exit(
         ctx, urn=urn, domain=domain, tag=tag, tag_mode=tag_mode, exclude_tag=exclude_tag
     )
@@ -316,6 +337,11 @@ def push_hdh(
         "--dry-run",
         help="Valide et affiche ce qui serait envoyé, sans appel réseau d'écriture",
     ),
+    strict_version: bool = typer.Option(
+        False,
+        "--strict-version",
+        help="Échoue si le serveur DataHub est hors de la plage supportée ou non reconnu",
+    ),
 ) -> None:
     """Pousse le catalogue DataHub (DataProducts) vers /ingest/datasets du HDH.
 
@@ -355,6 +381,7 @@ def push_hdh(
     typer.echo(f"Connecté à {resolved.url}{profile_label} ({who}).")
 
     ctx = from_env()
+    _check_server_version_or_exit(ctx, strict_version=strict_version)
     selected = _select_or_exit(
         ctx, urn=urn, domain=domain, tag=tag, tag_mode=tag_mode, exclude_tag=exclude_tag
     )
