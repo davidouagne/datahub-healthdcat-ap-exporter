@@ -96,11 +96,10 @@ seulement de le signaler même quand l'autre Data Product n'est pas sélectionn�
 
 ## Questions ouvertes
 
-1. Relation au parent : `dcat:qualifiedRelation` (rôle explicite, quel vocabulaire de
-   rôles ?) ou `dct:relation` simple ? Que faire quand le parent n'est pas dans la
-   sélection ? L'ingestion HDH conserve-t-elle ces propriétés ? (non vérifié)
-2. `outputPort` : le filtrage des distributions mérite-t-il un ADR et un changement
-   cassant ?
+Tranchées le 2026-10-29 par ADR-0006 : relation qualifiée de rôle IANA `up` vers l'IRI
+stable du parent, émise même hors sélection (l'ingestion HDH la conserve, mais réémet la
+cible en `dcat:DataService`) ; ports exclusifs avec repli sur tous les assets, sans
+rupture.
 
 ## Tickets
 
@@ -113,8 +112,8 @@ Sous-issues de #124 ouvertes à partir de cette recherche :
 | #143 | `dct:modified` jamais émis | source à choisir |
 | #144 | Asset partagé entre DataProducts | prêt |
 | #145 | `dcat:landingPage` + `foaf:page` | prêt |
-| #146 | Hiérarchie `parentDataProduct` | à trancher (question 1) |
-| #147 | Output ports → `dcat:distribution` | à trancher (question 2) |
+| #146 | Hiérarchie `parentDataProduct` | ADR-0006 ; bloqué par #141 |
+| #147 | Output ports → `dcat:distribution` | ADR-0006 ; prêt |
 
 ## Sources
 

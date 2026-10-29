@@ -1,4 +1,4 @@
-# Écarts connus entre le vocabulaire vendu HDH et HealthDCAT-AP/DPV
+# Écarts connus entre le HDH et HealthDCAT-AP/DPV
 
 ## Politique
 
@@ -29,6 +29,25 @@ MR `!9`, alors que c'est un terme DPV-PD valide et actif) n'est **pas** un
 vocabulaire réel de l'exporteur, déjà signalé et clos sur
 `datahub-data-gov-registry#25` (voir #85).
 
+## Pertes à l'ingestion HDH
+
+Le Catalogue HDH ne conserve pas le Turtle poussé (`POST /ingest/datasets`) : il le
+charge dans un graphe temporaire, le relit dans son modèle (`FullDatasetSerializer`) puis
+réécrit son propre RDF (`app/turtle/services.py`, `_full_dataset_from_turtle_string`).
+Toute propriété sans champ dans ce modèle disparaît, sans erreur. Ces propriétés restent
+valides en HealthDCAT-AP : l'exporteur continue de les émettre (export Turtle, ouverture
+européenne #132), même règle que pour les vocabulaires vendus.
+
+| Propriété émise | Sort côté HDH | Source HDH | Émise par |
+|---|---|---|---|
+| `dcat:landingPage` | Perdue : lue par le parseur, mais le modèle n'a pas de champ | `app/form/services/rdf_graph_parser.py` (`_parse_dataset_from_graph`) | #145 |
+| `foaf:page` | Perdue : idem | idem | #145 |
+| `dct:relation` (direct), `dct:isPartOf`, `dct:hasPart`, `dcat:inSeries` | Perdues : non lues | idem | non émises (ADR-0006) |
+| `dcat:qualifiedRelation` | Conservée, mais la cible `dct:relation` est réémise comme `dcat:DataService` (`dct:title` et `dcat:endpointURL` = l'IRI cible) ; un rôle hors vocabulaire `RoleQualifiedRelation` (relations IANA) est libellé « NA » | `app/form/serializers/dataset.py` (`to_turtle`) | #146 (ADR-0006) |
+
+Vérifié sur le clone `healthdatahub/catalogue-de-metadonnees` au commit `fc5149f`
+(2026-06-19), le 2026-10-29.
+
 ## Historique
 
 - 2026-09-18 (#85) : audit initial de `PersonalData.yml` contre DPV v2.3,
@@ -37,6 +56,8 @@ vocabulaire réel de l'exporteur, déjà signalé et clos sur
   **revenue en arrière** — la politique retenue est de rester conforme au
   contenu du HDH tel qu'il est vendu, et de consolider les écarts ici plutôt
   que de les corriger fichier par fichier.
+- 2026-10-29 (#146, #147) : pertes à l'ingestion HDH, constatées en préparant
+  ADR-0006.
 
 ## Ajouter un écart
 
