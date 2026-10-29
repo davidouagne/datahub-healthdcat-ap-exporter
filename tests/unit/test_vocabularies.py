@@ -57,6 +57,19 @@ def test_reference_specification_maps_standards_to_canonical_uris():
         v.REFERENCE_SPECIFICATION.resolve("OSIRIS")
 
 
+def test_coding_system_maps_french_nomenclatures_to_ans_smt_uris():
+    # CodeSystem.url du Serveur Multi-Terminologies de l'ANS, vérifiées le
+    # 2026-10-29 (docs/research/coding-system-uris.md). CIP13 et UCD partagent
+    # l'URI du référentiel CIP/UCD ; l'ancienne valeur ambiguë NFS est la NABM.
+    assert v.CODING_SYSTEM.resolve("CCAM") == "https://smt.esante.gouv.fr/terminologie-ccam"
+    assert v.CODING_SYSTEM.resolve("CIP13") == "https://smt.esante.gouv.fr/terminologie-cip_ucd"
+    assert v.CODING_SYSTEM.resolve("UCD") == "https://smt.esante.gouv.fr/terminologie-cip_ucd"
+    assert v.CODING_SYSTEM.resolve("NABM") == "https://smt.esante.gouv.fr/terminologie-nabm"
+    with pytest.raises(v.UnknownVocabularyValueError):
+        v.CODING_SYSTEM.resolve("NFS")
+    assert not any("aphp.fr" in uri for uri in v.CODING_SYSTEM.code_to_uri.values())
+
+
 def test_health_category_and_theme_use_semic_authority_host():
     # Aucun hôte de vocab canonique n'existe encore pour healthCategory /
     # healthTheme (vocab HealthDCAT-AP non publié). On aligne sur le namespace

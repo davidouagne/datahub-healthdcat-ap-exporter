@@ -12,6 +12,7 @@ exporte déjà avec la 0.2.x, c'est-à-dire aujourd'hui l'AP-HP.
 | L'URI de base n'a plus de valeur par défaut (`https://eds.aphp.fr`) | La déclarer dans le profil ou par `--base-uri` (§ 2) |
 | Un code `referenceSpecification` non résolu devient `<URI de base>/conformsTo/<code>` au lieu de `urn:aphp:conformsTo:<code>` | Rien, sauf si un consommateur s'appuie sur l'ancienne IRI (§ 3) |
 | `acryl-datahub>=1.7,<1.8` : seul un serveur DataHub 1.7.x est vérifié | Vérifier la version du serveur (§ 4) |
+| La valeur `NFS` de `coding` devient `NABM` ; CIP13, UCD, CCAM et NABM pointent vers les URIs de l'ANS | Remplacer `NFS` par `NABM` en recopiant les valeurs (§ 5) |
 
 L'ordre compte : les nouvelles SP doivent porter leurs valeurs **avant** la montée de
 version, sinon la 0.3.0 s'arrête au lancement (voir § 1, étape 5).
@@ -143,6 +144,27 @@ Un code de `referenceSpecification` absent du vocabulaire (par exemple `OSIRIS`)
 La 0.3.0 dépend de `acryl-datahub>=1.7,<1.8` : seule la série 1.7 du serveur est
 vérifiée (ADR-0004). Hors de cette plage, `export-file` et `push-hdh` avertissent et
 continuent ; `--strict-version` les fait échouer. Python 3.11 reste le minimum.
+
+## 5. Systèmes de codage français
+
+La valeur `NFS` de `healthdcatap.coding` désignait la Nomenclature des actes de biologie
+médicale : elle est renommée `NABM`. Les définitions générées au § 1 n'autorisent plus
+`NFS` ; à l'étape 2, recopier `NFS` en `NABM`. Une valeur `NFS` restante n'est pas
+exportée et produit un avertissement.
+
+Les quatre nomenclatures françaises quittent l'espace de noms provisoire
+`https://aphp.fr/codesystem/*` pour les URIs du Serveur Multi-Terminologies de l'ANS
+(`docs/research/coding-system-uris.md`) :
+
+| Code | Avant | 0.3.0 |
+|---|---|---|
+| `CIP13` | `https://aphp.fr/codesystem/cip13` | `https://smt.esante.gouv.fr/terminologie-cip_ucd` |
+| `UCD` | `https://aphp.fr/codesystem/ucd` | `https://smt.esante.gouv.fr/terminologie-cip_ucd` |
+| `CCAM` | `https://aphp.fr/codesystem/ccam` | `https://smt.esante.gouv.fr/terminologie-ccam` |
+| `NABM` (ex-`NFS`) | `https://aphp.fr/codesystem/nfs` | `https://smt.esante.gouv.fr/terminologie-nabm` |
+
+CIP13 et UCD partagent une URI : l'ANS les publie dans un seul référentiel. Les jeux
+repoussés au HDH portent les nouvelles IRI de `healthdcatap:hasCodingSystem`.
 
 ## Autres évolutions de sortie (non cassantes)
 

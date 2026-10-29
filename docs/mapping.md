@@ -113,8 +113,10 @@ d'auteur :
   vers l'extension GDPR du DPV (`https://w3id.org/dpv/legal/eu/gdpr#`).
 - **`CodingSystem.yml`** — les 9 codes de `healthdcatap.coding`
   (SNOMED-CT, LOINC, ICD-10/11, ATC : URIs canoniques stables ; CIP13, UCD,
-  CCAM, NFS : espace de noms `https://aphp.fr/codesystem/*` local et
-  explicitement non déréférençable, faute d'identifiant officiel ANS/HDH).
+  CCAM, NABM : `CodeSystem.url` du Serveur Multi-Terminologies de l'ANS,
+  `https://smt.esante.gouv.fr/terminologie-*`, CIP13 et UCD partageant celle du
+  référentiel CIP/UCD ; vérifiées le 2026-10-29, cf.
+  `docs/research/coding-system-uris.md`).
 - **`ReferenceSpecification.yml`** — `HL7-FHIR-R4` → `http://hl7.org/fhir/4.0.1`,
   `OMOP-CDM-5.4` → page GitHub Pages OHDSI versionnée, `HL7v2` → `urn:hl7-org:v2xml`
   (URIs vérifiées le 2026-08-28, cf. `docs/research/reference-specification-uris.md`).
