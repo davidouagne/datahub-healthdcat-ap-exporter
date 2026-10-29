@@ -22,8 +22,30 @@ Jobs parallèles, `permissions: {}` au niveau workflow, élévation minimale par
 |---|---|
 | `lint` | `ruff check` + `ruff format --check` ; puis `pip-audit` advisory (`continue-on-error`) |
 | `typecheck` | `mypy` strict sur `src/dh_healthdcat` (`tests/` allégé) |
-| `test` | matrice Python 3.11 / 3.12 *(3.10 retiré le 2026-10-26, fin de vie)* ; `pytest` + `pytest-cov` → `coverage.xml` (upload Codecov depuis le leg 3.12) |
+| `test` | matrice résolution × Python : `highest` (lock, maintenu au plus haut par Dependabot) sur 3.11 et 3.12, `lowest` (`--resolution lowest-direct`, planchers déclarés) sur 3.11 seulement *(3.10 retiré le 2026-10-26, fin de vie ; axe résolution ajouté le 2026-10-29, ADR-0004)* ; `pytest` + `pytest-cov` → `coverage.xml` (upload Codecov depuis `highest`/3.12) |
 | `build` | `uv build` + fumée du wheel non-éditable (job existant, conservé) |
+
+Axe de résolution (#127, ADR-0004 §3) : `lowest` vérifie que les planchers
+déclarés dans `pyproject.toml` fonctionnent réellement (il a révélé
+`typer>=0.12` faux face à `click` ≥ 8.2, relevé à `>=0.16`). Il ne croise que
+Python 3.11 : la combinaison la plus ancienne de chaque axe est celle qui casse
+la première, et doubler le leg ne couvrirait rien de plus. Les jobs portent
+des noms `test (<résolution>, <python>)` ; le ruleset `main` n'exige que
+l'agrégat `CI status`, qui dépend de tous les legs — aucune mise à jour du
+ruleset n'est donc nécessaire quand la matrice change.
+
+Pré-versions : aucun rc d'`acryl-datahub` n'entre dans le lock. La politique
+par défaut d'uv (`if-necessary-or-explicit`) n'en retient une que si la
+contrainte la nomme ou si aucune version stable ne la satisfait, et
+Dependabot ne propose pas de pré-version tant que la version courante n'en est
+pas une. `prerelease = "disallow"` a été écarté : il rétrogradait une
+transitive (`mixpanel` 5.3 → 5.0, qui dépend d'une alpha `json-logic`) sans
+rien ajouter pour `acryl-datahub`.
+
+Dependabot : une montée `1.7.0.x → 1.7.0.y` est classée `semver-patch` par
+`fetch-metadata` (vérifié sur #122, 1.7.0.16 → 1.7.0.17) et reste en
+auto-merge ; l'élargissement `<1.8 → <1.9` est une mineure de dépendance de
+production, donc en revue humaine (ADR-0004 §2).
 
 `dependency-review` a été extrait dans son propre workflow,
 `.github/workflows/dependency-review.yml` — voir §1bis — alignement sur
