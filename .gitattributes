@@ -1,0 +1,3 @@
+# Scripts shell : toujours LF, même sur un checkout Windows (core.autocrlf),
+# sinon bash échoue sur les retours chariot (CR).
+*.sh text eol=lf
