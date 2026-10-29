@@ -9,10 +9,16 @@ from __future__ import annotations
 
 from types import SimpleNamespace as NS
 
+import pytest
 from datahub.api.entities.structuredproperties.structuredproperties import StructuredProperties
 
-from dh_healthdcat.reader.graph import DataProductQuery, ReadContext, to_datahub_filter
-from tests.fixtures.fake_datahub import ALL_DATAPRODUCT_URNS, build_context
+from dh_healthdcat.reader.graph import (
+    ASPECTS_READ,
+    DataProductQuery,
+    ReadContext,
+    to_datahub_filter,
+)
+from tests.fixtures.fake_datahub import ALL_DATAPRODUCT_URNS, DATAPRODUCT_URN, build_context
 
 
 def test_property_definitions_are_loaded_indexed_and_cached(monkeypatch):
@@ -171,3 +177,26 @@ class TestFindDataProductUrns:
         ctx.find_data_product_urns(DataProductQuery())
 
         assert ctx.graph.last_extra_or_filters is None
+
+
+class TestGetEntity:
+    def test_requests_the_declared_aspects_for_the_entity_type(self):
+        ctx = build_context()
+        ctx.get_entity(DATAPRODUCT_URN)
+
+        assert ctx.graph.requested_aspects[DATAPRODUCT_URN] == list(ASPECTS_READ["dataProduct"])
+
+    def test_entity_is_fetched_once(self):
+        ctx = build_context()
+        ctx.get_entity(DATAPRODUCT_URN)
+        ctx.get_entity(DATAPRODUCT_URN)
+
+        assert ctx.graph.get_entity_semityped_calls == [DATAPRODUCT_URN]
+
+    def test_undeclared_entity_type_fails_loudly(self):
+        with pytest.raises(ValueError, match="ASPECTS_READ"):
+            build_context().get_entity("urn:li:corpuser:jdoe")
+
+    def test_invalid_urn_is_rejected(self):
+        with pytest.raises(ValueError, match="URN DataHub invalide"):
+            build_context().get_entity("pas-une-urn")

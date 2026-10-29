@@ -3,7 +3,8 @@
 `ReadContext` porte tout ce que le reader interroge à répétition pendant un
 export :
 
-- `get_entity(urn)` mémoïse `DataHubGraph.get_entity_semityped()` — un export
+- `get_entity(urn)` mémoïse `DataHubGraph.get_entity_semityped()`, limité aux
+  aspects que le reader lit (`ASPECTS_READ`) — un export
   déréférence les mêmes domaines/glossaryTerms/owners des centaines de fois
   (P0-1).
 - `property_definitions` résout une seule fois, au démarrage, toutes les
@@ -119,6 +120,43 @@ def to_datahub_filter(query: DataProductQuery) -> list[dict[str, Any]] | None:
     return [{"and": [rule.to_raw() for rule in group["and"]]} for group in combined.compile()]
 
 
+# Aspects demandés à DataHub, par type d'entité : exactement ceux que le reader
+# lit (`entity.get(...)`). Seule liste à tenir à jour quand le reader lit un
+# nouvel aspect — le double de test ne renvoie que les aspects demandés, donc
+# un oubli ici fait échouer les tests. Demander une liste explicite plutôt que
+# tous les aspects évite qu'un aspect ajouté par une version serveur plus
+# récente, inconnu du client installé, soit téléchargé puis journalisé
+# (`Ignoring unknown aspect type …`) à chaque entité lue (#142).
+ASPECTS_READ: dict[str, tuple[str, ...]] = {
+    "dataProduct": (
+        "dataProductProperties",
+        "structuredProperties",
+        "globalTags",
+        "glossaryTerms",
+        "institutionalMemory",
+    ),
+    "dataset": (
+        "datasetProperties",
+        "editableDatasetProperties",
+        "schemaMetadata",
+        "deprecation",
+        "globalTags",
+        "structuredProperties",
+    ),
+    "glossaryTerm": ("glossaryTermInfo",),
+}
+
+
+def _entity_type(urn: str) -> str:
+    """`urn:li:<type>:…` → `<type>`."""
+
+    prefix, sep, rest = urn.partition("urn:li:")
+    entity_type, colon, _ = rest.partition(":")
+    if prefix or not sep or not entity_type or not colon:
+        raise ValueError(f"URN DataHub invalide : {urn!r}")
+    return entity_type
+
+
 _PROFILE_CACHE_MISS = object()
 
 
@@ -130,9 +168,20 @@ class ReadContext:
     _profile_cache: dict[str, Any] = field(default_factory=dict, repr=False)
 
     def get_entity(self, urn: str) -> SemitypedEntity:
+        """Aspects `ASPECTS_READ` de l'entité, mémoïsés par URN. Une liste par
+        type d'entité : le cache ne peut donc pas servir à un appelant une
+        entité lue avec d'autres aspects que ceux qu'il attend."""
+
         cached = self._entity_cache.get(urn)
         if cached is None:
-            cached = self.graph.get_entity_semityped(urn)
+            entity_type = _entity_type(urn)
+            aspects = ASPECTS_READ.get(entity_type)
+            if aspects is None:
+                raise ValueError(
+                    f"type d'entité {entity_type!r} absent de ASPECTS_READ "
+                    "(reader/graph.py) : déclarer les aspects lus"
+                )
+            cached = self.graph.get_entity_semityped(urn, aspects=list(aspects))
             self._entity_cache[urn] = cached
         return cached
 
