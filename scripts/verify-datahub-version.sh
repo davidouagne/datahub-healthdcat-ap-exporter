@@ -8,8 +8,9 @@
 #   --keep               laisse le serveur tourner (sinon : supprimé, volumes compris)
 #
 # Démarre le serveur en Docker sous un projet compose dédié à la version,
-# avec ses propres volumes, puis charge le seed de
-# tests/integration/seed/ avec les seules commandes natives d'acryl-datahub,
+# avec ses propres volumes, puis charge les définitions des SP
+# (`dh-healthdcat properties`) et le seed de tests/integration/seed/ avec les
+# seules commandes natives d'acryl-datahub,
 # exporte le DataProduct, valide le Turtle contre la sensitivity shape, puis
 # le compare par isomorphisme RDF à tests/integration/expected/.
 #
@@ -116,7 +117,10 @@ case "$mounts" in
 esac
 
 step "Seed : définitions des structured properties"
-dh properties upsert -f "$seed/structured-properties.yml"
+# Les définitions canoniques du paquet (#134), pas une copie : le contrôle
+# vérifie aussi qu'`upsert` les accepte sur cette version du serveur.
+dhhc properties --output "$work/structured-properties.yml"
+dh properties upsert -f "$work/structured-properties.yml"
 
 step "Seed : Datasets, profil et valeurs des SP (MCP JSON)"
 # Chemin relatif : sous Windows, la source `file` lit « C: » comme un schéma d'URL.

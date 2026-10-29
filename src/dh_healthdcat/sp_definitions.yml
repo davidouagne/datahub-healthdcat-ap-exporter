@@ -1,0 +1,315 @@
+# Définitions canoniques des structured properties lues par l'exporteur
+# (ADR-0005 §3). Noms locaux, sans préfixe : `dh-healthdcat properties`
+# ajoute celui de `sp.py` et génère les valeurs autorisées à partir du
+# vocabulaire nommé (`mapping/vocab/<vocabulary>.yml`).
+# Reprises du registre AP-HP (datahub-data-gov-registry, 2026-09-21).
+
+# --- Identification --------------------------------------------------------
+- name: acronym
+  display_name: "Acronyme"
+  description: "dct:alternative"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: datasetType
+  display_name: "Type de jeu de données"
+  description: "dct:type — vocabulaire EU Publications Office dataset-type"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+  vocabulary: DatasetType
+- name: healthCategory
+  display_name: "Catégorie de données de santé"
+  description: "healthdcatap:healthCategory — vocabulaire EHDS (17 catégories, Annexe II du règlement EHDS)"
+  type: string
+  cardinality: MULTIPLE
+  entity_types: [dataProduct]
+  vocabulary: HealthCategories
+- name: healthTheme
+  display_name: "Thème de santé"
+  description: "healthdcatap:healthTheme — vocabulaire EHDS"
+  type: string
+  cardinality: MULTIPLE
+  entity_types: [dataProduct]
+  vocabulary: HealthTheme
+- name: isReferencedBy
+  display_name: "Référencé par"
+  description: "dct:isReferencedBy — URI absolue de publication associée (un DOI nu doit être préfixé https://doi.org/)"
+  type: string
+  cardinality: MULTIPLE
+  entity_types: [dataProduct]
+- name: issued
+  display_name: "Date de publication"
+  description: "dct:issued"
+  type: date
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: language
+  display_name: "Langue"
+  description: "dct:language — vocabulaire EU Publications Office"
+  type: string
+  cardinality: MULTIPLE
+  entity_types: [dataProduct]
+  vocabulary: PublicationsEuropAuthorityLanguage
+- name: publishingFrequency
+  display_name: "Fréquence de mise à jour"
+  description: "dcat:accrualPeriodicity — valeurs EU Publications Office"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+  vocabulary: Frequency
+
+# --- Couverture ------------------------------------------------------------
+- name: maxTypicalAge
+  display_name: "Âge maximal typique (années)"
+  description: "healthdcatap:maxTypicalAge — entier positif"
+  type: number
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: minTypicalAge
+  display_name: "Âge minimal typique (années)"
+  description: "healthdcatap:minTypicalAge — entier positif"
+  type: number
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: numberOfRecords
+  display_name: "Nombre d'enregistrements"
+  description: "healthdcatap:numberOfRecords — entier positif"
+  type: number
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: numberOfUniqueIndividuals
+  display_name: "Nombre d'individus uniques"
+  description: "healthdcatap:numberOfUniqueIndividuals — entier positif"
+  type: number
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: populationCoverage
+  display_name: "Couverture de population"
+  description: "healthdcatap:populationCoverage — description de la population couverte par le jeu de données"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: spatialCoverage
+  display_name: "Couverture géographique"
+  description: "dct:spatial — URI absolue (GeoNames https://sws.geonames.org/…, NAL EU country / place) ou code pays du vocabulaire EU Publications Office country, pas un libellé régional nu"
+  type: string
+  cardinality: MULTIPLE
+  entity_types: [dataProduct]
+- name: temporalCoverageEnd
+  display_name: "Fin de couverture temporelle"
+  description: "dct:temporal / dcat:endDate"
+  type: date
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: temporalCoverageStart
+  display_name: "Début de couverture temporelle"
+  description: "dct:temporal / dcat:startDate"
+  type: date
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+
+# --- Cadre légal -----------------------------------------------------------
+- name: applicableLegislation
+  display_name: "Législation applicable"
+  description: "dcatap:applicableLegislation"
+  type: string
+  cardinality: MULTIPLE
+  entity_types: [dataProduct]
+  vocabulary: ApplicableRegulations
+- name: legalBasis
+  display_name: "Base légale (RGPD)"
+  description: "dpv:hasLegalBasis — base légale justifiant le traitement. Valeurs issues du vocabulaire DPV EU-GDPR : https://w3id.org/dpv/legal/eu/gdpr"
+  type: string
+  cardinality: MULTIPLE
+  entity_types: [dataProduct]
+  vocabulary: LegalBasis
+- name: personalData
+  display_name: "Catégories de données personnelles"
+  description: "dpv:hasPersonalData — catégories de données personnelles, vocabulaire DPV (dpv-pd)"
+  type: string
+  cardinality: MULTIPLE
+  entity_types: [dataProduct]
+  vocabulary: PersonalData
+- name: purpose
+  display_name: "Finalité"
+  description: "dpv:hasPurpose — description courte de la finalité du traitement"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: retentionPeriodEnd
+  display_name: "Conservation — fin"
+  description: "healthdcatap:retentionPeriod (dcat:endDate) — fin de la période de conservation"
+  type: date
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: retentionPeriodStart
+  display_name: "Conservation — début"
+  description: "healthdcatap:retentionPeriod (dcat:startDate) — début de la période de conservation"
+  type: date
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+
+# --- Provenance et standards -----------------------------------------------
+- name: coding
+  display_name: "Systèmes de codage utilisés"
+  description: "healthdcatap:hasCodingSystem — terminologies utilisées dans le jeu de données"
+  type: string
+  cardinality: MULTIPLE
+  entity_types: [dataProduct]
+  vocabulary: CodingSystem
+- name: provenance
+  display_name: "Provenance"
+  description: "dct:provenance"
+  type: rich_text
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: referenceSpecification
+  display_name: "Standard de référence"
+  description: "dct:conformsTo — standard du modèle de données. Codes connus : HL7-FHIR-R4, OMOP-CDM-5.4, HL7v2 ; une URI absolue ou un autre code est aussi accepté (repli local)."
+  type: string
+  cardinality: MULTIPLE
+  entity_types: [dataset, dataProduct]
+
+# --- Accès et distributions ------------------------------------------------
+- name: accessRights
+  display_name: "Droits d'accès"
+  description: "dct:accessRights — vocabulaire EU Publications Office access-right"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+  vocabulary: AccessRights
+- name: accessUrl
+  display_name: "URL d'accès"
+  description: "dcat:accessURL — au niveau de l'asset (Dataset DataHub), pas du DataProduct. URI absolue exigée"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataset]
+- name: distributionFormat
+  display_name: "Format de la distribution"
+  description: "dct:format — vocabulaire EU Publications Office file-type. Facultatif : à défaut, déduit de l'extension du nom technique de l'asset. NDJSON n'existe pas dans ce vocabulaire : choisir JSON."
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataset]
+  vocabulary: FileType
+- name: distributionStatus
+  display_name: "Statut de la distribution"
+  description: "adms:status — vocabulaire EU Publications Office distribution-status"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataset]
+  vocabulary: DistributionStatus
+- name: downloadUrl
+  display_name: "URL de téléchargement"
+  description: "dcat:downloadURL — URI absolue exigée"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataset]
+- name: license
+  display_name: "Licence"
+  description: "dct:license — URI de la licence (ex: https://creativecommons.org/licenses/by/4.0/)"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataset, dataProduct]
+
+# --- Point de contact ------------------------------------------------------
+- name: contactPointEmail
+  display_name: "Point de contact — email"
+  description: "dcat:contactPoint (vcard:hasEmail) — adresse email nue (pas de préfixe mailto:)"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: contactPointName
+  display_name: "Point de contact — nom"
+  description: "dcat:contactPoint (vcard:fn)"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: contactPointUrl
+  display_name: "Point de contact — URL"
+  description: "dcat:contactPoint (vcard:hasURL). Obligatoire pour la conformité SHACL du point de contact (:Kind_Shape exige vcard:hasURL)."
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+
+# --- Créateur --------------------------------------------------------------
+- name: creatorEmail
+  display_name: "Créateur — email"
+  description: "dct:creator / foaf:mbox — adresse email nue (pas de préfixe mailto:)"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: creatorHomepage
+  display_name: "Créateur — site web"
+  description: "dct:creator / foaf:homepage — URI absolue exigée"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: creatorName
+  display_name: "Créateur — nom"
+  description: "dct:creator / foaf:name — obligatoire (foaf:name, minCount 1 dans le nœud)"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+
+# --- Éditeur ---------------------------------------------------------------
+- name: publisherEmail
+  display_name: "Éditeur — email"
+  description: "dct:publisher / foaf:mbox — obligatoire (:HealthPublisherAgent_Shape) — adresse email nue (pas de préfixe mailto:)"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: publisherHomepage
+  display_name: "Éditeur — site web"
+  description: "dct:publisher / foaf:homepage — obligatoire (:HealthPublisherAgent_Shape) — URI absolue exigée"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: publisherName
+  display_name: "Éditeur — nom"
+  description: "dct:publisher / foaf:name — obligatoire (foaf:name, minCount 1 dans le nœud)"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: publisherNote
+  display_name: "Note sur l'éditeur"
+  description: "healthdcatap:publisherNote — obligatoire pour le publisher. R7 utilise dct:description (nœud Publisher) ; la forme healthdcatap:* est conservée car exigée par le validateur SHACL du Catalogue HDH (:HealthPublisherAgent_Shape, sh:minCount 1)."
+  type: rich_text
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: publisherType
+  display_name: "Type d'éditeur"
+  description: "healthdcatap:publisherType — obligatoire pour le publisher (:HealthPublisherAgent_Shape). Vocabulaire HDH publisher-type. R7 utilise dct:type (nœud Publisher) ; la forme healthdcatap:* est conservée car exigée par le validateur SHACL du Catalogue HDH."
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+  vocabulary: PublisherType
+
+# --- HDAB ------------------------------------------------------------------
+- name: hdabEmail
+  display_name: "HDAB — email"
+  description: "healthdcatap:hdab / foaf:mbox — obligatoire (:HealthAgent_Shape) — adresse email nue (pas de préfixe mailto:)"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: hdabHomepage
+  display_name: "HDAB — site web"
+  description: "healthdcatap:hdab / foaf:homepage — obligatoire (:HealthAgent_Shape) — URI absolue exigée"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+- name: hdabName
+  display_name: "HDAB — nom"
+  description: "healthdcatap:hdab / foaf:name — obligatoire (foaf:name, minCount 1 dans le nœud)"
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+
+# --- Éditeur (suite) -------------------------------------------------------
+- name: trustedDataHolder
+  display_name: "Détenteur de confiance"
+  description: "healthdcatap:trustedDataHolder (xsd:boolean) — obligatoire pour le publisher. DataHub n'a pas de type booléen natif pour les structured properties : deux valeurs autorisées, sérialisées \"true\"^^xsd:boolean / \"false\"^^xsd:boolean. Terme retiré de HealthDCAT-AP côté EC (n'existait que dans le brouillon SEMIC v2/v3) ; conservé uniquement parce que le validateur SHACL du Catalogue HDH l'exige encore (:HealthPublisherAgent_Shape, sh:minCount 1). À reconsidérer si le HDH s'aligne sur R7."
+  type: string
+  cardinality: SINGLE
+  entity_types: [dataProduct]
+  vocabulary: Booleans

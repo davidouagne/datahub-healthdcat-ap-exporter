@@ -67,6 +67,17 @@ Deux façons de configurer la connexion, par ordre de priorité :
 
 Référence officielle : [DataHub CLI — docs.datahub.com/docs/cli](https://docs.datahub.com/docs/cli).
 
+### Définitions des structured properties
+
+L'exporteur lit ses métadonnées dans des structured properties (SP) DataHub. Leurs définitions (type, cardinalité, valeurs autorisées, types d'entités) sont livrées avec le paquet, et correspondent exactement à la version installée :
+
+```bash
+dh-healthdcat properties --output structured-properties.yml
+datahub properties upsert -f structured-properties.yml
+```
+
+Les valeurs autorisées sont celles des vocabulaires que l'exporteur sait résoudre. `dh-healthdcat` n'écrit jamais dans DataHub : c'est vous qui appliquez le fichier, et vous pouvez restreindre ces valeurs dans votre propre registre.
+
 Ne pas confondre avec la configuration du **Catalogue de métadonnées de la PDS** (`--hdh-url`/`--api-key` de `push-hdh`, voir plus bas) : DataHub est la source lue, le Catalogue de métadonnées est la destination poussée.
 
 ## Usage

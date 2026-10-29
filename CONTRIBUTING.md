@@ -142,7 +142,8 @@ autre version démarrerait sur les données de votre instance locale.
    scripts/verify-datahub-version.sh 1.8.0
    ```
 
-   Il démarre le serveur, charge le seed de `tests/integration/seed/`, exporte
+   Il démarre le serveur, charge les définitions des SP
+   (`dh-healthdcat properties`) et le seed de `tests/integration/seed/`, exporte
    le DataProduct, le valide contre la sensitivity shape et le compare par
    isomorphisme RDF à `tests/integration/expected/datahub-<mineure>.ttl`.
    Comptez une dizaine de minutes. `--keep` laisse le serveur tourner pour

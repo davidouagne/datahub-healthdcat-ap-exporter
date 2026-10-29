@@ -62,6 +62,12 @@ class Vocabulary:
         return self.labels_fr.get(code, default if default is not None else code)
 
 
+def load(name: str) -> Vocabulary:
+    """Vocabulaire `mapping/vocab/<name>.yml` (mémoïsé)."""
+
+    return _load(name)
+
+
 @cache
 def _load(name: str) -> Vocabulary:
     path = VOCAB_DIR / f"{name}.yml"
