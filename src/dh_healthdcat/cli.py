@@ -84,6 +84,18 @@ def _check_server_version_or_exit(ctx: ReadContext, *, strict_version: bool) -> 
     typer.secho(message, fg=typer.colors.YELLOW, err=True)
 
 
+def _check_sp_prefix_or_exit(ctx: ReadContext) -> None:
+    """Arrêt unique et explicite si l'instance n'a que des SP à l'ancien
+    préfixe (ADR-0005 §2), plutôt qu'une anomalie par propriété manquante."""
+
+    from dh_healthdcat import sp
+
+    message = sp.legacy_prefix_error(ctx.property_definitions)
+    if message is not None:
+        typer.secho(message, fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+
+
 def _select_or_exit(
     ctx: ReadContext,
     *,
@@ -161,6 +173,7 @@ def export_file(
 
     ctx = from_env()
     _check_server_version_or_exit(ctx, strict_version=strict_version)
+    _check_sp_prefix_or_exit(ctx)
     selected = _select_or_exit(
         ctx, urn=urn, domain=domain, tag=tag, tag_mode=tag_mode, exclude_tag=exclude_tag
     )
@@ -403,6 +416,7 @@ def push_hdh(
 
     ctx = from_env()
     _check_server_version_or_exit(ctx, strict_version=strict_version)
+    _check_sp_prefix_or_exit(ctx)
     selected = _select_or_exit(
         ctx, urn=urn, domain=domain, tag=tag, tag_mode=tag_mode, exclude_tag=exclude_tag
     )

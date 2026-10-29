@@ -1,7 +1,7 @@
 # Vocabulaire d'auteur (dh-healthdcat), pas un fichier HDH vendu.
 #
 # Les clés reprennent EXACTEMENT la forme stockée par
-# `fr.aphp.healthdcat.legalBasis` (assets.yml, kind: STRUCTURED_PROPERTY) :
+# `healthdcatap.legalBasis` (assets.yml, kind: STRUCTURED_PROPERTY) :
 # préfixées "eu-gdpr:", pas les identifiants locaux bruts du DPV. Les 12
 # `allowedValues` d'assets.yml correspondent terme à terme à l'extension GDPR
 # du DPV (Data Privacy Vocabulary), confirmé le 2026-08-14 par lecture de

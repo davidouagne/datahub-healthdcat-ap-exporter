@@ -1,7 +1,7 @@
 # Vocabulaire d'auteur (dh-healthdcat), pas vendu du HDH — le HDH ne publie pas
 # de dictionnaire "statut de distribution".
 #
-# Couvre les valeurs de `fr.aphp.healthdcat.distributionStatus` (→ adms:status),
+# Couvre les valeurs de `healthdcatap.distributionStatus` (→ adms:status),
 # sous-ensemble du NAL EU Publications Office `distribution-status` retenu par le
 # registre (`allowedValues: COMPLETED, WITHDRAWN`).
 DistributionStatus:

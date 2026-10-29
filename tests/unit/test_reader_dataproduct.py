@@ -47,7 +47,7 @@ def test_read_data_product_end_to_end():
 
 
 def test_reference_specification_codes_resolve_to_canonical_uris_local_fallback_kept():
-    """`fr.aphp.healthdcat.referenceSpecification` : les codes du vocab
+    """`healthdcatap.referenceSpecification` : les codes du vocab
     ReferenceSpecification deviennent leur URI canonique ; un code hors vocab
     (OSIRIS) retombe silencieusement sur urn:aphp:conformsTo:<code>."""
 
@@ -59,12 +59,12 @@ def test_reference_specification_codes_resolve_to_canonical_uris_local_fallback_
         "urn:aphp:conformsTo:OSIRIS",
     )
     assert not [
-        i for i in dataset.issues if i.datahub_field == "fr.aphp.healthdcat.referenceSpecification"
+        i for i in dataset.issues if i.datahub_field == "healthdcatap.referenceSpecification"
     ]
 
 
 def test_bare_dois_in_is_referenced_by_are_normalised_to_https_doi_org():
-    """`fr.aphp.healthdcat.isReferencedBy` : un DOI nu (`10.x/...`) ou préfixé
+    """`healthdcatap.isReferencedBy` : un DOI nu (`10.x/...`) ou préfixé
     `doi:` devient `https://doi.org/...` ; une URL déjà complète passe telle
     quelle (`dct:isReferencedBy` attend une IRI)."""
 
@@ -79,7 +79,7 @@ def test_bare_dois_in_is_referenced_by_are_normalised_to_https_doi_org():
 
 
 def test_distribution_status_is_resolved_to_publications_office_uri():
-    """`fr.aphp.healthdcat.distributionStatus` (COMPLETED/WITHDRAWN) est résolu
+    """`healthdcatap.distributionStatus` (COMPLETED/WITHDRAWN) est résolu
     en IRI `.../distribution-status/*` et porté par `Distribution.status_uri`
     (émis en `adms:status`). Sans ce câblage, la propriété était définie mais
     jamais émise."""
@@ -100,7 +100,7 @@ def test_type_coercion_warns_but_does_not_fail():
 
     assert dataset.number_of_records == 1_000_000_000  # coercé en int malgré la chaîne source
     coercion_warnings = [
-        i for i in dataset.issues if i.datahub_field == "fr.aphp.healthdcat.numberOfRecords"
+        i for i in dataset.issues if i.datahub_field == "healthdcatap.numberOfRecords"
     ]
     assert len(coercion_warnings) == 1
     assert coercion_warnings[0].severity is Severity.WARNING

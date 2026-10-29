@@ -1,7 +1,7 @@
 # Vocabulaire d'auteur (dh-healthdcat), pas vendu du HDH — le HDH ne publie pas
 # de dictionnaire "systèmes de codage" parmi ses 19 vocabulaires contrôlés.
 #
-# Couvre les valeurs de `fr.aphp.healthdcat.coding` déclarées dans assets.yml.
+# Couvre les valeurs de `healthdcatap.coding` déclarées dans assets.yml.
 # Les URI HL7/OMS/WHO-CC sont des systèmes canoniques stables. CIP13/UCD/CCAM/NFS
 # n'ont pas d'URI internationale de référence : on utilise un espace de noms
 # AP-HP local, explicitement non déréférençable, en attendant un identifiant
