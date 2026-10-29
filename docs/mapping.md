@@ -10,6 +10,9 @@ le code réel, vérifié par `pyshacl` contre les shapes réelles du HDH
 **DataProduct → `dcat:Dataset`.** Les Datasets DataHub membres deviennent
 `dcat:distribution` (par défaut) ou `adms:sample` (s'ils portent le tag
 `dcat:sample`). Leur `schemaMetadata` devient `csvw:Table`/`csvw:Column`.
+Si le DataProduct déclare au moins un **output port** (`outputPort` de
+l'association), seuls les ports deviennent des `dcat:distribution` ; les autres
+assets sont ignorés, sauf les échantillons tagués `dcat:sample` (ADR-0006).
 
 ## Espaces de noms (`mapping/namespaces.py`)
 
@@ -42,7 +45,7 @@ vérifié par le SHACL de base · `⚙️` = dérivé/calculé, pas une saisie.
 | `healthdcatap:healthCategory` | M | `fr.aphp.healthdcat.healthCategory` → `HealthCategories` | |
 | `healthdcatap:healthTheme` | M | `fr.aphp.healthdcat.healthTheme` → `HealthTheme` | |
 | `dct:spatial` | M | `fr.aphp.healthdcat.spatialCoverage` → `PublicationsEuropAuthorityCountry` ou passage direct | |
-| `dcat:distribution` | M, ≥1 | assets non tagués `dcat:sample` | dataset.py (reader) |
+| `dcat:distribution` | M, ≥1 | assets non tagués `dcat:sample` ; seulement les output ports si le DataProduct en déclare (ADR-0006) | dataset.py (reader) |
 | `adms:sample` | M, ≥1 | assets tagués `dcat:sample` | dataset.py (reader) |
 | `dct:language` | | `fr.aphp.healthdcat.language` → `PublicationsEuropAuthorityLanguage` | |
 | `dct:issued` (`xsd:date`) | | `fr.aphp.healthdcat.issued` (un `date` — émis en `xsd:date`, pas `xsd:dateTime`) | |

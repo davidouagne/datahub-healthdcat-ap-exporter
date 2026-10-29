@@ -264,11 +264,23 @@ def _read_assets(
     inherited_legislation: tuple[str, ...],
 ) -> tuple[list[Distribution], list[Distribution]]:
     """Distributions / échantillons depuis dataProductProperties.assets, avec
-    héritage dct:rights et dcatap:applicableLegislation du DataProduct."""
+    héritage dct:rights et dcatap:applicableLegislation du DataProduct.
 
+    ADR-0006 : dès qu'un asset est déclaré output port, les assets hors port
+    ne sont pas lus (ni distribution, ni anomalie), sauf les échantillons
+    tagués dcat:sample, indépendants des ports. Sans port, tous les assets."""
+
+    associations = dp.assets or []
+    has_ports = any(a.outputPort for a in associations)
     distributions: list[Distribution] = []
     samples: list[Distribution] = []
-    for association in dp.assets or []:
+    for association in associations:
+        if (
+            has_ports
+            and not association.outputPort
+            and not dataset_reader.is_sample_asset(ctx, association.destinationUrn)
+        ):
+            continue
         distribution = dataset_reader.read_distribution(
             ctx, association.destinationUrn, association.destinationUrn, title, issues
         )
