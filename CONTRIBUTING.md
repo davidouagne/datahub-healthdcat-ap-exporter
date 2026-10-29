@@ -77,7 +77,7 @@ Ce dépôt suit le format [Conventional Commits](https://www.conventionalcommits
 Signed-off-by: Prénom Nom <email>
 ```
 
-Types autorisés : `feat`, `fix`, `test`, `docs`, `chore`, `build`, `deps`. Sujet à
+Types autorisés : `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `build`, `deps`. Sujet à
 l'impératif, ≤ 72 caractères, sans point final. Scopes libres.
 
 ### Signoff DCO

@@ -42,10 +42,14 @@ Le titre de PR n'entre pas dans l'historique (merge par rebase, §1) : il n'est
 plus vérifié (contrôle `pr-title` / `amannn/action-semantic-pull-request`
 retiré le 2026-10-05).
 
-Config `commitlint` : `type-enum = [feat, fix, test, docs, chore, build, deps]`,
+Config `commitlint` : `type-enum = [feat, fix, refactor, test, docs, chore, build, deps]`,
 `header-max-length: 72`, `subject-full-stop: never`, `type-empty` /
 `subject-empty: never`, scopes libres, pas de `subject-case`. Le contributeur
 nettoie l'historique de sa branche (rebase interactif) avant d'ouvrir la PR.
+
+`refactor` *ajouté le 2026-10-29* : un changement de structure sans effet
+observable ne se range ni sous `chore` (outillage, maintenance) ni sous `feat`/`fix`.
+Comme `chore`, il ne déclenche pas de release et n'apparaît pas dans le changelog.
 
 ## 3. Signoff DCO
 
