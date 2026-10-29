@@ -11,7 +11,8 @@ from types import SimpleNamespace as NS
 
 from datahub.api.entities.structuredproperties.structuredproperties import StructuredProperties
 
-from dh_healthdcat.reader.graph import ReadContext
+from dh_healthdcat.reader.graph import DataProductQuery, ReadContext, to_datahub_filter
+from tests.fixtures.fake_datahub import ALL_DATAPRODUCT_URNS, build_context
 
 
 def test_property_definitions_are_loaded_indexed_and_cached(monkeypatch):
@@ -87,3 +88,86 @@ def test_from_config_builds_a_datahub_graph_client_from_server_and_token(monkeyp
     assert isinstance(ctx.graph, FakeDataHubGraph)
     assert captured["config"].server == "https://gms.test"
     assert captured["config"].token == "tok"
+
+
+class TestToDatahubFilter:
+    """Forme brute `extra_or_filters` produite via `FilterDsl` — la zone la plus
+    fragile d'une version d'acryl-datahub à l'autre, d'où des attentes exactes."""
+
+    def test_empty_query_returns_none(self):
+        assert to_datahub_filter(DataProductQuery()) is None
+
+    def test_domain_only(self):
+        assert to_datahub_filter(DataProductQuery(domains=("urn:li:domain:d1",))) == [
+            {"and": [{"field": "domains", "condition": "EQUAL", "values": ["urn:li:domain:d1"]}]}
+        ]
+
+    def test_tags_any_is_a_single_or_rule(self):
+        # tag_mode="any" (défaut) : une seule règle multi-valeurs, OU implicite
+        # au niveau de la recherche — reproduit exactement le comportement v0.
+        query = DataProductQuery(tags=("urn:li:tag:a", "urn:li:tag:b"))
+        assert to_datahub_filter(query) == [
+            {
+                "and": [
+                    {
+                        "field": "tags",
+                        "condition": "EQUAL",
+                        "values": ["urn:li:tag:a", "urn:li:tag:b"],
+                    }
+                ]
+            }
+        ]
+
+    def test_tags_all_is_one_rule_per_tag_anded(self):
+        query = DataProductQuery(tags=("urn:li:tag:a", "urn:li:tag:b"), tag_mode="all")
+        assert to_datahub_filter(query) == [
+            {
+                "and": [
+                    {"field": "tags", "condition": "EQUAL", "values": ["urn:li:tag:a"]},
+                    {"field": "tags", "condition": "EQUAL", "values": ["urn:li:tag:b"]},
+                ]
+            }
+        ]
+
+    def test_exclude_tags_is_a_single_negated_rule(self):
+        assert to_datahub_filter(DataProductQuery(exclude_tags=("urn:li:tag:x",))) == [
+            {
+                "and": [
+                    {
+                        "field": "tags",
+                        "condition": "EQUAL",
+                        "values": ["urn:li:tag:x"],
+                        "negated": True,
+                    }
+                ]
+            }
+        ]
+
+    def test_domain_and_tag_combine_with_and(self):
+        query = DataProductQuery(domains=("urn:li:domain:d1",), tags=("urn:li:tag:a",))
+        assert to_datahub_filter(query) == [
+            {
+                "and": [
+                    {"field": "domains", "condition": "EQUAL", "values": ["urn:li:domain:d1"]},
+                    {"field": "tags", "condition": "EQUAL", "values": ["urn:li:tag:a"]},
+                ]
+            }
+        ]
+
+
+class TestFindDataProductUrns:
+    def test_passes_the_translated_filter_in_a_single_search(self):
+        ctx = build_context()
+        result = ctx.find_data_product_urns(DataProductQuery(tags=("urn:li:tag:a",)))
+
+        assert result == ALL_DATAPRODUCT_URNS
+        assert ctx.graph.last_extra_or_filters == [
+            {"and": [{"field": "tags", "condition": "EQUAL", "values": ["urn:li:tag:a"]}]}
+        ]
+        assert ctx.graph.get_entity_semityped_calls == []
+
+    def test_empty_query_searches_without_filter(self):
+        ctx = build_context()
+        ctx.find_data_product_urns(DataProductQuery())
+
+        assert ctx.graph.last_extra_or_filters is None
