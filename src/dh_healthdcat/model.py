@@ -111,14 +111,14 @@ class ValidationIssue:
 
     C'est ce qui alimente le rapport lisible exigé par G4 / P0-6 :
     « DataProduct "X" : healthdcatap:healthTheme manquant → renseigner
-    fr.aphp.healthdcat.healthTheme ».
+    <préfixe SP>healthTheme ».
     """
 
     severity: Severity
     dataset_name: str
     dataset_urn: str
     rdf_property: str  # ex. "healthdcatap:healthTheme"
-    datahub_field: str  # ex. "fr.aphp.healthdcat.healthTheme"
+    datahub_field: str  # nom qualifié complet, ex. sp.qualified("healthTheme")
     message: str
 
     def __str__(self) -> str:  # pragma: no cover - formatage simple
@@ -180,9 +180,7 @@ class HealthDataset:
     coding_system: tuple[str, ...] = ()
 
     # Temporel / cycle de vie
-    issued: date | None = (
-        None  # dct:issued — `fr.aphp.healthdcat.issued` est un date, émis en xsd:date
-    )
+    issued: date | None = None  # dct:issued — la SP `issued` est un date, émis en xsd:date
     modified: datetime | None = (
         None  # dct:modified — vrai horodatage (dataProductProperties.lastModified)
     )

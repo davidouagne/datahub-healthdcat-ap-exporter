@@ -21,6 +21,7 @@ from __future__ import annotations
 from rdflib import RDF, XSD, Graph, Literal, URIRef
 from rdflib.namespace import RDFS
 
+from dh_healthdcat import sp
 from dh_healthdcat.mapping import agent as agent_mapping
 from dh_healthdcat.mapping import distribution as distribution_mapping
 from dh_healthdcat.mapping.namespaces import (
@@ -107,24 +108,22 @@ def _add_classification(graph: Graph, uri: URIRef, dataset: HealthDataset) -> No
     for theme in dataset.theme:
         graph.add((uri, DCAT.theme, URIRef(theme)))
     if not dataset.theme:
-        _missing(dataset, "dcat:theme", "fr.aphp.healthdcat.theme")
+        _missing(dataset, "dcat:theme", sp.qualified("theme"))
 
     if dataset.dataset_type:
         graph.add((uri, DCT.type, URIRef(dataset.dataset_type)))
     else:
-        _missing(dataset, "dct:type", "fr.aphp.healthdcat.datasetType")
+        _missing(dataset, "dct:type", sp.qualified("datasetType"))
 
     if dataset.access_rights:
         graph.add((uri, DCT.accessRights, URIRef(dataset.access_rights)))
     else:
-        _missing(dataset, "dct:accessRights", "fr.aphp.healthdcat.accessRights")
+        _missing(dataset, "dct:accessRights", sp.qualified("accessRights"))
 
     for legislation in dataset.applicable_legislation:
         graph.add((uri, DCATAP.applicableLegislation, URIRef(legislation)))
     if not dataset.applicable_legislation:
-        _missing(
-            dataset, "dcatap:applicableLegislation", "fr.aphp.healthdcat.applicableLegislation"
-        )
+        _missing(dataset, "dcatap:applicableLegislation", sp.qualified("applicableLegislation"))
 
     for lang in dataset.language:
         graph.add((uri, DCT.language, URIRef(lang)))
@@ -162,7 +161,7 @@ def _add_agents(graph: Graph, uri: URIRef, dataset: HealthDataset) -> None:
         )
     else:
         _missing(
-            dataset, "dcat:contactPoint", "fr.aphp.healthdcat.contactPointName/.contactPointEmail"
+            dataset, "dcat:contactPoint", f"{sp.qualified('contactPointName')}/.contactPointEmail"
         )
 
 
@@ -175,7 +174,7 @@ def _add_provenance_and_purpose(graph: Graph, uri: URIRef, dataset: HealthDatase
         graph.add((prov_node, RDF.type, DCT.ProvenanceStatement))
         graph.add((prov_node, RDFS.label, Literal(dataset.provenance, lang="fr")))
     else:
-        _missing(dataset, "dct:provenance", "fr.aphp.healthdcat.provenance")
+        _missing(dataset, "dct:provenance", sp.qualified("provenance"))
 
     if dataset.purpose:
         purpose_node = node_uri("purpose", dataset.source_urn)
@@ -183,7 +182,7 @@ def _add_provenance_and_purpose(graph: Graph, uri: URIRef, dataset: HealthDatase
         graph.add((purpose_node, RDF.type, DPV.Purpose))
         graph.add((purpose_node, DCT.description, Literal(dataset.purpose, lang="fr")))
     else:
-        _missing(dataset, "dpv:hasPurpose", "fr.aphp.healthdcat.purpose")
+        _missing(dataset, "dpv:hasPurpose", sp.qualified("purpose"))
 
 
 def _add_health_coverage(graph: Graph, uri: URIRef, dataset: HealthDataset) -> None:
@@ -192,17 +191,17 @@ def _add_health_coverage(graph: Graph, uri: URIRef, dataset: HealthDataset) -> N
     for category in dataset.health_category:
         graph.add((uri, HEALTHDCATAP.healthCategory, URIRef(category)))
     if not dataset.health_category:
-        _missing(dataset, "healthdcatap:healthCategory", "fr.aphp.healthdcat.healthCategory")
+        _missing(dataset, "healthdcatap:healthCategory", sp.qualified("healthCategory"))
 
     for theme in dataset.health_theme:
         graph.add((uri, HEALTHDCATAP.healthTheme, URIRef(theme)))
     if not dataset.health_theme:
-        _missing(dataset, "healthdcatap:healthTheme", "fr.aphp.healthdcat.healthTheme")
+        _missing(dataset, "healthdcatap:healthTheme", sp.qualified("healthTheme"))
 
     for spatial in dataset.spatial:
         graph.add((uri, DCT.spatial, URIRef(spatial)))
     if not dataset.spatial:
-        _missing(dataset, "dct:spatial", "fr.aphp.healthdcat.spatialCoverage")
+        _missing(dataset, "dct:spatial", sp.qualified("spatialCoverage"))
 
 
 def _add_optional_metadata(graph: Graph, uri: URIRef, dataset: HealthDataset) -> None:
