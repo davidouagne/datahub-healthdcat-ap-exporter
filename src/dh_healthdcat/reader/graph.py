@@ -13,17 +13,22 @@ export :
   pour l'aspect `datasetProfile` (timeseries, donc absent de
   `get_entity_semityped()` — voir sa docstring côté acryl-datahub), seule
   source de `dcat:byteSize`.
+- `find_data_product_urns(query)` traduit une `DataProductQuery` neutre en
+  filtre de recherche DataHub (`to_datahub_filter`) et l'évalue côté serveur.
 
 Volontairement découplé de `acryl-datahub` au-delà de cette frontière : le
-reste du reader ne connaît que `ReadContext`, ce qui permet de le tester avec
-un double (voir tests/fixtures/) sans instance DataHub ni réseau.
+reste du code ne connaît que `ReadContext` et `DataProductQuery`, ce qui permet
+de le tester avec un double (voir tests/fixtures/) sans instance DataHub ni
+réseau, et cantonne ici toute adaptation entre versions DataHub (ADR-0004 §4).
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
+
+TagMode = Literal["any", "all"]
 
 
 class SemitypedEntity(Protocol):
@@ -64,6 +69,56 @@ class PropertyDefinition:
     entity_types: tuple[str, ...] = ()
 
 
+@dataclass(frozen=True, slots=True)
+class DataProductQuery:
+    """Critères de sélection des DataProducts, en termes neutres : URN déjà
+    normalisées (`urn:li:domain:…`, `urn:li:tag:…`), aucune notion de filtre
+    DataHub. Domaines en OU ; tags en OU (`any`) ou en ET (`all`) ; les tags
+    exclus écartent tout DataProduct qui en porte un ; les trois groupes se
+    combinent en ET."""
+
+    domains: tuple[str, ...] = ()
+    tags: tuple[str, ...] = ()
+    tag_mode: TagMode = "any"
+    exclude_tags: tuple[str, ...] = ()
+
+    @property
+    def is_empty(self) -> bool:
+        return not (self.domains or self.tags or self.exclude_tags)
+
+
+def to_datahub_filter(query: DataProductQuery) -> list[dict[str, Any]] | None:
+    """`extra_or_filters` (forme brute attendue par
+    `DataHubGraph.get_urns_by_filter`) équivalent à `query`, ou None pour une
+    requête vide — tout le catalogue, sans aller-retour de recherche inutile.
+
+    Seul point du code qui manipule `FilterDsl`, la zone la plus fragile d'une
+    version d'acryl-datahub à l'autre (classes privées `_DomainFilter` /
+    `_TagFilter` / `_Not`, utilisées uniquement via `.compile()`/`.to_raw()`)."""
+
+    if query.is_empty:
+        return None
+
+    # Import différé : FilterDsl dépend de pydantic v2 côté acryl-datahub,
+    # inutile de le charger pour un export qui ne filtre pas (même raison que
+    # `_load_property_definitions` pour StructuredProperties).
+    from datahub.sdk.search_filters import FilterDsl as F
+
+    clauses: list[Any] = []
+    if query.domains:
+        clauses.append(F.domain(list(query.domains)))
+    if query.tags:
+        if query.tag_mode == "any":
+            clauses.append(F.tag(list(query.tags)))
+        else:  # "all"
+            clauses.extend(F.tag([t]) for t in query.tags)
+    if query.exclude_tags:
+        clauses.append(F.not_(F.tag(list(query.exclude_tags))))
+
+    combined = clauses[0] if len(clauses) == 1 else F.and_(*clauses)
+    return [{"and": [rule.to_raw() for rule in group["and"]]} for group in combined.compile()]
+
+
 _PROFILE_CACHE_MISS = object()
 
 
@@ -99,6 +154,16 @@ class ReadContext:
         profile = self.graph.get_latest_timeseries_value(dataset_urn, DatasetProfileClass, {})
         self._profile_cache[dataset_urn] = profile
         return profile
+
+    def find_data_product_urns(self, query: DataProductQuery) -> list[str]:
+        """URN des DataProducts satisfaisant `query`, en une seule requête de
+        recherche évaluée côté serveur (pas d'énumération + test un par un)."""
+
+        return list(
+            self.graph.get_urns_by_filter(
+                entity_types=["dataProduct"], extra_or_filters=to_datahub_filter(query)
+            )
+        )
 
     @property
     def property_definitions(self) -> dict[str, PropertyDefinition]:
