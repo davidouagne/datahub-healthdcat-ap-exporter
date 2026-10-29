@@ -53,7 +53,6 @@ def _entities() -> dict[str, dict]:
                 name="Venues et sejours des patients",
                 description="Enregistrements de venues et sejours.",
                 assets=[NS(destinationUrn=ASSET_URN), NS(destinationUrn=SAMPLE_URN)],
-                lastModified=None,
             ),
             "ownership": NS(
                 owners=[
@@ -187,7 +186,6 @@ def _entities() -> dict[str, dict]:
                 name="DataProduct en cours de peuplement",
                 description="Squelette sans propriétés HealthDCAT-AP renseignées.",
                 assets=[],
-                lastModified=None,
             ),
         },
     }

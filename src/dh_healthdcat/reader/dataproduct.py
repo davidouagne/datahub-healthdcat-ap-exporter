@@ -10,7 +10,6 @@ G4/P0-6.
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Any
 
 from dh_healthdcat import sp
@@ -361,11 +360,6 @@ def read_data_product(
     issued = props.get_date(
         entity, "issued", title, dataproduct_urn, issues
     )  # date, émis en xsd:date
-    modified = (
-        datetime.fromtimestamp(dp.lastModified.time / 1000)
-        if getattr(dp, "lastModified", None)
-        else None
-    )
 
     temporal = _read_period(
         entity,
@@ -391,6 +385,11 @@ def read_data_product(
     contact_point = agents_reader.read_contact_point(ctx, entity, title, dataproduct_urn, issues)
 
     distributions, samples = _read_assets(ctx, dp, title, issues, license_, applicable_legislation)
+    # dct:modified : dernière modification des données, soit la plus récente
+    # des distributions (datasetProperties.lastModified des assets). Le
+    # DataProduct n'a pas d'horodatage propre (dataProductProperties n'en porte
+    # pas, 1.7 comme 1.8) ; les échantillons, simples extraits, ne comptent pas.
+    modified = max((d.modified for d in distributions if d.modified), default=None)
 
     return HealthDataset(
         source_urn=dataproduct_urn,

@@ -182,7 +182,7 @@ class HealthDataset:
     # Temporel / cycle de vie
     issued: date | None = None  # dct:issued — la SP `issued` est un date, émis en xsd:date
     modified: datetime | None = (
-        None  # dct:modified — vrai horodatage (dataProductProperties.lastModified)
+        None  # dct:modified — max des dct:modified des distributions (données)
     )
     temporal: PeriodOfTime | None = None
     accrual_periodicity: str | None = None
