@@ -14,3 +14,4 @@ nourrit le changelog. Le titre de PR n'entre pas dans l'historique.
 - [ ] `uv run pytest` passe.
 - [ ] Si une correspondance de champ DataHub → HealthDCAT-AP a changé : `docs/mapping.md` est à jour.
 - [ ] Si un vocabulaire contrôlé (`mapping/vocab/*.yml`) a changé : la valeur exacte attendue par les shapes SHACL du HDH a été vérifiée.
+- [ ] Si la plage `acryl-datahub` est élargie : contrôle Docker passé sur X.Y (`scripts/verify-datahub-version.sh X.Y.Z`, voir `CONTRIBUTING.md`). Ne s'applique pas aux montées de patch.
