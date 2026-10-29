@@ -63,15 +63,21 @@ jobs:
         run: uv run mypy src/dh_healthdcat
 
   test:
-    name: test
+    name: test (${{ matrix.resolution }}, ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write # upload Codecov OIDC, sans token (#18)
     strategy:
       fail-fast: false
+      # highest : le lock (maintenu au plus haut par Dependabot).
+      # lowest : planchers déclarés dans pyproject.toml, dont celui
+      # d'acryl-datahub (plage des Versions DataHub supportées, ADR-0004).
       matrix:
-        python-version: ["3.11", "3.12"]
+        include:
+          - { resolution: highest, python-version: "3.11" }
+          - { resolution: highest, python-version: "3.12" }
+          - { resolution: lowest, python-version: "3.11" }
     steps:
       - uses: actions/checkout@v7
 
@@ -81,14 +87,26 @@ jobs:
           enable-cache: true
           python-version: ${{ matrix.python-version }}
 
-      - name: Installer les dépendances de dev
+      - name: Installer les dépendances (lock)
+        if: matrix.resolution == 'highest'
         run: uv sync --frozen
 
+      # Hors lock : `uv pip` résout sans réécrire uv.lock ; les étapes
+      # suivantes passent par `--no-sync` pour ne pas resynchroniser sur le lock.
+      - name: Installer les dépendances (planchers)
+        if: matrix.resolution == 'lowest'
+        run: |
+          uv venv
+          uv pip install --resolution lowest-direct -e . --group dev
+
+      - name: Versions résolues
+        run: uv pip list | grep -E -i '^(acryl-datahub|rdflib|pyshacl|httpx|typer|click|pyyaml) '
+
       - name: pytest + couverture
-        run: uv run pytest --cov=dh_healthdcat --cov-report=xml --cov-fail-under=90
+        run: uv run --no-sync pytest --cov=dh_healthdcat --cov-report=xml --cov-fail-under=90
 
       - name: Upload couverture vers Codecov
-        if: always() && matrix.python-version == '3.12'
+        if: always() && matrix.resolution == 'highest' && matrix.python-version == '3.12'
         uses: codecov/codecov-action@v7
         with:
           use_oidc: true
