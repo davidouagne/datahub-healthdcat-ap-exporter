@@ -6,7 +6,9 @@
 [![Python versions](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)](https://pypi.org/project/dh-healthdcat/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 
-Exporte les métadonnées de l'Entrepôt de Données de Santé (EDS) AP-HP, cataloguées dans [DataHub](https://datahubproject.io/), vers le standard [HealthDCAT-AP](https://healthdcat-ap.github.io/) — en fichier Turtle ou directement vers l'API du [Catalogue de métadonnées de la Plateforme des Données de Santé](https://catalogue-metadonnees.health-data-hub.fr/).
+Exporte des jeux de données de santé catalogués dans [DataHub](https://datahubproject.io/) vers le standard [HealthDCAT-AP](https://healthdcat-ap.github.io/) — en fichier Turtle ou directement vers l'API du [Catalogue de métadonnées de la Plateforme des Données de Santé](https://catalogue-metadonnees.health-data-hub.fr/) (HDH).
+
+L'outil s'adresse à tout **adoptant** : un entrepôt ou un producteur de données de santé qui catalogue ses jeux dans DataHub et veut les publier en HealthDCAT-AP. Il lit DataHub sans jamais y écrire.
 
 ## Principe
 
@@ -27,7 +29,43 @@ DataHub GMS
                                   pyshacl, avant tout envoi                 └─▶ POST /ingest (HDH)
 ```
 
+## Démarrage rapide
+
+Parcours d'un nouvel adoptant, de l'installation au premier export. Chaque étape est détaillée plus bas.
+
+1. **Installer** l'outil, dans un environnement qui accède à votre DataHub :
+   ```bash
+   pip install dh-healthdcat
+   ```
+2. **Se connecter à DataHub** : `dh-healthdcat` réutilise la configuration de la CLI `datahub` (`DATAHUB_GMS_URL`/`DATAHUB_GMS_TOKEN` ou `~/.datahubenv`, voir « Configuration DataHub »).
+3. **Créer les structured properties** que l'exporteur lit :
+   ```bash
+   dh-healthdcat properties --output structured-properties.yml
+   datahub properties upsert -f structured-properties.yml
+   ```
+4. **Déclarer l'URI de base**, l'espace de noms HTTP sous lequel l'exporteur forge les identifiants de vos jeux, dans `.dh-healthdcat.yml` :
+   ```yaml
+   profiles:
+     dev:
+       url: https://dev.catalogue.health-data-hub.fr
+       base_uri: https://example.org
+   ```
+5. **Renseigner les SP `healthdcatap.*`** sur vos DataProducts (UI DataHub, `datahub dataproduct upsert`, ou votre propre connecteur). `docs/mapping.md` indique les propriétés obligatoires.
+6. **Exporter, vérifier, puis pousser** :
+   ```bash
+   dh-healthdcat export-file --output catalogue.ttl
+   dh-healthdcat validate catalogue.ttl
+   export HDH_API_KEY=mdc_...   # clé data-provider du catalogue HDH
+   dh-healthdcat push-hdh --dry-run
+   ```
+
 ## Installation
+
+```bash
+pip install dh-healthdcat
+```
+
+Pour contribuer (installation éditable, outils de développement) :
 
 ```bash
 uv venv .venv
@@ -87,10 +125,10 @@ Ne pas confondre avec la configuration du **Catalogue de métadonnées de la PDS
 ### Export en fichier Turtle
 
 ```bash
-dh-healthdcat export-file --base-uri https://data.mon-entrepot.fr --output catalogue.ttl
+dh-healthdcat export-file --base-uri https://example.org --output catalogue.ttl
 dh-healthdcat export-file --urn urn:li:dataProduct:b78435bfad26dab4c11e6e41c2a72b53 --output un-jeu.ttl
-dh-healthdcat export-file --domain "Biologie" --tag eds --format json-ld --split-per-dataset out/
-dh-healthdcat export-file --tag eds --tag urgences --tag-mode all --exclude-tag dcat:sample --output prod.ttl
+dh-healthdcat export-file --domain "Biologie" --tag publiable --format json-ld --split-per-dataset out/
+dh-healthdcat export-file --tag publiable --tag urgences --tag-mode all --exclude-tag dcat:sample --output prod.ttl
 ```
 
 L'URI de base est obligatoire : `--base-uri`, ou `base_uri` dans le profil du fichier de configuration (voir « Configuration de l'instance »). Les exemples suivants supposent qu'un profil la déclare.
@@ -145,7 +183,7 @@ profiles:
     api_key_env: HDH_API_KEY_PREPROD   # variable dédiée, optionnel (sinon HDH_API_KEY)
   prod:
     url: https://catalogue.health-data-hub.fr
-    base_uri: https://data.mon-entrepot.fr   # URI de base de l'adoptant
+    base_uri: https://example.org   # URI de base de l'adoptant
 ```
 
 ```bash
@@ -173,7 +211,8 @@ Sans fichier de configuration, `push-hdh --hdh-url … --base-uri …` (clé dan
 
 ```
 src/dh_healthdcat/
-  cli.py                   # commandes export-file / validate / push-hdh (Typer), présentation seulement
+  cli.py                   # commandes export-file / validate / push-hdh / properties (Typer), présentation seulement
+  sp.py, sp_definitions.*  # préfixe et définitions canoniques des structured properties
   pipeline.py              # orchestration lecture→mapping→validation→décision, outcomes typés
   model.py                 # modèle pivot (HealthDataset, Distribution, Agent...)
   selection.py             # filtres --urn/--domain/--tag, partagés par les deux commandes
@@ -197,6 +236,10 @@ Aucun test ne nécessite d'instance DataHub ou d'instance Catalogue de métadonn
 
 ## Statut
 
-Implémentés et testés : le mapping, l'export fichier, la poussée API avec idempotence, et la configuration de l'instance par profils avec état cloisonné (voir « Configuration de l'instance » ci-dessus). `push-hdh` a été validé de bout en bout contre une instance HDH locale réelle le 2026-08-16 : jeu créé (`"[TEST] Patient HealthDCAT-AP" -> de1fb002-6bbb-4619-b850-d21dd99eb0e6`), `.dh-healthdcat-state.json` écrit au format v2 cloisonné par instance. Reste à faire avant un usage en production :
+Implémentés et testés : le mapping, l'export fichier, la poussée API avec idempotence, et la configuration de l'instance par profils avec état cloisonné (voir « Configuration de l'instance » ci-dessus). `push-hdh` a été validé de bout en bout contre une instance HDH locale réelle le 2026-08-16 : jeu créé, `.dh-healthdcat-state.json` écrit au format v2 cloisonné par instance.
 
-- **Curation** — peupler les propriétés `healthdcatap.*` sur les DataProducts existants (`aphp/datahub-sample`). Aujourd'hui la quasi-totalité en sont dépourvus et sont donc exclus de tout export/poussée strict (`dct:accessRights`, `dct:publisher`, `dcat:distribution`... manquants). Deux DataProducts de test entièrement conformes (`test-healthdcat-ap-sample`/`test-healthdcat-ap-patient`, dans `dataproduct-layer/assets.yml`) servent de référence : le connecteur d'ingestion réel (`aphp/datahub-yaml-source`) les ingère, `dh-healthdcat` les relit, les valide conformes (SHACL) et pousse `test-healthdcat-ap-patient` avec succès — voir `docs/mapping.md`.
+## Origine
+
+L'exporteur est né à l'AP-HP, pour publier les métadonnées de son Entrepôt de Données de Santé (EDS) vers le Catalogue HDH. L'AP-HP en est l'**adoptant d'origine**, pas un cas particulier du code : depuis la 0.3.0 (ADR-0005), les structured properties portent un préfixe neutre (`healthdcatap.*`), leurs définitions sont publiées par ce dépôt, et l'URI de base se déclare explicitement. Un catalogue qui utilise encore l'ancien préfixe `fr.aphp.healthdcat.*` doit suivre le guide de migration (`docs/migration-0.3.0.md`).
+
+Côté AP-HP, les DataProducts sont ingérés dans DataHub par un connecteur maison (`datahub-yaml-source`). Leur curation (peupler les `healthdcatap.*`) reste à faire pour la plupart : sans ces propriétés, un DataProduct est exclu de tout export strict.
