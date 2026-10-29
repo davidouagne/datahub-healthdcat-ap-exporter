@@ -878,7 +878,7 @@ requires-dist = [
     { name = "pyshacl", specifier = ">=0.25,<0.41" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "rdflib", specifier = "==7.6.0" },
-    { name = "typer", specifier = ">=0.12" },
+    { name = "typer", specifier = ">=0.16" },
 ]
 
 [package.metadata.requires-dev]

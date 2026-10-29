@@ -11,7 +11,9 @@ dependencies = [
     "rdflib==7.6.0",
     "pyshacl>=0.25,<0.41",
     "httpx>=0.27",
-    "typer>=0.12",
+    # 0.16 minimum : typer < 0.16 casse l'aide avec click >= 8.2
+    # (`make_metavar()` sans `ctx`), révélé par le leg CI `lowest`.
+    "typer>=0.16",
     "acryl-datahub>=0.14.1",
     "pyyaml>=6.0",
 ]
