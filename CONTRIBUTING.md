@@ -105,6 +105,26 @@ Vérifié en CI (`.github/workflows/commit-policy.yml`) : `commitlint` sur
 chaque commit, `dco` pour le signoff. Le titre de PR n'est pas vérifié : il
 n'entre pas dans l'historique.
 
+## Lancer un serveur DataHub local
+
+Pour inspecter une version du serveur à la main, sans seed ni export :
+
+```bash
+scripts/datahub-local.sh 1.7.0 up            # UI http://localhost:9002 (datahub / datahub)
+scripts/datahub-local.sh 1.7.0 down          # arrêt, données conservées
+scripts/datahub-local.sh 1.7.0 down --purge  # suppression, volumes compris
+```
+
+Chaque version a son projet compose (`dhhc-local-<version>`) et ses propres
+volumes, distincts de ceux du contrôle Docker et de tout quickstart par défaut
+(`datahub_*`). Une seule version tourne à la fois, sur les ports par défaut :
+`up` refuse de démarrer si un autre serveur répond déjà sur 8080. Un `up`
+suivant redémarre la même instance sur ses données.
+
+N'utilisez pas `datahub docker nuke` : quel que soit le projet, il supprime
+aussi les volumes `datahub_mysqldata`, `datahub_broker`… d'un quickstart par
+défaut.
+
 ## Élargir la plage des versions DataHub
 
 La plage des *Versions DataHub supportées* fait foi dans `pyproject.toml`
