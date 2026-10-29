@@ -34,6 +34,14 @@ uv venv .venv
 uv pip install -e ".[dev]"
 ```
 
+### Versions DataHub supportées
+
+La plage des versions du serveur DataHub (GMS) supportées fait foi dans
+`pyproject.toml`, contrainte `acryl-datahub` : la version du client installé et
+celle du serveur visé suivent la même plage. Elle ne contient que des versions
+vérifiées ; une mineure plus récente n'y entre qu'après vérification (voir
+`docs/adr/0004-support-versions-datahub.md`).
+
 ### Configuration DataHub
 
 `dh-healthdcat` se connecte au GMS via `DataHubGraph.get_default_graph()` — exactement la même résolution que la CLI `datahub` elle-même. Si `datahub` (ou tout script `acryl-datahub`) fonctionne déjà sur ce poste, `dh-healthdcat` fonctionnera sans configuration supplémentaire.

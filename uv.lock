@@ -873,7 +873,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "acryl-datahub", specifier = ">=0.14.1" },
+    { name = "acryl-datahub", specifier = ">=1.7,<1.8" },
     { name = "httpx", specifier = ">=0.27" },
     { name = "pyshacl", specifier = ">=0.25,<0.41" },
     { name = "pyyaml", specifier = ">=6.0" },
