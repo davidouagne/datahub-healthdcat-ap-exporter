@@ -76,6 +76,8 @@ dh-healthdcat properties --output structured-properties.yml
 datahub properties upsert -f structured-properties.yml
 ```
 
+Toutes les SP sont préfixées `healthdcatap.` (ADR-0005). L'ancien préfixe `fr.aphp.healthdcat.` n'est plus lu : sur une instance qui ne définit que celui-ci, `export-file` et `push-hdh` s'arrêtent au lancement avec une erreur unique qui renvoie au guide de migration.
+
 Les valeurs autorisées sont celles des vocabulaires que l'exporteur sait résoudre. `dh-healthdcat` n'écrit jamais dans DataHub : c'est vous qui appliquez le fichier, et vous pouvez restreindre ces valeurs dans votre propre registre.
 
 Ne pas confondre avec la configuration du **Catalogue de métadonnées de la PDS** (`--hdh-url`/`--api-key` de `push-hdh`, voir plus bas) : DataHub est la source lue, le Catalogue de métadonnées est la destination poussée.
@@ -94,7 +96,7 @@ dh-healthdcat export-file --tag eds --tag urgences --tag-mode all --exclude-tag 
 Chaque DataProduct est validé individuellement contre les shapes SHACL du HDH (`shapes/ehds/`) ; un jeu invalide (champ obligatoire manquant ou violation SHACL) est **exclu de l'export, pas l'export entier** — les autres DataProducts sélectionnés sont écrits normalement (`--no-strict` pour l'inclure quand même malgré ses erreurs, utile en exploration). Le code de sortie reste non nul dès qu'au moins un jeu a été exclu, même si le fichier produit contient les autres. Un jeu invalide produit un message explicite :
 
 ```
-ERREUR: DataProduct "Imagerie médicale" : healthdcatap:healthTheme manquant → renseigner fr.aphp.healthdcat.healthTheme
+ERREUR: DataProduct "Imagerie médicale" : healthdcatap:healthTheme manquant → renseigner healthdcatap.healthTheme
   -> "Imagerie médicale" exclu de l'export : erreurs ci-dessus (--no-strict pour forcer)
 ```
 
@@ -191,4 +193,4 @@ Aucun test ne nécessite d'instance DataHub ou d'instance Catalogue de métadonn
 
 Implémentés et testés : le mapping, l'export fichier, la poussée API avec idempotence, et la configuration de l'instance par profils avec état cloisonné (voir « Configuration de l'instance » ci-dessus). `push-hdh` a été validé de bout en bout contre une instance HDH locale réelle le 2026-08-16 : jeu créé (`"[TEST] Patient HealthDCAT-AP" -> de1fb002-6bbb-4619-b850-d21dd99eb0e6`), `.dh-healthdcat-state.json` écrit au format v2 cloisonné par instance. Reste à faire avant un usage en production :
 
-- **Curation** — peupler les propriétés `fr.aphp.healthdcat.*` sur les DataProducts existants (`aphp/datahub-sample`). Aujourd'hui la quasi-totalité en sont dépourvus et sont donc exclus de tout export/poussée strict (`dct:accessRights`, `dct:publisher`, `dcat:distribution`... manquants). Deux DataProducts de test entièrement conformes (`test-healthdcat-ap-sample`/`test-healthdcat-ap-patient`, dans `dataproduct-layer/assets.yml`) servent de référence : le connecteur d'ingestion réel (`aphp/datahub-yaml-source`) les ingère, `dh-healthdcat` les relit, les valide conformes (SHACL) et pousse `test-healthdcat-ap-patient` avec succès — voir `docs/mapping.md`.
+- **Curation** — peupler les propriétés `healthdcatap.*` sur les DataProducts existants (`aphp/datahub-sample`). Aujourd'hui la quasi-totalité en sont dépourvus et sont donc exclus de tout export/poussée strict (`dct:accessRights`, `dct:publisher`, `dcat:distribution`... manquants). Deux DataProducts de test entièrement conformes (`test-healthdcat-ap-sample`/`test-healthdcat-ap-patient`, dans `dataproduct-layer/assets.yml`) servent de référence : le connecteur d'ingestion réel (`aphp/datahub-yaml-source`) les ingère, `dh-healthdcat` les relit, les valide conformes (SHACL) et pousse `test-healthdcat-ap-patient` avec succès — voir `docs/mapping.md`.

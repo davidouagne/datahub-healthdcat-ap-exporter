@@ -1,7 +1,7 @@
 # Vocabulaire d'auteur (dh-healthdcat), pas vendu du HDH — le HDH ne publie pas
 # de dictionnaire "spécifications de référence" parmi ses vocabulaires contrôlés.
 #
-# Couvre les valeurs de `fr.aphp.healthdcat.referenceSpecification` (→ dct:conformsTo).
+# Couvre les valeurs de `healthdcatap.referenceSpecification` (→ dct:conformsTo).
 # URIs canoniques vérifiées le 2026-08-28 contre les sources primaires — voir
 # `docs/research/reference-specification-uris.md`. Choix de forme :
 #   - HL7-FHIR-R4 : version épinglée `4.0.1` (et non l'étiquette mouvante "R4"),

@@ -28,16 +28,16 @@ def test_resolve_or_warn_degrades_gracefully():
         "NOPE",
         dataset_name="Test",
         dataset_urn="urn:li:dataProduct:test",
-        datahub_field="fr.aphp.healthdcat.accessRights",
+        datahub_field="healthdcatap.accessRights",
         issues=issues,
     )
     assert result is None
     assert len(issues) == 1
-    assert issues[0].datahub_field == "fr.aphp.healthdcat.accessRights"
+    assert issues[0].datahub_field == "healthdcatap.accessRights"
 
 
 def test_legal_basis_matches_dpv_gdpr_extension():
-    # Clé "eu-gdpr:A9-2-j" : forme exacte stockée par fr.aphp.healthdcat.legalBasis
+    # Clé "eu-gdpr:A9-2-j" : forme exacte stockée par healthdcatap.legalBasis
     # (assets.yml), pas l'identifiant DPV nu — voir vocab/README.md.
     assert v.LEGAL_BASIS.resolve("eu-gdpr:A9-2-j") == "https://w3id.org/dpv/legal/eu/gdpr#A9-2-j"
 

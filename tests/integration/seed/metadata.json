@@ -97,7 +97,7 @@
       "json": {
         "properties": [
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.accessUrl",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.accessUrl",
             "values": [
               {
                 "string": "https://s3.example.org/dhhc-verify/Patient.ndjson"
@@ -105,7 +105,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.distributionFormat",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.distributionFormat",
             "values": [
               {
                 "string": "JSON"
@@ -113,7 +113,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.distributionStatus",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.distributionStatus",
             "values": [
               {
                 "string": "COMPLETED"
@@ -243,7 +243,7 @@
       "json": {
         "properties": [
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.accessUrl",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.accessUrl",
             "values": [
               {
                 "string": "https://s3.example.org/dhhc-verify/Patient_sample.ndjson"
@@ -263,7 +263,7 @@
       "json": {
         "properties": [
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.datasetType",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.datasetType",
             "values": [
               {
                 "string": "PERSONAL_DATA"
@@ -271,7 +271,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.accessRights",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.accessRights",
             "values": [
               {
                 "string": "NON_PUBLIC"
@@ -279,7 +279,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.applicableLegislation",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.applicableLegislation",
             "values": [
               {
                 "string": "COMMISSION IMPLEMENTING REGULATION (EU) 2023/138"
@@ -287,7 +287,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.healthCategory",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.healthCategory",
             "values": [
               {
                 "string": "HRAD"
@@ -295,7 +295,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.healthTheme",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.healthTheme",
             "values": [
               {
                 "string": "health_systems"
@@ -303,7 +303,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.spatialCoverage",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.spatialCoverage",
             "values": [
               {
                 "string": "FRA"
@@ -311,7 +311,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.provenance",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.provenance",
             "values": [
               {
                 "string": "Donnees issues du dossier patient informatise."
@@ -319,7 +319,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.purpose",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.purpose",
             "values": [
               {
                 "string": "Recherche et pilotage de l'activite hospitaliere."
@@ -327,7 +327,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.contactPointName",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.contactPointName",
             "values": [
               {
                 "string": "Coordination EDS"
@@ -335,7 +335,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.contactPointEmail",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.contactPointEmail",
             "values": [
               {
                 "string": "eds-coord@example.org"
@@ -343,7 +343,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.contactPointUrl",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.contactPointUrl",
             "values": [
               {
                 "string": "https://eds.example.org"
@@ -351,7 +351,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.license",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.license",
             "values": [
               {
                 "string": "https://eds.example.org/licence"
@@ -359,7 +359,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.referenceSpecification",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.referenceSpecification",
             "values": [
               {
                 "string": "HL7-FHIR-R4"
@@ -370,7 +370,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.isReferencedBy",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.isReferencedBy",
             "values": [
               {
                 "string": "10.1234/abcd.2019"
@@ -381,7 +381,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.numberOfRecords",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.numberOfRecords",
             "values": [
               {
                 "double": 1000.0
@@ -389,7 +389,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.publishingFrequency",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.publishingFrequency",
             "values": [
               {
                 "string": "DAILY"
@@ -397,7 +397,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.issued",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.issued",
             "values": [
               {
                 "string": "2024-01-15"
@@ -405,7 +405,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.temporalCoverageStart",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.temporalCoverageStart",
             "values": [
               {
                 "string": "2015-01-01"
@@ -413,7 +413,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.temporalCoverageEnd",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.temporalCoverageEnd",
             "values": [
               {
                 "string": "2023-12-31"
@@ -421,7 +421,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.publisherName",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.publisherName",
             "values": [
               {
                 "string": "Etablissement de sante exemple"
@@ -429,7 +429,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.publisherHomepage",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.publisherHomepage",
             "values": [
               {
                 "string": "https://www.example.org"
@@ -437,7 +437,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.publisherEmail",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.publisherEmail",
             "values": [
               {
                 "string": "eds-contact@example.org"
@@ -445,7 +445,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.publisherType",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.publisherType",
             "values": [
               {
                 "string": "Hospital or Healthcare System"
@@ -453,7 +453,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.publisherNote",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.publisherNote",
             "values": [
               {
                 "string": "Entrepot de donnees de sante"
@@ -461,7 +461,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.trustedDataHolder",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.trustedDataHolder",
             "values": [
               {
                 "string": "true"
@@ -469,7 +469,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.hdabName",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.hdabName",
             "values": [
               {
                 "string": "Health Data Hub"
@@ -477,7 +477,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.hdabHomepage",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.hdabHomepage",
             "values": [
               {
                 "string": "https://health-data-hub.fr"
@@ -485,7 +485,7 @@
             ]
           },
           {
-            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.hdabEmail",
+            "propertyUrn": "urn:li:structuredProperty:healthdcatap.hdabEmail",
             "values": [
               {
                 "string": "contact@health-data-hub.fr"

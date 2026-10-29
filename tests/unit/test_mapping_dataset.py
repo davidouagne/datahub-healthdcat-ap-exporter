@@ -129,7 +129,7 @@ def test_missing_required_fields_are_reported_with_datahub_field_name():
 
     by_property = {i.rdf_property: i for i in dataset.issues if i.severity is Severity.ERROR}
     assert "healthdcatap:healthTheme" in by_property
-    assert by_property["healthdcatap:healthTheme"].datahub_field == "fr.aphp.healthdcat.healthTheme"
+    assert by_property["healthdcatap:healthTheme"].datahub_field == "healthdcatap.healthTheme"
     assert "dcat:distribution" in by_property
     assert "adms:sample" in by_property
     assert "dct:publisher" in by_property
@@ -214,7 +214,7 @@ def test_no_tablegroup_when_no_asset_carries_a_schema():
 
 
 def test_issued_is_emitted_as_xsd_date_not_datetime():
-    """`fr.aphp.healthdcat.issued` est un `date` : on émet `dct:issued` en
+    """`healthdcatap.issued` est un `date` : on émet `dct:issued` en
     `xsd:date`, pas en `xsd:dateTime` forcé. `dct:modified` reste un vrai
     horodatage (`xsd:dateTime`)."""
 

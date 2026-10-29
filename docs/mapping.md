@@ -30,37 +30,37 @@ vérifié par le SHACL de base · `⚙️` = dérivé/calculé, pas une saisie.
 | `dct:identifier` (`xsd:anyURI`) | M | `{base_uri}/dataset/{dataProductKey.id}` | dataproduct.py |
 | `dct:title` | M | `dataProductProperties.name` | dataproduct.py |
 | `dct:description` | M | `dataProductProperties.description` | dataproduct.py |
-| `dct:alternative` | | `fr.aphp.healthdcat.acronym` | |
+| `dct:alternative` | | `healthdcatap.acronym` | |
 | `dcat:keyword` | M | `globalTags` (hors `dcat:sample`) | |
 | `dcat:theme` | M | constante `.../data-theme/HEAL` (voir note) | |
-| `dct:type` | M, =1 | `fr.aphp.healthdcat.datasetType` → `DatasetType` | |
-| `dct:accessRights` | M, =1 | `fr.aphp.healthdcat.accessRights` → `AccessRights` | |
-| `dcatap:applicableLegislation` | M | `fr.aphp.healthdcat.applicableLegislation` → `ApplicableRegulations` | |
-| `dct:publisher` | M, =1 | `fr.aphp.healthdcat.publisher{Name,Homepage,Email,Type,Note}`, `.trustedDataHolder` | agents.py |
-| `dct:creator` | | `fr.aphp.healthdcat.creator{Name,Homepage,Email}` | agents.py |
-| `dcat:contactPoint` | M | `fr.aphp.healthdcat.contactPoint{Name,Email,Url}` | agents.py |
-| `healthdcatap:hdab` | M, =1 | `fr.aphp.healthdcat.hdab{Name,Homepage,Email}` | agents.py |
-| `dct:provenance` | M | `fr.aphp.healthdcat.provenance` | |
-| `dpv:hasPurpose` | M | `fr.aphp.healthdcat.purpose` | |
-| `healthdcatap:healthCategory` | M | `fr.aphp.healthdcat.healthCategory` → `HealthCategories` | |
-| `healthdcatap:healthTheme` | M | `fr.aphp.healthdcat.healthTheme` → `HealthTheme` | |
-| `dct:spatial` | M | `fr.aphp.healthdcat.spatialCoverage` → `PublicationsEuropAuthorityCountry` ou passage direct | |
+| `dct:type` | M, =1 | `healthdcatap.datasetType` → `DatasetType` | |
+| `dct:accessRights` | M, =1 | `healthdcatap.accessRights` → `AccessRights` | |
+| `dcatap:applicableLegislation` | M | `healthdcatap.applicableLegislation` → `ApplicableRegulations` | |
+| `dct:publisher` | M, =1 | `healthdcatap.publisher{Name,Homepage,Email,Type,Note}`, `.trustedDataHolder` | agents.py |
+| `dct:creator` | | `healthdcatap.creator{Name,Homepage,Email}` | agents.py |
+| `dcat:contactPoint` | M | `healthdcatap.contactPoint{Name,Email,Url}` | agents.py |
+| `healthdcatap:hdab` | M, =1 | `healthdcatap.hdab{Name,Homepage,Email}` | agents.py |
+| `dct:provenance` | M | `healthdcatap.provenance` | |
+| `dpv:hasPurpose` | M | `healthdcatap.purpose` | |
+| `healthdcatap:healthCategory` | M | `healthdcatap.healthCategory` → `HealthCategories` | |
+| `healthdcatap:healthTheme` | M | `healthdcatap.healthTheme` → `HealthTheme` | |
+| `dct:spatial` | M | `healthdcatap.spatialCoverage` → `PublicationsEuropAuthorityCountry` ou passage direct | |
 | `dcat:distribution` | M, ≥1 | assets non tagués `dcat:sample` ; seulement les output ports si le DataProduct en déclare (ADR-0006) | dataset.py (reader) |
 | `adms:sample` | M, ≥1 | assets tagués `dcat:sample` | dataset.py (reader) |
-| `dct:language` | | `fr.aphp.healthdcat.language` → `PublicationsEuropAuthorityLanguage` | |
-| `dct:issued` (`xsd:date`) | | `fr.aphp.healthdcat.issued` (un `date` — émis en `xsd:date`, pas `xsd:dateTime`) | |
+| `dct:language` | | `healthdcatap.language` → `PublicationsEuropAuthorityLanguage` | |
+| `dct:issued` (`xsd:date`) | | `healthdcatap.issued` (un `date` — émis en `xsd:date`, pas `xsd:dateTime`) | |
 | `dct:modified` (`xsd:dateTime`) | | ⚙️ le plus récent des `dct:modified` des distributions (`datasetProperties.lastModified` des assets, hors `adms:sample`) ; absent si aucun asset n'en porte. `dataProductProperties` n'a pas d'horodatage propre | dataproduct.py |
 | `dct:temporal` | | `temporalCoverageStart`/`End` | |
 | `dct:accrualPeriodicity` | | `publishingFrequency` → `Frequency` | |
 | `dct:conformsTo` | | `referenceSpecification` → `ReferenceSpecification` (vocab d'auteur) ; code hors vocab → `urn:aphp:conformsTo:<code>` (ex. `OSIRIS`) | |
 | `dct:license` | | `license`, passage direct | |
-| `dct:isReferencedBy` | | `fr.aphp.healthdcat.isReferencedBy` ; DOI nu (`10.x/…`) ou `doi:` préfixé → `https://doi.org/…` | |
+| `dct:isReferencedBy` | | `healthdcatap.isReferencedBy` ; DOI nu (`10.x/…`) ou `doi:` préfixé → `https://doi.org/…` | |
 | `healthdcatap:numberOfRecords`/`numberOfUniqueIndividuals`/`min|maxTypicalAge` | | `number` | |
-| `healthdcatap:populationCoverage` | | `fr.aphp.healthdcat.populationCoverage` | |
+| `healthdcatap:populationCoverage` | | `healthdcatap.populationCoverage` | |
 | `healthdcatap:retentionPeriod` | | `retentionPeriodStart`/`End` → `dct:PeriodOfTime` | |
 | `healthdcatap:hasCodingSystem` | | `coding` → `CodingSystem` (vocabulaire d'auteur) | |
 | `dpv:hasLegalBasis` | | `legalBasis` → `LegalBasis` (vocabulaire d'auteur) | |
-| `dpv:hasPersonalData` | | `fr.aphp.healthdcat.personalData` → `PersonalData` | |
+| `dpv:hasPersonalData` | | `healthdcatap.personalData` → `PersonalData` | |
 | `healthdcatap:hasStructuredData` (`xsd:boolean`, R7 1..1) | | dérivé : `true` ssi ≥1 asset porte un `schemaMetadata` (→ `csvw:Table`) | `model.py::HealthDataset.has_structured_data` ; toujours émis, `false` compris ; validateur HDH indifférent |
 | `healthdcatap:hasVariables` → `csvw:TableGroup` (R7, `minCount 1` si `hasStructuredData`) | | ⚙️ regroupe par `csvw:table` toutes les `csvw:Table` du dataset (distributions + samples) | `dataset.py` ; émis ssi ≥1 `csvw:Table` ; nœud `<tablegroup:{uuid}>` ; validateur HDH indifférent (pas de `:CSVWTableGroup_Shape`) |
 | `dcat:landingPage` | | `dataProductProperties.externalUrl` ; valeur qui n'est pas une IRI absolue → WARNING, ignorée | dataproduct.py |
@@ -82,7 +82,7 @@ directement sur l'entité DataProduct.
 
 v1 émet toujours et uniquement `.../data-theme/HEAL` (constante). Le HDH n'a
 pas de vocabulaire `theme` dédié parmi ses 19 fichiers ; `HEAL` seul satisfait
-déjà `dcat:theme minCount 1`. Aucune propriété `fr.aphp.healthdcat.theme`
+déjà `dcat:theme minCount 1`. Aucune propriété `healthdcatap.theme`
 n'est nécessaire tant qu'aucun besoin de thème secondaire n'est identifié.
 
 ## Correspondance Dataset DataHub → `dcat:Distribution` / `adms:sample`
@@ -93,13 +93,13 @@ valide avec la seule `dcat:accessURL`.
 
 | Propriété | Distribution | Sample | Source |
 |---|---|---|---|
-| `dcat:accessURL` | M | M | `fr.aphp.healthdcat.accessUrl` (`entityTypes:[dataset]`), repli `datasetProperties.externalUrl` |
+| `dcat:accessURL` | M | M | `healthdcatap.accessUrl` (`entityTypes:[dataset]`), repli `datasetProperties.externalUrl` |
 | `dcat:byteSize` (`xsd:nonNegativeInteger`) | M, =1 | — | `datasetProfile.sizeInBytes` (aspect **timeseries**, lu via `ReadContext.get_dataset_profile` → `graph.get_latest_timeseries_value`) |
-| `dct:format` | M, =1 | — | `fr.aphp.healthdcat.distributionFormat`, sinon déduit de l'extension du **nom technique** du dataset (jamais du displayName, qui ne la porte pas) |
-| `dct:rights` (nœud `dct:RightsStatement`, pas un littéral direct — exigé `sh:BlankNodeOrIRI`) | M, =1 | — | hérité de `fr.aphp.healthdcat.license` du DataProduct |
+| `dct:format` | M, =1 | — | `healthdcatap.distributionFormat`, sinon déduit de l'extension du **nom technique** du dataset (jamais du displayName, qui ne la porte pas) |
+| `dct:rights` (nœud `dct:RightsStatement`, pas un littéral direct — exigé `sh:BlankNodeOrIRI`) | M, =1 | — | hérité de `healthdcatap.license` du DataProduct |
 | `dcatap:applicableLegislation` | M | — | hérité du DataProduct si l'asset n'en a pas |
 | `dct:title` / `dct:description` | | | `datasetProperties.name`/`.description`, fusion `editableDatasetProperties` |
-| `adms:status` | | | `fr.aphp.healthdcat.distributionStatus` → `DistributionStatus` ; `deprecation.deprecated` écrase en `WITHDRAWN` |
+| `adms:status` | | | `healthdcatap.distributionStatus` → `DistributionStatus` ; `deprecation.deprecated` écrase en `WITHDRAWN` |
 | `csvw:Table` → `csvw:column` | | | `schemaMetadata.fields` |
 
 ## Vocabulaires (`mapping/vocab/`)
@@ -111,7 +111,7 @@ d'auteur :
 
 - **`LegalBasis.yml`** — mapping des 12 codes `eu-gdpr:A6-1-*`/`eu-gdpr:A9-2-*`
   vers l'extension GDPR du DPV (`https://w3id.org/dpv/legal/eu/gdpr#`).
-- **`CodingSystem.yml`** — les 9 codes de `fr.aphp.healthdcat.coding`
+- **`CodingSystem.yml`** — les 9 codes de `healthdcatap.coding`
   (SNOMED-CT, LOINC, ICD-10/11, ATC : URIs canoniques stables ; CIP13, UCD,
   CCAM, NFS : espace de noms `https://aphp.fr/codesystem/*` local et
   explicitement non déréférençable, faute d'identifiant officiel ANS/HDH).
@@ -150,7 +150,7 @@ détail exact.
 | `locn:address` (pays du HDAB) | `Agent.country` est lu et résolu mais jamais câblé dans `mapping/agent.py` (non exigé par le SHACL) | P2 |
 | `prov:qualifiedAttribution` (dataController/dataProcessor) | Propriétés existantes non reprises, pas d'équivalent HealthDCAT-AP direct | P2 |
 | `dqv:hasQualityAnnotation` | Entités `ASSERTION` (quality-layer) non lues | P2 |
-| `fr.aphp.healthdcat.publishingFrequency` allowedValue `IRREGULAR` | Le vocabulaire HDH `Frequency` attend `IRREG` — écart détecté par `resolve_or_warn` (dégradé en avertissement, pas d'échec) | à corriger dans `assets.yml` |
+| `healthdcatap.publishingFrequency` allowedValue `IRREGULAR` | Le vocabulaire HDH `Frequency` attend `IRREG` — écart détecté par `resolve_or_warn` (dégradé en avertissement, pas d'échec) | à corriger dans `assets.yml` |
 | `HealthCategories`/`HealthTheme` (URIs) | Repointées de l'hôte de dév en dur (`13.81.34.152:1101`) vers le namespace SEMIC `http://healthdataportal.eu/resource/authority/...` (issue #6). Aucun hôte canonique publié à ce jour → IRI pas encore déréférençables — voir `docs/research/hdh-healthdcat-ap-gaps.md` | resynchroniser quand l'EC/HDH publiera le vocabulaire officiel |
-| `fr.aphp.healthdcat.retentionPeriod` (ancienne, texte ISO 8601) | Dépréciée au profit de `retentionPeriodStart`/`retentionPeriodEnd`, toujours déclarée dans `assets.yml` mais plus exportée | à retirer une fois la curation terminée |
+| `healthdcatap.retentionPeriod` (ancienne, texte ISO 8601) | Dépréciée au profit de `retentionPeriodStart`/`retentionPeriodEnd`, toujours déclarée dans `assets.yml` mais plus exportée | à retirer une fois la curation terminée |
 | `PersonalData.yml` : mélange `dpv-pd#`/`pd#` + entrée `Death` sans terme DPV correspondant | Écarts confirmés présents à l'identique dans la source HDH (fichier vendu) le 2026-09-18, non corrigés localement (« HDH fait foi » — décision confirmée après un aller-retour sur `Death`, voir #86) — détail dans `docs/research/hdh-healthdcat-ap-gaps.md` | à signaler côté HDH pour resynchronisation |

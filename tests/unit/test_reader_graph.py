@@ -28,16 +28,16 @@ def test_property_definitions_are_loaded_indexed_and_cached(monkeypatch):
         calls.append(graph)
         return [
             NS(
-                qualified_name="fr.aphp.healthdcat.x",
-                urn="urn:li:structuredProperty:fr.aphp.healthdcat.x",
+                qualified_name="healthdcatap.x",
+                urn="urn:li:structuredProperty:healthdcatap.x",
                 type="urn:li:dataType:datahub.string",
                 cardinality="MULTIPLE",
                 entity_types=("dataProduct",),
             ),
             # cardinality/entity_types absents : repli sur "SINGLE" / ().
             NS(
-                qualified_name="fr.aphp.healthdcat.y",
-                urn="urn:li:structuredProperty:fr.aphp.healthdcat.y",
+                qualified_name="healthdcatap.y",
+                urn="urn:li:structuredProperty:healthdcatap.y",
                 type="urn:li:dataType:datahub.string",
                 cardinality=None,
                 entity_types=None,
@@ -57,10 +57,10 @@ def test_property_definitions_are_loaded_indexed_and_cached(monkeypatch):
     ctx = ReadContext(graph=object())
     definitions = ctx.property_definitions
 
-    assert set(definitions) == {"fr.aphp.healthdcat.x", "fr.aphp.healthdcat.y"}
-    assert definitions["fr.aphp.healthdcat.x"].cardinality == "MULTIPLE"
-    assert definitions["fr.aphp.healthdcat.y"].cardinality == "SINGLE"
-    assert definitions["fr.aphp.healthdcat.y"].entity_types == ()
+    assert set(definitions) == {"healthdcatap.x", "healthdcatap.y"}
+    assert definitions["healthdcatap.x"].cardinality == "MULTIPLE"
+    assert definitions["healthdcatap.y"].cardinality == "SINGLE"
+    assert definitions["healthdcatap.y"].entity_types == ()
 
     # Deuxième accès : pas de second appel à StructuredProperties.list (cache).
     assert ctx.property_definitions is definitions
