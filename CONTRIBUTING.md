@@ -26,7 +26,8 @@ Aucun test ne nécessite d'instance [DataHub](https://datahubproject.io/) ou [Ca
 testé contre un double (`tests/fixtures/fake_datahub.py`), le `mapping` et la
 validation SHACL contre des graphes construits à la main. Toute contribution
 touchant à la lecture DataHub ou au mapping RDF doit rester testable hors
-ligne de la même façon.
+ligne de la même façon. Seul le contrôle Docker d'une version DataHub, hors
+CI, démarre un vrai serveur (voir « Élargir la plage des versions DataHub »).
 
 ## Structure du projet
 
@@ -103,6 +104,69 @@ d'y fusionner `main`.
 Vérifié en CI (`.github/workflows/commit-policy.yml`) : `commitlint` sur
 chaque commit, `dco` pour le signoff. Le titre de PR n'est pas vérifié : il
 n'entre pas dans l'historique.
+
+## Élargir la plage des versions DataHub
+
+La plage des *Versions DataHub supportées* fait foi dans `pyproject.toml`
+(contrainte `acryl-datahub`) et ne contient que des versions vérifiées
+(`docs/adr/0004-support-versions-datahub.md`). Une nouvelle mineure du serveur
+(1.8, 1.9…) n'y entre que par une PR d'élargissement, revue humainement, qui
+exige le contrôle Docker local. Il n'est jamais lancé en CI.
+
+Les montées de patch (`1.7.0.x → 1.7.0.y`) ne sont pas concernées : Dependabot
+les classe `semver-patch` et elles restent en auto-merge, sans contrôle Docker.
+
+### Prérequis
+
+- Docker, avec environ 8 Go de RAM disponibles.
+- Les ports 8080, 9002, 3306, 9092 et 9200 libres : **arrêtez tout autre
+  quickstart DataHub** avant de lancer le contrôle (`docker compose -p datahub
+  stop` conserve ses données). Le script refuse de démarrer si un serveur répond
+  déjà sur 8080.
+
+Le script isole ses données dans des volumes propres à la version
+(`dhhc-verify-<version>_*`) et les supprime à la fin. Ne lancez pas
+`datahub docker quickstart --version …` à la main pour ce contrôle : le compose
+du quickstart nomme ses volumes en dur (`datahub_*`), et un serveur d'une
+autre version démarrerait sur les données de votre instance locale.
+
+### Procédure
+
+1. Dans la PR d'élargissement (ouverte par Dependabot ou à la main), porter le
+   plafond de la contrainte à la mineure suivante (`acryl-datahub>=1.7,<1.9`
+   pour accueillir la 1.8), puis `uv lock`. Le plafond doit rester la dernière
+   mineure vérifiée.
+2. Lancer le contrôle contre la nouvelle version du serveur :
+
+   ```bash
+   scripts/verify-datahub-version.sh 1.8.0
+   ```
+
+   Il démarre le serveur, charge le seed de `tests/integration/seed/`, exporte
+   le DataProduct, le valide contre la sensitivity shape et le compare par
+   isomorphisme RDF à `tests/integration/expected/datahub-<mineure>.ttl`.
+   Comptez une dizaine de minutes. `--keep` laisse le serveur tourner pour
+   l'inspecter.
+3. Lire le résultat :
+   - **Sortie 0** : export conforme et identique à la référence.
+   - **Échec SHACL** : l'export n'est plus conforme sur cette version. C'est
+     une incompatibilité à corriger, dans `reader/graph.py` seulement (seule
+     frontière avec DataHub, ADR-0004 §4).
+   - **Écart avec la référence** : le diff liste les triples présents d'un seul
+     côté (`-` référence, `+` export). Chaque écart est soit une régression à
+     corriger, soit un changement voulu à expliquer dans la PR.
+4. Pour une mineure qui n'a pas encore de référence, ou quand un écart est
+   voulu, régénérer la référence puis la commiter dans la PR :
+
+   ```bash
+   scripts/verify-datahub-version.sh 1.8.0 --update-reference
+   ```
+
+   Relancer ensuite le contrôle sans l'option : un second passage sur un
+   serveur neuf doit donner un graphe identique. Si une valeur dépend du moment
+   de l'ingestion, la normaliser dans `scripts/compare_reference.py` et
+   documenter pourquoi.
+5. Cocher la case « contrôle Docker passé sur X.Y » du modèle de PR.
 
 ## Avant de proposer une modification
 
