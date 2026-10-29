@@ -11,8 +11,9 @@
 #   - HL7v2 : `urn:hl7-org:v2xml`, namespace XML officiel HL7 v2 (URN réel,
 #     stable, non déréférençable) — v2 est une famille de versions sans URI
 #     canonique unique.
-# Tout code absent d'ici (p. ex. OSIRIS) retombe sur `urn:aphp:conformsTo:<code>`
-# côté reader/dataproduct.py — comportement voulu, pas un oubli.
+# Tout code absent d'ici (p. ex. OSIRIS) retombe sur `<URI de base>/conformsTo/<code>`
+# côté reader/dataproduct.py (URI de base de l'adoptant, ADR-0005 §4) —
+# comportement voulu, pas un oubli.
 ReferenceSpecification:
   vocabulary_list:
     HL7-FHIR-R4: "http://hl7.org/fhir/4.0.1"

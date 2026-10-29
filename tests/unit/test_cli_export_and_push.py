@@ -16,6 +16,7 @@ from dh_healthdcat.emit.hdh_client import HdhClient, HdhClientError
 from dh_healthdcat.emit.state import PushState
 from dh_healthdcat.reader.graph import ReadContext
 from tests.fixtures.fake_datahub import (
+    BASE_URI,
     DATAPRODUCT_URN,
     NONCONFORMING_DATAPRODUCT_URN,
     build_context,
@@ -40,7 +41,8 @@ def test_export_file_writes_a_valid_dataproduct(tmp_path, monkeypatch):
     output = tmp_path / "out.ttl"
 
     result = runner.invoke(
-        cli_module.app, ["export-file", "--output", str(output), "--urn", DATAPRODUCT_URN]
+        cli_module.app,
+        ["export-file", "--base-uri", BASE_URI, "--output", str(output), "--urn", DATAPRODUCT_URN],
     )
 
     assert result.exit_code == 0, result.output
@@ -57,7 +59,9 @@ def test_export_file_default_selection_mixes_outcomes_and_exits_1(tmp_path, monk
     monkeypatch.setattr(cli_module, "from_env", build_context)
     output = tmp_path / "out.ttl"
 
-    result = runner.invoke(cli_module.app, ["export-file", "--output", str(output)])
+    result = runner.invoke(
+        cli_module.app, ["export-file", "--base-uri", BASE_URI, "--output", str(output)]
+    )
 
     assert result.exit_code == 1
     assert "IGNORÉ" in result.output  # DataProduct illisible
@@ -73,7 +77,15 @@ def test_export_file_nothing_valid_writes_no_file_and_exits_1(tmp_path, monkeypa
 
     result = runner.invoke(
         cli_module.app,
-        ["export-file", "--output", str(output), "--urn", NONCONFORMING_DATAPRODUCT_URN],
+        [
+            "export-file",
+            "--base-uri",
+            BASE_URI,
+            "--output",
+            str(output),
+            "--urn",
+            NONCONFORMING_DATAPRODUCT_URN,
+        ],
     )
 
     assert result.exit_code == 1
@@ -90,6 +102,8 @@ def test_export_file_split_per_dataset_writes_one_file(tmp_path, monkeypatch):
         cli_module.app,
         [
             "export-file",
+            "--base-uri",
+            BASE_URI,
             "--output",
             str(out_dir),
             "--urn",
@@ -110,7 +124,17 @@ def test_export_file_urn_with_tag_triggers_the_precedence_warning(tmp_path, monk
 
     result = runner.invoke(
         cli_module.app,
-        ["export-file", "--output", str(output), "--urn", DATAPRODUCT_URN, "--tag", "eds"],
+        [
+            "export-file",
+            "--base-uri",
+            BASE_URI,
+            "--output",
+            str(output),
+            "--urn",
+            DATAPRODUCT_URN,
+            "--tag",
+            "eds",
+        ],
     )
 
     assert "--urn est prioritaire" in result.output
@@ -123,6 +147,8 @@ def test_export_file_invalid_tag_mode_exits_2(monkeypatch):
         cli_module.app,
         [
             "export-file",
+            "--base-uri",
+            BASE_URI,
             "--output",
             "unused.ttl",
             "--tag",
@@ -145,7 +171,8 @@ def test_export_file_no_match_exits_1_and_writes_nothing(tmp_path, monkeypatch):
     output = tmp_path / "out.ttl"
 
     result = runner.invoke(
-        cli_module.app, ["export-file", "--output", str(output), "--domain", "eds"]
+        cli_module.app,
+        ["export-file", "--base-uri", BASE_URI, "--output", str(output), "--domain", "eds"],
     )
 
     assert result.exit_code == 1
@@ -225,6 +252,8 @@ def test_push_hdh_creates_a_new_dataproduct(tmp_path, monkeypatch):
         cli_module.app,
         [
             "push-hdh",
+            "--base-uri",
+            BASE_URI,
             "--hdh-url",
             "https://hdh.test",
             "--api-key",
@@ -258,6 +287,8 @@ def test_push_hdh_dry_run_never_calls_create_dataset(tmp_path, monkeypatch):
         cli_module.app,
         [
             "push-hdh",
+            "--base-uri",
+            BASE_URI,
             "--hdh-url",
             "https://hdh.test",
             "--api-key",
@@ -288,6 +319,8 @@ def test_push_hdh_updates_a_known_dataproduct(tmp_path, monkeypatch):
         cli_module.app,
         [
             "push-hdh",
+            "--base-uri",
+            BASE_URI,
             "--hdh-url",
             "https://hdh.test",
             "--api-key",
@@ -315,6 +348,8 @@ def test_push_hdh_default_selection_reports_unreadable_and_rejected(tmp_path, mo
         cli_module.app,
         [
             "push-hdh",
+            "--base-uri",
+            BASE_URI,
             "--hdh-url",
             "https://hdh.test",
             "--api-key",
@@ -345,6 +380,8 @@ def test_push_hdh_push_failure_does_not_abort_and_exits_1(tmp_path, monkeypatch)
         cli_module.app,
         [
             "push-hdh",
+            "--base-uri",
+            BASE_URI,
             "--hdh-url",
             "https://hdh.test",
             "--api-key",
@@ -374,6 +411,8 @@ def test_push_hdh_invalid_api_key_exits_1_before_any_selection(tmp_path, monkeyp
         cli_module.app,
         [
             "push-hdh",
+            "--base-uri",
+            BASE_URI,
             "--hdh-url",
             "https://hdh.test",
             "--api-key",

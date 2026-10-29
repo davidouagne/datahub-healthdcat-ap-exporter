@@ -17,7 +17,7 @@ import dh_healthdcat.cli as cli_module
 from dh_healthdcat import datahub_version
 from dh_healthdcat.emit.hdh_client import HdhClient
 from dh_healthdcat.reader.graph import ServerInfo
-from tests.fixtures.fake_datahub import DATAPRODUCT_URN, build_context
+from tests.fixtures.fake_datahub import BASE_URI, DATAPRODUCT_URN, build_context
 
 RANGE = SpecifierSet(">=1.7,<1.8")
 runner = CliRunner()
@@ -106,7 +106,16 @@ def _context_with_version(version: str):
 class TestCli:
     def _export(self, tmp_path, *extra):
         output = str(tmp_path / "out.ttl")
-        args = ["export-file", "--output", output, "--urn", DATAPRODUCT_URN, *extra]
+        args = [
+            "export-file",
+            "--base-uri",
+            BASE_URI,
+            "--output",
+            output,
+            "--urn",
+            DATAPRODUCT_URN,
+            *extra,
+        ]
         return runner.invoke(cli_module.app, args)
 
     def test_in_range_prints_no_version_message(self, tmp_path, monkeypatch):
@@ -179,6 +188,8 @@ class TestCli:
             cli_module.app,
             [
                 "push-hdh",
+                "--base-uri",
+                BASE_URI,
                 "--hdh-url",
                 "https://hdh.test",
                 "--api-key",

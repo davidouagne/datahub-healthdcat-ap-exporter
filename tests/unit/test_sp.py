@@ -6,7 +6,7 @@ import dh_healthdcat
 import dh_healthdcat.cli as cli_module
 from dh_healthdcat import sp
 from dh_healthdcat.reader.graph import PropertyDefinition
-from tests.fixtures.fake_datahub import DATAPRODUCT_URN, build_context
+from tests.fixtures.fake_datahub import BASE_URI, DATAPRODUCT_URN, build_context
 
 SRC = Path(dh_healthdcat.__file__).parent
 
@@ -68,7 +68,8 @@ class TestCli:
     def _export(self, tmp_path):
         output = str(tmp_path / "out.ttl")
         return CliRunner().invoke(
-            cli_module.app, ["export-file", "--output", output, "--urn", DATAPRODUCT_URN]
+            cli_module.app,
+            ["export-file", "--base-uri", BASE_URI, "--output", output, "--urn", DATAPRODUCT_URN],
         )
 
     def test_legacy_only_instance_stops_before_any_selection(self, tmp_path, monkeypatch):

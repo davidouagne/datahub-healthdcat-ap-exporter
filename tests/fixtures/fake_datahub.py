@@ -18,6 +18,8 @@ from types import SimpleNamespace as NS
 from dh_healthdcat.reader.graph import PropertyDefinition, ReadContext
 
 DATAPRODUCT_URN = "urn:li:dataProduct:b78435bfad26dab4c11e6e41c2a72b53"
+# URI de base de l'adoptant fictif (ADR-0005 §4 : jamais de valeur par défaut).
+BASE_URI = "https://example.org"
 ASSET_URN = "urn:li:dataset:(urn:li:dataPlatform:s3,sharing_layer_Patient.ndjson,PROD)"
 SAMPLE_URN = "urn:li:dataset:(urn:li:dataPlatform:s3,sharing_layer_Patient_sample.ndjson,PROD)"
 

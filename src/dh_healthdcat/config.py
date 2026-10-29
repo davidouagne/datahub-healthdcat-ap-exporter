@@ -36,6 +36,7 @@ class Profile:
     name: str
     url: str | None = None
     api_key_env: str | None = None
+    base_uri: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -66,6 +67,18 @@ def normalize_url(raw: str) -> str:
     netloc = hostname if port is None else f"{hostname}:{port}"
     path = parts.path.rstrip("/")
     return urlunsplit((scheme, netloc, path, "", ""))
+
+
+def normalize_base_uri(raw: object) -> str:
+    """URI de base : URI http(s) absolue, sans `/` final (les identifiants
+    sont forgés en `<base>/dataset/<id>`). `ValueError` sinon."""
+
+    if not isinstance(raw, str):
+        raise ValueError(f"doit être une chaîne (reçu {raw!r}).")
+    parts = urlsplit(raw.strip())
+    if parts.scheme not in ("http", "https") or not parts.hostname:
+        raise ValueError(f"doit être une URI http(s) absolue (reçu {raw!r}).")
+    return raw.strip().rstrip("/")
 
 
 def find_config_file(
@@ -136,6 +149,7 @@ def load_config(path: Path) -> Config:
             )
         url = body.get("url")
         api_key_env = body.get("api_key_env")
+        base_uri = body.get("base_uri")
         if url is not None and not isinstance(url, str):
             raise ConfigError(
                 f"Profil {name!r} ({path}) : `url` doit être une chaîne (reçu {url!r})."
@@ -145,7 +159,12 @@ def load_config(path: Path) -> Config:
                 f"Profil {name!r} ({path}) : `api_key_env` doit être une chaîne "
                 f"(reçu {api_key_env!r})."
             )
-        profiles[name] = Profile(name=name, url=url, api_key_env=api_key_env)
+        if base_uri is not None:
+            try:
+                base_uri = normalize_base_uri(base_uri)
+            except ValueError as exc:
+                raise ConfigError(f"Profil {name!r} ({path}) : `base_uri` {exc}") from None
+        profiles[name] = Profile(name=name, url=url, api_key_env=api_key_env, base_uri=base_uri)
 
     default_profile = raw.get("default_profile")
     if default_profile is not None and default_profile not in profiles:
@@ -156,6 +175,55 @@ def load_config(path: Path) -> Config:
         )
 
     return Config(path=path, profiles=profiles, default_profile=default_profile)
+
+
+def select_profile(
+    *, config: Config | None, env: Mapping[str, str], cli_profile: str | None
+) -> Profile | None:
+    """Profil retenu : `--profile` > `$HDH_PROFILE` > `default_profile` >
+    l'unique profil déclaré ; None si aucun ne s'applique."""
+
+    config = config or Config(path=None)
+    profile_name = cli_profile or env.get("HDH_PROFILE") or config.default_profile
+    if profile_name is None and len(config.profiles) == 1:
+        (profile_name,) = config.profiles
+    if profile_name is None:
+        return None
+    profile = config.profiles.get(profile_name)
+    if profile is None:
+        known = ", ".join(sorted(config.profiles)) or "aucun"
+        location = f" ({config.path})" if config.path else ""
+        raise ConfigError(
+            f"Profil {profile_name!r} inconnu{location} — profils déclarés : {known}."
+        )
+    return profile
+
+
+def resolve_base_uri(
+    *,
+    config: Config | None,
+    env: Mapping[str, str],
+    cli_base_uri: str | None,
+    cli_profile: str | None,
+) -> str:
+    """URI de base (ADR-0005 §4) : `--base-uri` > `base_uri` du profil
+    sélectionné. Jamais de valeur par défaut : sans l'une ni l'autre,
+    `ConfigError` (REQ-004). Fonction pure, comme `resolve_target`."""
+
+    if cli_base_uri is not None:
+        try:
+            return normalize_base_uri(cli_base_uri)
+        except ValueError as exc:
+            raise ConfigError(f"--base-uri {exc}") from None
+
+    profile = select_profile(config=config, env=env, cli_profile=cli_profile)
+    if profile is not None and profile.base_uri is not None:
+        return profile.base_uri
+    where = f"le profil {profile.name!r}" if profile else "un profil du fichier de configuration"
+    raise ConfigError(
+        "Aucune URI de base : passez --base-uri https://votre-domaine.example, ou déclarez "
+        f"`base_uri` dans {where} (voir README, « Configuration de l'instance »)."
+    )
 
 
 def resolve_target(
@@ -170,21 +238,8 @@ def resolve_target(
     la variable de clé se résolvent indépendamment. Fonction pure (REQ-007) :
     ni I/O ni accès à `os.environ` — `config` et `env` sont injectés."""
 
-    config = config or Config(path=None)
-
-    profile_name = cli_profile or env.get("HDH_PROFILE") or config.default_profile
-    if profile_name is None and len(config.profiles) == 1:
-        (profile_name,) = config.profiles
-
-    profile: Profile | None = None
-    if profile_name is not None:
-        profile = config.profiles.get(profile_name)
-        if profile is None:
-            known = ", ".join(sorted(config.profiles)) or "aucun"
-            location = f" ({config.path})" if config.path else ""
-            raise ConfigError(
-                f"Profil {profile_name!r} inconnu{location} — profils déclarés : {known}."
-            )
+    profile = select_profile(config=config, env=env, cli_profile=cli_profile)
+    profile_name = profile.name if profile else None
 
     raw_url = cli_url or env.get("HDH_URL") or (profile.url if profile else None)
     if not raw_url:

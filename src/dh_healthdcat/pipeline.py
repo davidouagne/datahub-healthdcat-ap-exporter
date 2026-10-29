@@ -35,7 +35,7 @@ from dh_healthdcat.emit.hdh_client import HdhClientError, HdhTarget
 from dh_healthdcat.emit.state import PushState
 from dh_healthdcat.mapping.dataset import dataset_to_graph
 from dh_healthdcat.model import HealthDataset, Severity, ValidationIssue
-from dh_healthdcat.reader.dataproduct import DEFAULT_BASE_URI, read_data_product
+from dh_healthdcat.reader.dataproduct import read_data_product
 from dh_healthdcat.reader.graph import ReadContext
 from dh_healthdcat.validate.shacl import ShaclResult, validate_graph
 
@@ -76,7 +76,7 @@ def prepare(
     ctx: ReadContext,
     urns: Iterable[str],
     *,
-    base_uri: str = DEFAULT_BASE_URI,
+    base_uri: str,
     strict: bool = True,
 ) -> Iterator[Outcome]:
     # URN d'asset → (URN, titre) du 1ᵉʳ DataProduct de la sélection qui l'exporte
@@ -179,7 +179,7 @@ def push(
     *,
     target: HdhTarget,
     state: PushState,
-    base_uri: str = DEFAULT_BASE_URI,
+    base_uri: str,
     dry_run: bool = False,
 ) -> Iterator[PushOutcome]:
     """Créer ou mettre à jour chaque jeu préparé, puis enregistrer l'id
