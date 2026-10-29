@@ -191,7 +191,8 @@ class HealthDataset:
     conforms_to: tuple[str, ...] = ()
     license: str | None = None
     is_referenced_by: tuple[str, ...] = ()
-    pages: tuple[str, ...] = ()
+    landing_page: str | None = None  # dcat:landingPage — dataProductProperties.externalUrl
+    pages: tuple[str, ...] = ()  # foaf:page — institutionalMemory.elements[].url
 
     # Distributions
     distributions: tuple[Distribution, ...] = ()  # dcat:distribution

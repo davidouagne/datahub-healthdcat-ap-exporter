@@ -12,7 +12,7 @@ from types import SimpleNamespace as NS
 from rdflib import XSD, Literal, URIRef
 
 from dh_healthdcat.mapping.dataset import dataset_to_graph
-from dh_healthdcat.mapping.namespaces import DCT
+from dh_healthdcat.mapping.namespaces import DCAT, DCT, FOAF
 from dh_healthdcat.model import Severity
 from dh_healthdcat.reader.dataproduct import read_data_product
 from dh_healthdcat.validate.shacl import validate_graph
@@ -197,3 +197,59 @@ def test_modified_is_absent_when_no_distribution_has_one():
     assert dataset.modified is None
     graph = dataset_to_graph(dataset)
     assert list(graph.objects(URIRef(f"dataset:{dataset.dataset_id}"), DCT.modified)) == []
+
+
+def _set_documentation(ctx, *, external_url, links) -> None:
+    entity = ctx.graph._entities[DATAPRODUCT_URN]
+    entity["dataProductProperties"].externalUrl = external_url
+    entity["institutionalMemory"] = NS(elements=[NS(url=u, description="doc") for u in links])
+
+
+def test_landing_page_and_pages_are_exported():
+    """#145 : externalUrl → dcat:landingPage, institutionalMemory → foaf:page
+    (un par lien, sans doublon), et le graphe reste conforme."""
+
+    ctx = build_context()
+    _set_documentation(
+        ctx,
+        external_url="https://eds.aphp.fr/produits/venues",
+        links=["https://wiki.aphp.fr/venues", "https://wiki.aphp.fr/venues", "https://x.fr/a"],
+    )
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+
+    assert dataset.landing_page == "https://eds.aphp.fr/produits/venues"
+    assert dataset.pages == ("https://wiki.aphp.fr/venues", "https://x.fr/a")
+    graph = dataset_to_graph(dataset)
+    uri = URIRef(f"dataset:{dataset.dataset_id}")
+    assert list(graph.objects(uri, DCAT.landingPage)) == [
+        URIRef("https://eds.aphp.fr/produits/venues")
+    ]
+    assert set(graph.objects(uri, FOAF.page)) == {
+        URIRef("https://wiki.aphp.fr/venues"),
+        URIRef("https://x.fr/a"),
+    }
+    assert validate_graph(graph).conforms is True
+
+
+def test_non_absolute_iris_are_ignored_with_a_warning():
+    ctx = build_context()
+    _set_documentation(
+        ctx, external_url="eds.aphp.fr/venues", links=["voir le wiki", "https://x.fr/a"]
+    )
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+
+    assert dataset.landing_page is None
+    assert dataset.pages == ("https://x.fr/a",)
+    warnings = [i for i in dataset.issues if "IRI absolue attendue" in i.message]
+    assert {i.rdf_property for i in warnings} == {"dcat:landingPage", "foaf:page"}
+    assert all(i.severity is Severity.WARNING for i in warnings)
+    assert not dataset.has_errors
+
+
+def test_no_documentation_emits_nothing():
+    dataset = read_data_product(build_context(), DATAPRODUCT_URN)
+
+    assert dataset.landing_page is None
+    assert dataset.pages == ()
