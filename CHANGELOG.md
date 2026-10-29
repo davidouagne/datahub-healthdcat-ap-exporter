@@ -1,5 +1,59 @@
 # Changelog
 
+## [0.3.0](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.2.0...v0.3.0) (2026-10-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* la valeur `NFS` de `healthdcatap.coding` n'est plus reconnue (ignorée avec un avertissement) ; la remplacer par `NABM`. Les IRI émises pour CIP13, UCD, CCAM et NABM changent.
+* `--base-uri` n'a plus de défaut (`https://eds.aphp.fr`) et le repli `urn:aphp:conformsTo:<code>` disparaît. Déclarer `base_uri` dans le profil ou passer `--base-uri` à `export-file` et `push-hdh`.
+* les SP `fr.aphp.healthdcat.*` ne sont plus lues. Les définitions (`dh-healthdcat properties`) et les valeurs doivent être migrées vers `healthdcatap.*` avant de monter de version.
+* acryl-datahub >= 1.7 et < 1.8 est désormais requis. Un environnement qui impose un acryl-datahub plus ancien, ou d'une mineure non encore vérifiée, ne peut plus installer l'exporteur sans forcer la résolution.
+
+### Features
+
+* avertir si le serveur DataHub est hors de la plage supportée ([c8edb92](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/c8edb9234297d5a200d2bc48a1a5107017a200c2)), closes [#128](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/128)
+* exporter dcat:landingPage et foaf:page ([3dabe4b](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/3dabe4b6f550cd5ac13fbc00b67a3aaf1c800ae7)), closes [#145](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/145)
+* lanceur local d'un serveur DataHub isolé par version ([5aa454f](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/5aa454f2b66802acd9a7b8f01f53b8926a4513c3)), closes [#170](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/170)
+* lire les structured properties sous le préfixe healthdcatap ([7e78057](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/7e78057bc16db96019eb2e3f58a1e9cf66adc961)), closes [#135](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/135)
+* livrer les définitions des SP et la commande properties ([0a97c45](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/0a97c457a3ed6e5dd88a958616044cbb75178553)), closes [#134](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/134)
+* ne publier que les output ports d'un Data Product ([5868297](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/5868297bf212e4d056b32416e589308470335d7f)), closes [#147](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/147)
+* rendre l'URI de base obligatoire ([a45ddc7](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/a45ddc7571ac39bebb91150c051785fe5cb95ef2)), closes [#136](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/136)
+* URIs de l'ANS pour les systèmes de codage français ([a8bc3a9](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/a8bc3a9b3cde16576fcfe8e95ff879675eddbeae)), closes [#138](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/138)
+
+
+### Bug Fixes
+
+* émettre dct:modified depuis les distributions ([5059fe2](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/5059fe21ed593ba33a317510613e734d7b8b4d13)), closes [#143](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/143)
+* ne demander à DataHub que les aspects lus ([f5d7e5f](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/f5d7e5ff22d95d612d390bba6ec83e7f076abcf8)), closes [#142](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/142)
+* ne supprimer que les volumes du projet après le contrôle Docker ([eb2713d](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/eb2713de47f214ba078c48c630c2dce6ca4b32d1)), closes [#170](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/170)
+* relever le plancher de typer à 0.16 ([abf9762](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/abf976277b8fd6f666b04123ac53dc6377b512fb)), closes [#127](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/127)
+* un nœud de distribution par DataProduct pour un asset partagé ([a7ee466](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/a7ee4667b1fb7830a924c01c9b07f14ae15a894f)), closes [#144](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/144)
+
+
+### Dependencies
+
+* Bump msgpack from 1.2.2 to 1.2.3 ([6aac09e](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/6aac09e0b3be975fd6814dcdcce71f4a1dc05bb2))
+
+
+### Documentation
+
+* ADR-0004 politique de support des versions DataHub ([cd08972](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/cd08972d0e98411c85fc44b75180761ffcb2ced0)), closes [#124](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/124)
+* ADR-0005 contrat des structured properties healthdcatap.* ([1cb4331](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/1cb43318fa67be87abfa279acccd6d7676f5ab37)), closes [#125](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/125)
+* ADR-0006, hiérarchie de Data Products et output ports ([3b9a756](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/3b9a756fb8e708c31d918c5ef2f2b143e41e945e))
+* guide de migration vers la 0.3.0 ([57475b6](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/57475b61c761cf5a31fcb6abd1ca088c0aa1225d)), closes [#140](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/140)
+* lancer les scripts shell sous Windows avec Git Bash ([8488097](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/848809718517b0fae8e68a80e2ead251f735e33c)), closes [#170](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/170)
+* note de recherche sur les URIs des systèmes de codage ([3763ef5](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/3763ef530182264b1079ccb962b413106e353b5a)), closes [#137](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/137)
+* présenter l'exporteur pour tout adoptant ([c07da2c](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/c07da2c9572a86fe97aa984ac9b60f01f018552b)), closes [#139](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/139)
+* procédure d'élargissement de la plage DataHub ([b3ced16](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/b3ced16b0a54b0f35384a7725e115952404dbfd7)), closes [#131](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/131)
+* recherche sur le Data Product de DataHub 1.8 ([1cc296d](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/1cc296d9b269e05f27e14c283f6bb31ef8de82cf)), closes [#124](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/124)
+* versionner les specs sous docs/specs ([371d8ba](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/371d8baf1e24f9e75b510a8fd0b1832f2bdaf0e8))
+
+
+### Build System
+
+* restreindre acryl-datahub à la plage vérifiée &gt;=1.7,&lt;1.8 ([afd1180](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/afd1180f5c45fa3e9a4b503ded77987b3bb6868f)), closes [#127](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/127)
+
 ## [0.2.0](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.1.9...v0.2.0) (2026-10-26)
 
 
