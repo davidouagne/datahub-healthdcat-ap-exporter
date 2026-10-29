@@ -57,7 +57,11 @@ def add_distribution(
     `csvw:TableGroup` porté par `healthdcatap:hasVariables`."""
 
     kind = "sample" if distribution.is_sample else "distribution"
-    node = node_uri(kind, distribution.source_urn or distribution.node_id)
+    # La graine inclut le dataset parent : un asset membre de plusieurs
+    # DataProducts (DataHub l'autorise) donne un nœud distinct par
+    # DataProduct, sinon leurs triples fusionneraient dans un export commun
+    # (deux dct:rights hérités → maxCount 1 violé, #144).
+    node = node_uri(kind, str(dataset_uri), distribution.source_urn or distribution.node_id)
     predicate = ADMS.sample if distribution.is_sample else DCAT.distribution
     graph.add((dataset_uri, predicate, node))
     graph.add((node, RDF.type, DCAT.Distribution))

@@ -9,8 +9,14 @@ boucles."""
 
 from __future__ import annotations
 
+import copy
+
+from rdflib import Graph
+
+from dh_healthdcat.mapping.namespaces import DCAT
 from dh_healthdcat.model import Severity
 from dh_healthdcat.pipeline import Prepared, Rejected, Unreadable, prepare
+from dh_healthdcat.validate.shacl import validate_graph
 from tests.fixtures.fake_datahub import (
     ALL_DATAPRODUCT_URNS,
     DATAPRODUCT_URN,
@@ -100,3 +106,63 @@ def test_prepared_dataset_has_no_duplicate_error_issues():
 
     by_property = [i.rdf_property for i in outcome.dataset.issues if i.severity is Severity.ERROR]
     assert len(by_property) == len(set(by_property))
+
+
+TWIN_DATAPRODUCT_URN = "urn:li:dataProduct:twin"
+
+
+def _add_twin_sharing_assets(ctx) -> None:
+    """Second DataProduct membre des mêmes assets, sous une autre licence."""
+
+    twin = copy.deepcopy(ctx.graph._entities[DATAPRODUCT_URN])
+    twin["dataProductProperties"].name = "Jumeau"
+    for assignment in twin["structuredProperties"].properties:
+        if assignment.propertyUrn.endswith(".license"):
+            assignment.values = ["https://eds.aphp.fr/autre-licence"]
+    ctx.graph._entities[TWIN_DATAPRODUCT_URN] = twin
+
+
+def test_shared_asset_gets_one_distribution_node_per_dataproduct():
+    """#144 : un asset partagé ne fusionne plus deux distributions en un seul
+    nœud — le graphe commun reste conforme malgré deux licences héritées."""
+
+    ctx = build_context()
+    _add_twin_sharing_assets(ctx)
+
+    outcomes = list(prepare(ctx, [DATAPRODUCT_URN, TWIN_DATAPRODUCT_URN]))
+
+    assert all(isinstance(o, Prepared) for o in outcomes)
+    merged = Graph()
+    for outcome in outcomes:
+        merged += outcome.graph
+    distributions = set(merged.objects(None, DCAT.distribution))
+    assert len(distributions) == 2
+    assert validate_graph(merged).conforms is True
+
+
+def test_shared_asset_is_reported_on_the_later_dataproduct_only():
+    ctx = build_context()
+    _add_twin_sharing_assets(ctx)
+
+    first, second = list(prepare(ctx, [DATAPRODUCT_URN, TWIN_DATAPRODUCT_URN]))
+
+    def shared(outcome):
+        return [i for i in outcome.dataset.issues if "partagé avec" in i.message]
+
+    assert shared(first) == []
+    # Distribution et échantillon sont tous deux partagés.
+    assert len(shared(second)) == 2
+    assert all(i.severity is Severity.WARNING for i in shared(second))
+    assert all('"Venues et sejours des patients"' in i.message for i in shared(second))
+
+
+def test_shared_asset_ids_are_stable_across_runs():
+    def distribution_nodes():
+        ctx = build_context()
+        _add_twin_sharing_assets(ctx)
+        return [
+            sorted(o.graph.objects(None, DCAT.distribution))
+            for o in prepare(ctx, [DATAPRODUCT_URN, TWIN_DATAPRODUCT_URN])
+        ]
+
+    assert distribution_nodes() == distribution_nodes()
