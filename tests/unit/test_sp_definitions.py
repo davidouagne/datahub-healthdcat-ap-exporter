@@ -5,6 +5,7 @@ commande `dh-healthdcat properties`."""
 from __future__ import annotations
 
 import functools
+from pathlib import Path
 
 import pytest
 import yaml
@@ -147,3 +148,32 @@ def test_cli_writes_into_a_directory(tmp_path):
     assert written.is_file()
     assert f"{len(sp_definitions.definitions())} définitions écrites" in result.output
     assert "datahub properties upsert -f" in result.output
+
+
+class TestMigrationGuide:
+    """Guide 0.3.0 (#140) : la table de correspondance est vérifiée contre les
+    définitions canoniques, et l'erreur de l'ancien préfixe y renvoie."""
+
+    GUIDE = Path(__file__).parents[2] / "docs" / "migration-0.3.0.md"
+
+    def test_error_message_points_to_the_guide(self):
+        assert self.GUIDE.is_file()
+        assert sp.MIGRATION_GUIDE.endswith("/blob/main/docs/migration-0.3.0.md")
+
+    def test_correspondence_table_matches_the_definitions(self):
+        rows = [
+            [cell.strip().strip("`") for cell in line.strip().strip("|").split("|")]
+            for line in self.GUIDE.read_text(encoding="utf-8").splitlines()
+            if line.startswith(f"| `{sp.LEGACY_PREFIX}")
+        ]
+        expected = [
+            [
+                sp.LEGACY_PREFIX + d.name,
+                sp.qualified(d.name),
+                d.type,
+                d.cardinality,
+                ", ".join(d.entity_types),
+            ]
+            for d in sp_definitions.definitions()
+        ]
+        assert rows == expected
