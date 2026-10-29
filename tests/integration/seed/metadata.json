@@ -1,0 +1,499 @@
+[
+  {
+    "entityType": "domain",
+    "entityUrn": "urn:li:domain:dhhc-verify",
+    "changeType": "UPSERT",
+    "aspectName": "domainProperties",
+    "aspect": {
+      "json": {
+        "customProperties": {},
+        "name": "Contrôle Docker dh-healthdcat"
+      }
+    }
+  },
+  {
+    "entityType": "dataset",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:s3,dhhc-verify/Patient.ndjson,PROD)",
+    "changeType": "UPSERT",
+    "aspectName": "datasetProperties",
+    "aspect": {
+      "json": {
+        "customProperties": {},
+        "name": "Patient.ndjson",
+        "description": "Ressources FHIR Patient",
+        "created": {
+          "time": 1704067200000,
+          "actor": "urn:li:corpuser:datahub"
+        },
+        "lastModified": {
+          "time": 1717200000000,
+          "actor": "urn:li:corpuser:datahub"
+        },
+        "tags": []
+      }
+    }
+  },
+  {
+    "entityType": "dataset",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:s3,dhhc-verify/Patient.ndjson,PROD)",
+    "changeType": "UPSERT",
+    "aspectName": "schemaMetadata",
+    "aspect": {
+      "json": {
+        "schemaName": "Patient.ndjson",
+        "platform": "urn:li:dataPlatform:s3",
+        "version": 0,
+        "created": {
+          "time": 1704067200000,
+          "actor": "urn:li:corpuser:datahub"
+        },
+        "lastModified": {
+          "time": 1717200000000,
+          "actor": "urn:li:corpuser:datahub"
+        },
+        "hash": "",
+        "platformSchema": {
+          "com.linkedin.schema.OtherSchema": {
+            "rawSchema": ""
+          }
+        },
+        "fields": [
+          {
+            "fieldPath": "id",
+            "nullable": false,
+            "description": "Identifiant",
+            "type": {
+              "type": {
+                "com.linkedin.schema.StringType": {}
+              }
+            },
+            "nativeDataType": "string",
+            "recursive": false,
+            "isPartOfKey": true
+          },
+          {
+            "fieldPath": "gender",
+            "nullable": false,
+            "description": "Sexe",
+            "type": {
+              "type": {
+                "com.linkedin.schema.StringType": {}
+              }
+            },
+            "nativeDataType": "string",
+            "recursive": false,
+            "isPartOfKey": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "entityType": "dataset",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:s3,dhhc-verify/Patient.ndjson,PROD)",
+    "changeType": "UPSERT",
+    "aspectName": "structuredProperties",
+    "aspect": {
+      "json": {
+        "properties": [
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.accessUrl",
+            "values": [
+              {
+                "string": "https://s3.example.org/dhhc-verify/Patient.ndjson"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.distributionFormat",
+            "values": [
+              {
+                "string": "JSON"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.distributionStatus",
+            "values": [
+              {
+                "string": "COMPLETED"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "entityType": "dataset",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:s3,dhhc-verify/Patient.ndjson,PROD)",
+    "changeType": "UPSERT",
+    "aspectName": "datasetProfile",
+    "aspect": {
+      "json": {
+        "timestampMillis": 1717200000000,
+        "partitionSpec": {
+          "partition": "FULL_TABLE_SNAPSHOT",
+          "type": "FULL_TABLE"
+        },
+        "rowCount": 1000,
+        "columnCount": 2,
+        "sizeInBytes": 123456
+      }
+    }
+  },
+  {
+    "entityType": "dataset",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:s3,dhhc-verify/Patient_sample.ndjson,PROD)",
+    "changeType": "UPSERT",
+    "aspectName": "datasetProperties",
+    "aspect": {
+      "json": {
+        "customProperties": {},
+        "name": "Patient_sample.ndjson",
+        "description": "Echantillon FHIR Patient",
+        "created": {
+          "time": 1704067200000,
+          "actor": "urn:li:corpuser:datahub"
+        },
+        "lastModified": {
+          "time": 1717200000000,
+          "actor": "urn:li:corpuser:datahub"
+        },
+        "tags": []
+      }
+    }
+  },
+  {
+    "entityType": "dataset",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:s3,dhhc-verify/Patient_sample.ndjson,PROD)",
+    "changeType": "UPSERT",
+    "aspectName": "schemaMetadata",
+    "aspect": {
+      "json": {
+        "schemaName": "Patient_sample.ndjson",
+        "platform": "urn:li:dataPlatform:s3",
+        "version": 0,
+        "created": {
+          "time": 1704067200000,
+          "actor": "urn:li:corpuser:datahub"
+        },
+        "lastModified": {
+          "time": 1717200000000,
+          "actor": "urn:li:corpuser:datahub"
+        },
+        "hash": "",
+        "platformSchema": {
+          "com.linkedin.schema.OtherSchema": {
+            "rawSchema": ""
+          }
+        },
+        "fields": [
+          {
+            "fieldPath": "id",
+            "nullable": false,
+            "description": "Identifiant",
+            "type": {
+              "type": {
+                "com.linkedin.schema.StringType": {}
+              }
+            },
+            "nativeDataType": "string",
+            "recursive": false,
+            "isPartOfKey": true
+          },
+          {
+            "fieldPath": "gender",
+            "nullable": false,
+            "description": "Sexe",
+            "type": {
+              "type": {
+                "com.linkedin.schema.StringType": {}
+              }
+            },
+            "nativeDataType": "string",
+            "recursive": false,
+            "isPartOfKey": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "entityType": "dataset",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:s3,dhhc-verify/Patient_sample.ndjson,PROD)",
+    "changeType": "UPSERT",
+    "aspectName": "globalTags",
+    "aspect": {
+      "json": {
+        "tags": [
+          {
+            "tag": "urn:li:tag:dcat:sample"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "entityType": "dataset",
+    "entityUrn": "urn:li:dataset:(urn:li:dataPlatform:s3,dhhc-verify/Patient_sample.ndjson,PROD)",
+    "changeType": "UPSERT",
+    "aspectName": "structuredProperties",
+    "aspect": {
+      "json": {
+        "properties": [
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.accessUrl",
+            "values": [
+              {
+                "string": "https://s3.example.org/dhhc-verify/Patient_sample.ndjson"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "entityType": "dataProduct",
+    "entityUrn": "urn:li:dataProduct:dhhc-verify-venues",
+    "changeType": "UPSERT",
+    "aspectName": "structuredProperties",
+    "aspect": {
+      "json": {
+        "properties": [
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.datasetType",
+            "values": [
+              {
+                "string": "PERSONAL_DATA"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.accessRights",
+            "values": [
+              {
+                "string": "NON_PUBLIC"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.applicableLegislation",
+            "values": [
+              {
+                "string": "COMMISSION IMPLEMENTING REGULATION (EU) 2023/138"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.healthCategory",
+            "values": [
+              {
+                "string": "HRAD"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.healthTheme",
+            "values": [
+              {
+                "string": "health_systems"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.spatialCoverage",
+            "values": [
+              {
+                "string": "FRA"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.provenance",
+            "values": [
+              {
+                "string": "Donnees issues du dossier patient informatise."
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.purpose",
+            "values": [
+              {
+                "string": "Recherche et pilotage de l'activite hospitaliere."
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.contactPointName",
+            "values": [
+              {
+                "string": "Coordination EDS"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.contactPointEmail",
+            "values": [
+              {
+                "string": "eds-coord@example.org"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.contactPointUrl",
+            "values": [
+              {
+                "string": "https://eds.example.org"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.license",
+            "values": [
+              {
+                "string": "https://eds.example.org/licence"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.referenceSpecification",
+            "values": [
+              {
+                "string": "HL7-FHIR-R4"
+              },
+              {
+                "string": "OSIRIS"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.isReferencedBy",
+            "values": [
+              {
+                "string": "10.1234/abcd.2019"
+              },
+              {
+                "string": "https://hal.science/hal-04"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.numberOfRecords",
+            "values": [
+              {
+                "double": 1000.0
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.publishingFrequency",
+            "values": [
+              {
+                "string": "DAILY"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.issued",
+            "values": [
+              {
+                "string": "2024-01-15"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.temporalCoverageStart",
+            "values": [
+              {
+                "string": "2015-01-01"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.temporalCoverageEnd",
+            "values": [
+              {
+                "string": "2023-12-31"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.publisherName",
+            "values": [
+              {
+                "string": "Etablissement de sante exemple"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.publisherHomepage",
+            "values": [
+              {
+                "string": "https://www.example.org"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.publisherEmail",
+            "values": [
+              {
+                "string": "eds-contact@example.org"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.publisherType",
+            "values": [
+              {
+                "string": "Hospital or Healthcare System"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.publisherNote",
+            "values": [
+              {
+                "string": "Entrepot de donnees de sante"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.trustedDataHolder",
+            "values": [
+              {
+                "string": "true"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.hdabName",
+            "values": [
+              {
+                "string": "Health Data Hub"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.hdabHomepage",
+            "values": [
+              {
+                "string": "https://health-data-hub.fr"
+              }
+            ]
+          },
+          {
+            "propertyUrn": "urn:li:structuredProperty:fr.aphp.healthdcat.hdabEmail",
+            "values": [
+              {
+                "string": "contact@health-data-hub.fr"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]
