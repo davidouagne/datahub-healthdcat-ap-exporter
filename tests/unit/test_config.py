@@ -1,5 +1,5 @@
 """Résolution de l'instance du Catalogue de métadonnées (config.py) —
-spec/spec-feature-catalogue-instance-config.md.
+docs/specs/feature-catalogue-instance-config.md.
 
 Trois couches testées séparément, comme selection.py sépare filtre pur et
 appel réseau :

@@ -1,6 +1,6 @@
 """État de poussée : correspondance URN DataHub -> id HDH, pour l'idempotence
 des poussées (G3/P0-8), cloisonnée par instance de catalogue —
-spec/spec-feature-catalogue-instance-config.md, REQ-008/009. L'alternative
+docs/specs/feature-catalogue-instance-config.md, REQ-008/009. L'alternative
 "écrite dans DataHub via structured property" (P1-4, --write-back) n'est pas
 ce module — voir cli.py.
 

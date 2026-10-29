@@ -1,4 +1,4 @@
-"""Câblage config→CLI de `push-hdh` — spec/spec-feature-catalogue-instance-config.md.
+"""Câblage config→CLI de `push-hdh` — docs/specs/feature-catalogue-instance-config.md.
 
 Seuls les chemins d'erreur *antérieurs à tout appel réseau* sont exercés ici :
 résolution de configuration (REQ-001/002/004) et absence de clé API
