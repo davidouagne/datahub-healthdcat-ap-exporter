@@ -14,7 +14,10 @@ dependencies = [
     # 0.16 minimum : typer < 0.16 casse l'aide avec click >= 8.2
     # (`make_metavar()` sans `ctx`), révélé par le leg CI `lowest`.
     "typer>=0.16",
-    "acryl-datahub>=0.14.1",
+    # Plage des Versions DataHub supportées (ADR-0004) : source unique, serveur
+    # = client. Plafond = dernière mineure vérifiée par le contrôle Docker ;
+    # une mineure n'y entre que par une PR d'élargissement.
+    "acryl-datahub>=1.7,<1.8",
     "pyyaml>=6.0",
 ]
 
