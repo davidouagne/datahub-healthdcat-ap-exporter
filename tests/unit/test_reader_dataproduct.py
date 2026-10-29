@@ -6,7 +6,13 @@ adms:sample n'en a pas besoin)."""
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
+from types import SimpleNamespace as NS
+
+from rdflib import XSD, Literal, URIRef
+
 from dh_healthdcat.mapping.dataset import dataset_to_graph
+from dh_healthdcat.mapping.namespaces import DCT
 from dh_healthdcat.model import Severity
 from dh_healthdcat.reader.dataproduct import read_data_product
 from dh_healthdcat.validate.shacl import validate_graph
@@ -156,3 +162,38 @@ def test_missing_dataset_profile_still_reported_as_byte_size_error():
         i for i in dataset.issues if i.dataset_urn == SAMPLE_URN and i.severity is Severity.ERROR
     ]
     assert sample_errors == []
+
+
+def _set_asset_last_modified(ctx, urn: str, millis: int) -> None:
+    ctx.graph._entities[urn]["datasetProperties"].lastModified = NS(time=millis)
+
+
+def test_modified_is_the_latest_distribution_modified():
+    """#143 : dataProductProperties n'a pas de lastModified ; dct:modified du
+    dcat:Dataset est la plus récente modification de ses distributions. Un
+    échantillon plus récent ne compte pas."""
+
+    ctx = build_context()
+    _set_asset_last_modified(ctx, ASSET_URN, 1_780_000_000_000)
+    _set_asset_last_modified(ctx, SAMPLE_URN, 1_790_000_000_000)
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+
+    assert dataset.modified == datetime(2026, 5, 28, 20, 26, 40, tzinfo=UTC)
+    assert dataset.modified == dataset.distributions[0].modified
+    graph = dataset_to_graph(dataset)
+    uri = URIRef(f"dataset:{dataset.dataset_id}")
+    assert list(graph.objects(uri, DCT.modified)) == [
+        Literal(dataset.modified, datatype=XSD.dateTime)
+    ]
+
+
+def test_modified_is_absent_when_no_distribution_has_one():
+    ctx = build_context()
+    _set_asset_last_modified(ctx, SAMPLE_URN, 1_790_000_000_000)
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+
+    assert dataset.modified is None
+    graph = dataset_to_graph(dataset)
+    assert list(graph.objects(URIRef(f"dataset:{dataset.dataset_id}"), DCT.modified)) == []

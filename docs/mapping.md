@@ -46,7 +46,7 @@ vérifié par le SHACL de base · `⚙️` = dérivé/calculé, pas une saisie.
 | `adms:sample` | M, ≥1 | assets tagués `dcat:sample` | dataset.py (reader) |
 | `dct:language` | | `fr.aphp.healthdcat.language` → `PublicationsEuropAuthorityLanguage` | |
 | `dct:issued` (`xsd:date`) | | `fr.aphp.healthdcat.issued` (un `date` — émis en `xsd:date`, pas `xsd:dateTime`) | |
-| `dct:modified` | | `dataProductProperties.lastModified` | |
+| `dct:modified` (`xsd:dateTime`) | | ⚙️ le plus récent des `dct:modified` des distributions (`datasetProperties.lastModified` des assets, hors `adms:sample`) ; absent si aucun asset n'en porte. `dataProductProperties` n'a pas d'horodatage propre | dataproduct.py |
 | `dct:temporal` | | `temporalCoverageStart`/`End` | |
 | `dct:accrualPeriodicity` | | `publishingFrequency` → `Frequency` | |
 | `dct:conformsTo` | | `referenceSpecification` → `ReferenceSpecification` (vocab d'auteur) ; code hors vocab → `urn:aphp:conformsTo:<code>` (ex. `OSIRIS`) | |
