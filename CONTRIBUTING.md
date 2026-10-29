@@ -125,6 +125,31 @@ N'utilisez pas `datahub docker nuke` : quel que soit le projet, il supprime
 aussi les volumes `datahub_mysqldata`, `datahub_broker`… d'un quickstart par
 défaut.
 
+### Sous Windows
+
+Les scripts `scripts/*.sh` se lancent avec **Git Bash** (fourni avec Git pour
+Windows), depuis la racine du dépôt, avec Docker Desktop démarré. Ils utilisent
+`uv` et `docker` de Windows et le `.venv` du projet.
+
+Depuis un terminal Git Bash :
+
+```bash
+scripts/datahub-local.sh 1.7.0 up
+```
+
+Depuis PowerShell, appelez Git Bash par son chemin complet :
+
+```powershell
+& "C:\Program Files\Git\bin\bash.exe" scripts/datahub-local.sh 1.7.0 up
+```
+
+**Ne tapez pas `bash` seul dans PowerShell ou cmd.** Cette commande lance
+`C:\Windows\System32\bash.exe`, le bash de **WSL**. Le script tournerait
+alors dans la distribution Linux, avec son propre `uv`, sans le `.venv` du
+projet, et éventuellement face au moteur Docker de WSL, celui d'un quickstart
+que vous y auriez lancé. Pour vérifier lequel vous appelez :
+`Get-Command bash -All` dans PowerShell.
+
 ## Élargir la plage des versions DataHub
 
 La plage des *Versions DataHub supportées* fait foi dans `pyproject.toml`
@@ -139,6 +164,8 @@ les classe `semver-patch` et elles restent en auto-merge, sans contrôle Docker.
 ### Prérequis
 
 - Docker, avec environ 8 Go de RAM disponibles.
+- Sous Windows : Git Bash, pas le `bash` de WSL (voir « Sous Windows »
+  ci-dessus).
 - Les ports 8080, 9002, 3306, 9092 et 9200 libres : **arrêtez tout autre
   quickstart DataHub** avant de lancer le contrôle (`docker compose -p datahub
   stop` conserve ses données). Le script refuse de démarrer si un serveur répond
