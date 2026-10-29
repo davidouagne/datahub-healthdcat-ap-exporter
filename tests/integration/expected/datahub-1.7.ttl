@@ -1,0 +1,144 @@
+@prefix adms: <http://www.w3.org/ns/adms#> .
+@prefix csvw: <http://www.w3.org/ns/csvw#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcatap: <http://data.europa.eu/r5r/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix dpv: <https://w3id.org/dpv#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix healthdcatap: <http://healthdataportal.eu/ns/health#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<dataset:dhhc-verify-venues> a dcat:Dataset,
+        dcat:Resource ;
+    dcatap:applicableLegislation <https://eur-lex.europa.eu/eli/reg_impl/2023/138/oj> ;
+    healthdcatap:hasStructuredData true ;
+    healthdcatap:hasVariables <tablegroup:0cc5c754-fcdb-537d-a43c-2ee568ba3ef9> ;
+    healthdcatap:hdab <hdab:5fdc253d-a384-5f9f-aa59-abc9fc9eabe3> ;
+    healthdcatap:healthCategory <http://healthdataportal.eu/resource/authority/healthcategories/HRAD> ;
+    healthdcatap:healthTheme <http://healthdataportal.eu/resource/authority/health-theme/HEALTH_SYSTEMS> ;
+    healthdcatap:numberOfRecords "1000"^^xsd:nonNegativeInteger ;
+    dct:accessRights <http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC> ;
+    dct:accrualPeriodicity <http://publications.europa.eu/resource/authority/frequency/DAILY> ;
+    dct:conformsTo <http://hl7.org/fhir/4.0.1>,
+        <urn:aphp:conformsTo:OSIRIS> ;
+    dct:description "Enregistrements de venues et sejours."@fr ;
+    dct:identifier "https://example.org/dataset/dhhc-verify-venues"^^xsd:anyURI ;
+    dct:isReferencedBy <https://doi.org/10.1234/abcd.2019>,
+        <https://hal.science/hal-04> ;
+    dct:issued "2024-01-15"^^xsd:date ;
+    dct:license <https://eds.example.org/licence> ;
+    dct:modified "2024-06-01T00:00:00+00:00"^^xsd:dateTime ;
+    dct:provenance <provenance:5fdc253d-a384-5f9f-aa59-abc9fc9eabe3> ;
+    dct:publisher <publisher:5fdc253d-a384-5f9f-aa59-abc9fc9eabe3> ;
+    dct:spatial <http://publications.europa.eu/resource/authority/country/FRA> ;
+    dct:temporal <periodOfTime:7977c20c-f13e-565d-a6d9-7bd54c354083> ;
+    dct:title "Venues et sejours des patients"@fr ;
+    dct:type <http://publications.europa.eu/resource/authority/dataset-type/PERSONAL_DATA> ;
+    adms:sample <sample:bcaef045-bb5d-59e3-812b-784511e0c164> ;
+    dcat:contactPoint <contact:5fdc253d-a384-5f9f-aa59-abc9fc9eabe3> ;
+    dcat:distribution <distribution:1cb84b78-e0aa-5ed6-8310-6b92fe68baeb> ;
+    dcat:keyword "sejours",
+        "venues" ;
+    dcat:theme <http://publications.europa.eu/resource/authority/data-theme/HEAL> ;
+    dpv:hasPurpose <purpose:5fdc253d-a384-5f9f-aa59-abc9fc9eabe3> .
+
+<column:8b718cc1-fdb3-541b-ad66-9d095d096c5d> a csvw:Column ;
+    dct:description "Identifiant"@fr ;
+    csvw:datatype "string" ;
+    csvw:name "id" ;
+    csvw:titles "id" .
+
+<column:ceb67f31-0f78-5bd2-b36c-5c278f8dc07c> a csvw:Column ;
+    dct:description "Sexe"@fr ;
+    csvw:datatype "string" ;
+    csvw:name "gender" ;
+    csvw:titles "gender" .
+
+<column:e4203440-020a-5b81-ab2b-02e551a2470c> a csvw:Column ;
+    dct:description "Sexe"@fr ;
+    csvw:datatype "string" ;
+    csvw:name "gender" ;
+    csvw:titles "gender" .
+
+<column:e561c30b-3f57-5459-8975-70e81ecb3324> a csvw:Column ;
+    dct:description "Identifiant"@fr ;
+    csvw:datatype "string" ;
+    csvw:name "id" ;
+    csvw:titles "id" .
+
+<contact:5fdc253d-a384-5f9f-aa59-abc9fc9eabe3> a vcard:Kind ;
+    vcard:fn "Coordination EDS" ;
+    vcard:hasEmail <mailto:eds-coord@example.org> ;
+    vcard:hasURL <https://eds.example.org> .
+
+<distribution:1cb84b78-e0aa-5ed6-8310-6b92fe68baeb> a dcat:Distribution ;
+    dcatap:applicableLegislation <https://eur-lex.europa.eu/eli/reg_impl/2023/138/oj> ;
+    dct:description "Ressources FHIR Patient"@fr ;
+    dct:format <http://publications.europa.eu/resource/authority/file-type/JSON> ;
+    dct:issued "2024-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    dct:modified "2024-06-01T00:00:00+00:00"^^xsd:dateTime ;
+    dct:rights <rights:da9d9d10-1afb-56e6-9773-4d05de54b044> ;
+    dct:title "Patient.ndjson" ;
+    adms:status <http://publications.europa.eu/resource/authority/distribution-status/COMPLETED> ;
+    dcat:accessURL <https://s3.example.org/dhhc-verify/Patient.ndjson> ;
+    dcat:byteSize "123456"^^xsd:nonNegativeInteger .
+
+<hdab:5fdc253d-a384-5f9f-aa59-abc9fc9eabe3> a foaf:Agent ;
+    foaf:homepage <https://health-data-hub.fr> ;
+    foaf:mbox <mailto:contact@health-data-hub.fr> ;
+    foaf:name "Health Data Hub" .
+
+<periodOfTime:7977c20c-f13e-565d-a6d9-7bd54c354083> a dct:PeriodOfTime ;
+    dcat:endDate "2023-12-31"^^xsd:date ;
+    dcat:startDate "2015-01-01"^^xsd:date .
+
+<provenance:5fdc253d-a384-5f9f-aa59-abc9fc9eabe3> a dct:ProvenanceStatement ;
+    rdfs:label "Donnees issues du dossier patient informatise."@fr .
+
+<publisher:5fdc253d-a384-5f9f-aa59-abc9fc9eabe3> a foaf:Agent ;
+    healthdcatap:publisherNote "Entrepot de donnees de sante"@fr ;
+    healthdcatap:publisherType <http://healthdataportal.eu/resource/authority/publisher-type/healthcareSystem> ;
+    healthdcatap:trustedDataHolder true ;
+    foaf:homepage <https://www.example.org> ;
+    foaf:mbox <mailto:eds-contact@example.org> ;
+    foaf:name "Etablissement de sante exemple" .
+
+<purpose:5fdc253d-a384-5f9f-aa59-abc9fc9eabe3> a dpv:Purpose ;
+    dct:description "Recherche et pilotage de l'activite hospitaliere."@fr .
+
+<rights:da9d9d10-1afb-56e6-9773-4d05de54b044> a dct:RightsStatement ;
+    rdfs:label "https://eds.example.org/licence"@fr .
+
+<rights:f4f963c6-7ca6-51e2-9f1d-87edf57074a5> a dct:RightsStatement ;
+    rdfs:label "https://eds.example.org/licence"@fr .
+
+<sample:bcaef045-bb5d-59e3-812b-784511e0c164> a dcat:Distribution ;
+    dcatap:applicableLegislation <https://eur-lex.europa.eu/eli/reg_impl/2023/138/oj> ;
+    dct:description "Echantillon FHIR Patient"@fr ;
+    dct:format <http://publications.europa.eu/resource/authority/file-type/JSON> ;
+    dct:issued "2024-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    dct:modified "2024-06-01T00:00:00+00:00"^^xsd:dateTime ;
+    dct:rights <rights:f4f963c6-7ca6-51e2-9f1d-87edf57074a5> ;
+    dct:title "Patient_sample.ndjson" ;
+    dcat:accessURL <https://s3.example.org/dhhc-verify/Patient_sample.ndjson> .
+
+<table:da9d9d10-1afb-56e6-9773-4d05de54b044> a csvw:Table ;
+    dct:title "Patient.ndjson" ;
+    csvw:column <column:ceb67f31-0f78-5bd2-b36c-5c278f8dc07c>,
+        <column:e561c30b-3f57-5459-8975-70e81ecb3324> ;
+    csvw:primaryKey "id" ;
+    csvw:url <https://s3.example.org/dhhc-verify/Patient.ndjson> .
+
+<table:f4f963c6-7ca6-51e2-9f1d-87edf57074a5> a csvw:Table ;
+    dct:title "Patient_sample.ndjson" ;
+    csvw:column <column:8b718cc1-fdb3-541b-ad66-9d095d096c5d>,
+        <column:e4203440-020a-5b81-ab2b-02e551a2470c> ;
+    csvw:primaryKey "id" ;
+    csvw:url <https://s3.example.org/dhhc-verify/Patient_sample.ndjson> .
+
+<tablegroup:0cc5c754-fcdb-537d-a43c-2ee568ba3ef9> a csvw:TableGroup ;
+    csvw:table <table:da9d9d10-1afb-56e6-9773-4d05de54b044>,
+        <table:f4f963c6-7ca6-51e2-9f1d-87edf57074a5> .
+

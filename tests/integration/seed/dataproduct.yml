@@ -1,0 +1,14 @@
+# DataProduct du contrôle Docker, chargé par `datahub dataproduct upsert -f`.
+# Ses structured properties sont dans metadata.json : le YAML natif
+# `datahub dataproduct` ne les accepte pas (voir reader/agents.py).
+id: dhhc-verify-venues
+domain: urn:li:domain:dhhc-verify
+display_name: Venues et sejours des patients
+description: Enregistrements de venues et sejours.
+# globalTags → dcat:keyword (obligatoire).
+tags:
+  - venues
+  - sejours
+assets:
+  - urn:li:dataset:(urn:li:dataPlatform:s3,dhhc-verify/Patient.ndjson,PROD)
+  - urn:li:dataset:(urn:li:dataPlatform:s3,dhhc-verify/Patient_sample.ndjson,PROD)
