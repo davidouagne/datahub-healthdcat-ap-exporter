@@ -11,7 +11,7 @@ G4/P0-6.
 from __future__ import annotations
 
 from typing import Any
-from urllib.parse import urlsplit
+from urllib.parse import quote, urlsplit
 
 from dh_healthdcat import sp
 from dh_healthdcat.mapping import vocabularies as v
@@ -32,8 +32,6 @@ from dh_healthdcat.reader import agents as agents_reader
 from dh_healthdcat.reader import dataset as dataset_reader
 from dh_healthdcat.reader import props
 from dh_healthdcat.reader.graph import ReadContext, SemitypedEntity
-
-DEFAULT_BASE_URI = "https://eds.aphp.fr"
 
 
 def _dataset_id_from_urn(urn: str) -> str:
@@ -125,16 +123,14 @@ def _doi_to_uri(value: str) -> str:
     return stripped
 
 
-def _as_uri(value: str | None, urn_namespace: str) -> str | None:
-    """Si `value` ressemble déjà à une URI, le renvoie tel quel ; sinon
-    l'enveloppe dans un URN stable pour rester `sh:nodeKind sh:IRI`-compatible
-    (ex. dct:conformsTo attend une IRI, pas un code libre)."""
+def _as_uri(value: str, base: str) -> str:
+    """Si `value` ressemble déjà à une URI, la renvoie telle quelle ; sinon la
+    forge sous `base` (`<base>/<code>`) pour rester `sh:nodeKind sh:IRI`-
+    compatible (ex. dct:conformsTo attend une IRI, pas un code libre)."""
 
-    if value is None:
-        return None
-    if value.startswith("http://") or value.startswith("https://") or ":" in value.split("/")[0]:
+    if value.startswith(("http://", "https://")) or ":" in value.split("/", 1)[0]:
         return value
-    return f"urn:{urn_namespace}:{value}"
+    return f"{base}/{quote(value, safe='')}"
 
 
 def _absolute_iri_or_warn(
@@ -223,19 +219,22 @@ def _read_spatial(
 
 
 def _read_conforms_to(
-    ctx: ReadContext, entity: SemitypedEntity, title: str, urn: str, issues: list[ValidationIssue]
+    ctx: ReadContext,
+    entity: SemitypedEntity,
+    title: str,
+    urn: str,
+    issues: list[ValidationIssue],
+    base_uri: str,
 ) -> list[str]:
     """dct:conformsTo : code résolu via v.REFERENCE_SPECIFICATION, sinon
-    enveloppé en urn:aphp:conformsTo:<code> (OSIRIS & co.)."""
+    forgé sous l'URI de base, `<base_uri>/conformsTo/<code>` (OSIRIS & co.)."""
 
     conforms_to: list[str] = []
     for code in props.get_strings(ctx, entity, "referenceSpecification", title, urn, issues):
         try:
             conforms_to.append(v.REFERENCE_SPECIFICATION.resolve(code))
         except UnknownVocabularyValueError:
-            fallback = _as_uri(code, "aphp:conformsTo")
-            if fallback:
-                conforms_to.append(fallback)
+            conforms_to.append(_as_uri(code, f"{base_uri}/conformsTo"))
     return conforms_to
 
 
@@ -296,7 +295,7 @@ def read_data_product(
     ctx: ReadContext,
     dataproduct_urn: str,
     *,
-    base_uri: str = DEFAULT_BASE_URI,
+    base_uri: str,
 ) -> HealthDataset:
     entity = ctx.get_entity(dataproduct_urn)
     dp = entity.get("dataProductProperties")
@@ -407,7 +406,7 @@ def read_data_product(
     )
 
     spatial = _read_spatial(ctx, entity, title, dataproduct_urn, issues)
-    conforms_to = _read_conforms_to(ctx, entity, title, dataproduct_urn, issues)
+    conforms_to = _read_conforms_to(ctx, entity, title, dataproduct_urn, issues, base_uri)
     license_ = props.get_string(ctx, entity, "license", title, dataproduct_urn, issues)
     is_referenced_by = tuple(
         _doi_to_uri(ref)

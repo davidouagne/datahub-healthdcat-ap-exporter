@@ -38,7 +38,7 @@ dictionnaire équivalent) :
   `healthdcatap.referenceSpecification` (→ `dct:conformsTo`) vers leurs
   URIs canoniques, vérifiées contre les sources primaires le 2026-08-28 (voir
   `docs/research/reference-specification-uris.md`). Tout autre code (p. ex.
-  `OSIRIS`) retombe sur `urn:aphp:conformsTo:<code>` côté
+  `OSIRIS`) retombe sur `<URI de base>/conformsTo/<code>` côté
   `reader/dataproduct.py`.
 - `DistributionStatus.yml` : `COMPLETED` / `WITHDRAWN` de
   `healthdcatap.distributionStatus` (→ `adms:status`) vers le NAL EU

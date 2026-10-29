@@ -17,7 +17,7 @@ from dh_healthdcat.mapping import vocabularies
 from dh_healthdcat.reader import props
 from dh_healthdcat.reader.dataproduct import read_data_product
 from dh_healthdcat.reader.graph import _entity_type
-from tests.fixtures.fake_datahub import DATAPRODUCT_URN, build_context
+from tests.fixtures.fake_datahub import BASE_URI, DATAPRODUCT_URN, build_context
 
 # Getter du reader → (types DataHub compatibles, cardinalité attendue).
 GETTERS = {
@@ -63,7 +63,7 @@ def reads() -> dict[str, set[tuple[str, str]]]:
     with pytest.MonkeyPatch.context() as mp:
         for name, original in originals.items():
             mp.setattr(props, name, spy(name, original))
-        read_data_product(build_context(), DATAPRODUCT_URN)
+        read_data_product(build_context(), DATAPRODUCT_URN, base_uri=BASE_URI)
     return recorded
 
 

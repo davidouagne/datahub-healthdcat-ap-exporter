@@ -19,6 +19,7 @@ from dh_healthdcat.reader.dataproduct import read_data_product
 from dh_healthdcat.validate.shacl import validate_graph
 from tests.fixtures.fake_datahub import (
     ASSET_URN,
+    BASE_URI,
     DATAPRODUCT_URN,
     SAMPLE_URN,
     UNDECLARED_PROPERTY,
@@ -28,7 +29,7 @@ from tests.fixtures.fake_datahub import (
 
 def test_read_data_product_end_to_end():
     ctx = build_context()
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert dataset.title == "Venues et sejours des patients"
     assert (
@@ -49,14 +50,15 @@ def test_read_data_product_end_to_end():
 def test_reference_specification_codes_resolve_to_canonical_uris_local_fallback_kept():
     """`healthdcatap.referenceSpecification` : les codes du vocab
     ReferenceSpecification deviennent leur URI canonique ; un code hors vocab
-    (OSIRIS) retombe silencieusement sur urn:aphp:conformsTo:<code>."""
+    (OSIRIS) retombe silencieusement sur <URI de base>/conformsTo/<code>
+    (ADR-0005 §4)."""
 
     ctx = build_context()
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert dataset.conforms_to == (
         "http://hl7.org/fhir/4.0.1",
-        "urn:aphp:conformsTo:OSIRIS",
+        f"{BASE_URI}/conformsTo/OSIRIS",
     )
     assert not [
         i for i in dataset.issues if i.datahub_field == "healthdcatap.referenceSpecification"
@@ -69,7 +71,7 @@ def test_bare_dois_in_is_referenced_by_are_normalised_to_https_doi_org():
     quelle (`dct:isReferencedBy` attend une IRI)."""
 
     ctx = build_context()
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert dataset.is_referenced_by == (
         "https://doi.org/10.1234/abcd.2019",
@@ -85,7 +87,7 @@ def test_distribution_status_is_resolved_to_publications_office_uri():
     jamais émise."""
 
     ctx = build_context()
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     distribution = next(d for d in dataset.distributions if d.source_urn == ASSET_URN)
     assert (
@@ -96,7 +98,7 @@ def test_distribution_status_is_resolved_to_publications_office_uri():
 
 def test_type_coercion_warns_but_does_not_fail():
     ctx = build_context()
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert dataset.number_of_records == 1_000_000_000  # coercé en int malgré la chaîne source
     coercion_warnings = [
@@ -108,7 +110,7 @@ def test_type_coercion_warns_but_does_not_fail():
 
 def test_undeclared_structured_property_is_flagged():
     ctx = build_context()
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     drift_warnings = [i for i in dataset.issues if i.datahub_field == UNDECLARED_PROPERTY]
     assert len(drift_warnings) == 1
@@ -117,7 +119,7 @@ def test_undeclared_structured_property_is_flagged():
 
 def test_ndjson_format_falls_back_to_json_with_warning():
     ctx = build_context()
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     fallback_warnings = [
         i for i in dataset.issues if "NDJSON" in i.message.upper() or ".ndjson" in i.message
@@ -130,7 +132,7 @@ def test_byte_size_read_from_dataset_profile_yields_full_conformance():
     plus aucune ERROR, le graphe est SHACL-conforme de bout en bout."""
 
     ctx = build_context()
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     distribution = next(d for d in dataset.distributions if d.source_urn == ASSET_URN)
     assert distribution.byte_size == 123456
@@ -150,7 +152,7 @@ def test_missing_dataset_profile_still_reported_as_byte_size_error():
     signale — inchangé par la lecture de datasetProfile."""
 
     ctx = build_context()
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     sample = dataset.samples[0]
     assert sample.source_urn == SAMPLE_URN
@@ -178,7 +180,7 @@ def test_modified_is_the_latest_distribution_modified():
     _set_asset_last_modified(ctx, ASSET_URN, 1_780_000_000_000)
     _set_asset_last_modified(ctx, SAMPLE_URN, 1_790_000_000_000)
 
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert dataset.modified == datetime(2026, 5, 28, 20, 26, 40, tzinfo=UTC)
     assert dataset.modified == dataset.distributions[0].modified
@@ -193,7 +195,7 @@ def test_modified_is_absent_when_no_distribution_has_one():
     ctx = build_context()
     _set_asset_last_modified(ctx, SAMPLE_URN, 1_790_000_000_000)
 
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert dataset.modified is None
     graph = dataset_to_graph(dataset)
@@ -217,7 +219,7 @@ def test_landing_page_and_pages_are_exported():
         links=["https://wiki.aphp.fr/venues", "https://wiki.aphp.fr/venues", "https://x.fr/a"],
     )
 
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert dataset.landing_page == "https://eds.aphp.fr/produits/venues"
     assert dataset.pages == ("https://wiki.aphp.fr/venues", "https://x.fr/a")
@@ -239,7 +241,7 @@ def test_non_absolute_iris_are_ignored_with_a_warning():
         ctx, external_url="eds.aphp.fr/venues", links=["voir le wiki", "https://x.fr/a"]
     )
 
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert dataset.landing_page is None
     assert dataset.pages == ("https://x.fr/a",)
@@ -250,7 +252,7 @@ def test_non_absolute_iris_are_ignored_with_a_warning():
 
 
 def test_no_documentation_emits_nothing():
-    dataset = read_data_product(build_context(), DATAPRODUCT_URN)
+    dataset = read_data_product(build_context(), DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert dataset.landing_page is None
     assert dataset.pages == ()
@@ -262,7 +264,7 @@ def test_glossary_term_label_becomes_a_keyword():
     ctx.graph._entities[term_urn] = {"glossaryTermInfo": NS(name="Séjour hospitalier")}
     ctx.graph._entities[DATAPRODUCT_URN]["glossaryTerms"] = NS(terms=[NS(urn=term_urn)])
 
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert "Séjour hospitalier" in dataset.keywords
     assert ctx.graph.requested_aspects[term_urn] == ["glossaryTermInfo"]
@@ -291,7 +293,7 @@ def test_without_output_port_every_asset_is_exported():
     ctx = build_context()
     _with_internal_asset(ctx)
 
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert [d.source_urn for d in dataset.distributions] == [ASSET_URN, INTERNAL_URN]
     assert [s.source_urn for s in dataset.samples] == [SAMPLE_URN]
@@ -305,7 +307,7 @@ def test_output_ports_choose_the_distributions():
     _with_internal_asset(ctx, output_ports=(ASSET_URN,))
     _set_asset_last_modified(ctx, INTERNAL_URN, 1_790_000_000_000)
 
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert [d.source_urn for d in dataset.distributions] == [ASSET_URN]
     assert [i for i in dataset.issues if i.dataset_urn == INTERNAL_URN] == []
@@ -318,6 +320,6 @@ def test_sample_is_kept_whether_or_not_it_is_a_port():
     ctx = build_context()
     _with_internal_asset(ctx, output_ports=(ASSET_URN,))
 
-    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert [s.source_urn for s in dataset.samples] == [SAMPLE_URN]

@@ -27,7 +27,7 @@ vérifié par le SHACL de base · `⚙️` = dérivé/calculé, pas une saisie.
 | Propriété | | Source DataHub | Module |
 |---|---|---|---|
 | `a dcat:Dataset, dcat:Resource` | ⚙️ | constante | dataset.py |
-| `dct:identifier` (`xsd:anyURI`) | M | `{base_uri}/dataset/{dataProductKey.id}` | dataproduct.py |
+| `dct:identifier` (`xsd:anyURI`) | M | `{base_uri}/dataset/{dataProductKey.id}` (URI de base de l'adoptant, obligatoire : `--base-uri` ou `base_uri` du profil) | dataproduct.py |
 | `dct:title` | M | `dataProductProperties.name` | dataproduct.py |
 | `dct:description` | M | `dataProductProperties.description` | dataproduct.py |
 | `dct:alternative` | | `healthdcatap.acronym` | |
@@ -52,7 +52,7 @@ vérifié par le SHACL de base · `⚙️` = dérivé/calculé, pas une saisie.
 | `dct:modified` (`xsd:dateTime`) | | ⚙️ le plus récent des `dct:modified` des distributions (`datasetProperties.lastModified` des assets, hors `adms:sample`) ; absent si aucun asset n'en porte. `dataProductProperties` n'a pas d'horodatage propre | dataproduct.py |
 | `dct:temporal` | | `temporalCoverageStart`/`End` | |
 | `dct:accrualPeriodicity` | | `publishingFrequency` → `Frequency` | |
-| `dct:conformsTo` | | `referenceSpecification` → `ReferenceSpecification` (vocab d'auteur) ; code hors vocab → `urn:aphp:conformsTo:<code>` (ex. `OSIRIS`) | |
+| `dct:conformsTo` | | `referenceSpecification` → `ReferenceSpecification` (vocab d'auteur) ; code hors vocab → `{base_uri}/conformsTo/<code>` (ex. `OSIRIS`) | |
 | `dct:license` | | `license`, passage direct | |
 | `dct:isReferencedBy` | | `healthdcatap.isReferencedBy` ; DOI nu (`10.x/…`) ou `doi:` préfixé → `https://doi.org/…` | |
 | `healthdcatap:numberOfRecords`/`numberOfUniqueIndividuals`/`min|maxTypicalAge` | | `number` | |
@@ -118,7 +118,7 @@ d'auteur :
 - **`ReferenceSpecification.yml`** — `HL7-FHIR-R4` → `http://hl7.org/fhir/4.0.1`,
   `OMOP-CDM-5.4` → page GitHub Pages OHDSI versionnée, `HL7v2` → `urn:hl7-org:v2xml`
   (URIs vérifiées le 2026-08-28, cf. `docs/research/reference-specification-uris.md`).
-  Câblé dans `reader/dataproduct.py` ; code hors vocab → `urn:aphp:conformsTo:<code>`.
+  Câblé dans `reader/dataproduct.py` ; code hors vocab → `{base_uri}/conformsTo/<code>`.
 - **`DistributionStatus.yml`** — `COMPLETED` / `WITHDRAWN` → NAL EU Publications
   Office `.../distribution-status/*`. Câblé dans `reader/dataset.py` (`adms:status`) ;
   une dépréciation DataHub écrase en `WITHDRAWN`.

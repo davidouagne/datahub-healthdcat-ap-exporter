@@ -19,6 +19,7 @@ from dh_healthdcat.pipeline import (
     push,
 )
 from tests.fixtures.fake_datahub import (
+    BASE_URI,
     DATAPRODUCT_URN,
     NONCONFORMING_DATAPRODUCT_URN,
     UNREADABLE_DATAPRODUCT_URN,
@@ -32,7 +33,7 @@ def test_new_dataproduct_is_created_and_id_recorded(tmp_path):
     target = InMemoryHdhCatalog()
     state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
 
-    [outcome] = list(push(ctx, [DATAPRODUCT_URN], target=target, state=state))
+    [outcome] = list(push(ctx, [DATAPRODUCT_URN], base_uri=BASE_URI, target=target, state=state))
 
     assert isinstance(outcome, Pushed)
     assert outcome.action is PushAction.CREATED
@@ -47,7 +48,7 @@ def test_already_known_dataproduct_is_updated_not_recreated(tmp_path):
     state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
     state.record(DATAPRODUCT_URN, "existing-hdh-id")
 
-    [outcome] = list(push(ctx, [DATAPRODUCT_URN], target=target, state=state))
+    [outcome] = list(push(ctx, [DATAPRODUCT_URN], base_uri=BASE_URI, target=target, state=state))
 
     assert isinstance(outcome, Pushed)
     assert outcome.action is PushAction.UPDATED
@@ -66,7 +67,7 @@ def test_each_push_is_durable_without_waiting_for_the_batch_to_finish(tmp_path):
     path = tmp_path / "state.json"
     state = PushState.open(path, instance="https://hdh.test")
 
-    [outcome] = list(push(ctx, [DATAPRODUCT_URN], target=target, state=state))
+    [outcome] = list(push(ctx, [DATAPRODUCT_URN], base_uri=BASE_URI, target=target, state=state))
 
     reopened = PushState.open(path, instance="https://hdh.test")
     assert reopened.hdh_id_for(DATAPRODUCT_URN) == outcome.hdh_id
@@ -80,7 +81,9 @@ def test_invalid_dataproduct_produces_no_write_call(tmp_path):
     target = InMemoryHdhCatalog()
     state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
 
-    [outcome] = list(push(ctx, [NONCONFORMING_DATAPRODUCT_URN], target=target, state=state))
+    [outcome] = list(
+        push(ctx, [NONCONFORMING_DATAPRODUCT_URN], base_uri=BASE_URI, target=target, state=state)
+    )
 
     assert isinstance(outcome, Rejected)
     assert target.created == []
@@ -92,7 +95,9 @@ def test_unreadable_dataproduct_is_relayed_with_no_write_call(tmp_path):
     target = InMemoryHdhCatalog()
     state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
 
-    [outcome] = list(push(ctx, [UNREADABLE_DATAPRODUCT_URN], target=target, state=state))
+    [outcome] = list(
+        push(ctx, [UNREADABLE_DATAPRODUCT_URN], base_uri=BASE_URI, target=target, state=state)
+    )
 
     assert isinstance(outcome, Unreadable)
     assert target.created == []
@@ -104,7 +109,9 @@ def test_dry_run_plans_without_any_write_call_or_state_mutation(tmp_path):
     target = InMemoryHdhCatalog()
     state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
 
-    [outcome] = list(push(ctx, [DATAPRODUCT_URN], target=target, state=state, dry_run=True))
+    [outcome] = list(
+        push(ctx, [DATAPRODUCT_URN], base_uri=BASE_URI, target=target, state=state, dry_run=True)
+    )
 
     assert isinstance(outcome, Planned)
     assert outcome.action is PushAction.CREATED
@@ -121,7 +128,9 @@ def test_dry_run_plans_an_update_when_a_known_id_exists(tmp_path):
     state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
     state.record(DATAPRODUCT_URN, "existing-hdh-id")
 
-    [outcome] = list(push(ctx, [DATAPRODUCT_URN], target=target, state=state, dry_run=True))
+    [outcome] = list(
+        push(ctx, [DATAPRODUCT_URN], base_uri=BASE_URI, target=target, state=state, dry_run=True)
+    )
 
     assert isinstance(outcome, Planned)
     assert outcome.action is PushAction.UPDATED
@@ -138,7 +147,9 @@ def test_a_failed_push_does_not_prevent_the_next_dataproduct(tmp_path):
     target = InMemoryHdhCatalog(fail_next_creates=1)
     state = PushState.open(tmp_path / "state.json", instance="https://hdh.test")
 
-    outcomes = list(push(ctx, [DATAPRODUCT_URN, DATAPRODUCT_URN], target=target, state=state))
+    outcomes = list(
+        push(ctx, [DATAPRODUCT_URN, DATAPRODUCT_URN], base_uri=BASE_URI, target=target, state=state)
+    )
 
     assert len(outcomes) == 2
     assert isinstance(outcomes[0], PushFailed)

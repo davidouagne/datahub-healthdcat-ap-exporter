@@ -19,6 +19,7 @@ from dh_healthdcat.pipeline import Prepared, Rejected, Unreadable, prepare
 from dh_healthdcat.validate.shacl import validate_graph
 from tests.fixtures.fake_datahub import (
     ALL_DATAPRODUCT_URNS,
+    BASE_URI,
     DATAPRODUCT_URN,
     NONCONFORMING_DATAPRODUCT_URN,
     UNREADABLE_DATAPRODUCT_URN,
@@ -29,7 +30,7 @@ from tests.fixtures.fake_datahub import (
 def test_mixed_batch_yields_one_typed_outcome_per_dataproduct_in_order():
     ctx = build_context()
 
-    outcomes = list(prepare(ctx, ALL_DATAPRODUCT_URNS))
+    outcomes = list(prepare(ctx, ALL_DATAPRODUCT_URNS, base_uri=BASE_URI))
 
     assert [type(o) for o in outcomes] == [Prepared, Unreadable, Rejected]
     assert [o.urn for o in outcomes] == ALL_DATAPRODUCT_URNS
@@ -38,7 +39,7 @@ def test_mixed_batch_yields_one_typed_outcome_per_dataproduct_in_order():
 def test_valid_dataproduct_is_prepared_with_a_conforming_graph():
     ctx = build_context()
 
-    [outcome] = list(prepare(ctx, [DATAPRODUCT_URN]))
+    [outcome] = list(prepare(ctx, [DATAPRODUCT_URN], base_uri=BASE_URI))
 
     assert isinstance(outcome, Prepared)
     assert outcome.shacl.conforms is True
@@ -49,7 +50,7 @@ def test_valid_dataproduct_is_prepared_with_a_conforming_graph():
 def test_unreadable_dataproduct_carries_the_reader_reason():
     ctx = build_context()
 
-    [outcome] = list(prepare(ctx, [UNREADABLE_DATAPRODUCT_URN]))
+    [outcome] = list(prepare(ctx, [UNREADABLE_DATAPRODUCT_URN], base_uri=BASE_URI))
 
     assert isinstance(outcome, Unreadable)
     assert UNREADABLE_DATAPRODUCT_URN in outcome.reason
@@ -58,7 +59,7 @@ def test_unreadable_dataproduct_carries_the_reader_reason():
 def test_strict_nonconforming_dataproduct_is_rejected_with_its_shacl_report():
     ctx = build_context()
 
-    [outcome] = list(prepare(ctx, [NONCONFORMING_DATAPRODUCT_URN], strict=True))
+    [outcome] = list(prepare(ctx, [NONCONFORMING_DATAPRODUCT_URN], base_uri=BASE_URI, strict=True))
 
     assert isinstance(outcome, Rejected)
     assert outcome.shacl.conforms is False
@@ -71,7 +72,7 @@ def test_non_strict_nonconforming_dataproduct_is_prepared_but_keeps_its_report()
 
     ctx = build_context()
 
-    [outcome] = list(prepare(ctx, [NONCONFORMING_DATAPRODUCT_URN], strict=False))
+    [outcome] = list(prepare(ctx, [NONCONFORMING_DATAPRODUCT_URN], base_uri=BASE_URI, strict=False))
 
     assert isinstance(outcome, Prepared)
     assert outcome.shacl.conforms is False
@@ -86,7 +87,11 @@ def test_regression_one_invalid_dataproduct_does_not_exclude_the_others():
     ctx = build_context()
 
     outcomes = list(
-        prepare(ctx, [NONCONFORMING_DATAPRODUCT_URN, DATAPRODUCT_URN, UNREADABLE_DATAPRODUCT_URN])
+        prepare(
+            ctx,
+            [NONCONFORMING_DATAPRODUCT_URN, DATAPRODUCT_URN, UNREADABLE_DATAPRODUCT_URN],
+            base_uri=BASE_URI,
+        )
     )
 
     by_urn = {o.urn: o for o in outcomes}
@@ -102,7 +107,7 @@ def test_prepared_dataset_has_no_duplicate_error_issues():
 
     ctx = build_context()
 
-    [outcome] = list(prepare(ctx, [NONCONFORMING_DATAPRODUCT_URN], strict=False))
+    [outcome] = list(prepare(ctx, [NONCONFORMING_DATAPRODUCT_URN], base_uri=BASE_URI, strict=False))
 
     by_property = [i.rdf_property for i in outcome.dataset.issues if i.severity is Severity.ERROR]
     assert len(by_property) == len(set(by_property))
@@ -129,7 +134,7 @@ def test_shared_asset_gets_one_distribution_node_per_dataproduct():
     ctx = build_context()
     _add_twin_sharing_assets(ctx)
 
-    outcomes = list(prepare(ctx, [DATAPRODUCT_URN, TWIN_DATAPRODUCT_URN]))
+    outcomes = list(prepare(ctx, [DATAPRODUCT_URN, TWIN_DATAPRODUCT_URN], base_uri=BASE_URI))
 
     assert all(isinstance(o, Prepared) for o in outcomes)
     merged = Graph()
@@ -144,7 +149,7 @@ def test_shared_asset_is_reported_on_the_later_dataproduct_only():
     ctx = build_context()
     _add_twin_sharing_assets(ctx)
 
-    first, second = list(prepare(ctx, [DATAPRODUCT_URN, TWIN_DATAPRODUCT_URN]))
+    first, second = list(prepare(ctx, [DATAPRODUCT_URN, TWIN_DATAPRODUCT_URN], base_uri=BASE_URI))
 
     def shared(outcome):
         return [i for i in outcome.dataset.issues if "partagé avec" in i.message]
@@ -162,7 +167,7 @@ def test_shared_asset_ids_are_stable_across_runs():
         _add_twin_sharing_assets(ctx)
         return [
             sorted(o.graph.objects(None, DCAT.distribution))
-            for o in prepare(ctx, [DATAPRODUCT_URN, TWIN_DATAPRODUCT_URN])
+            for o in prepare(ctx, [DATAPRODUCT_URN, TWIN_DATAPRODUCT_URN], base_uri=BASE_URI)
         ]
 
     assert distribution_nodes() == distribution_nodes()

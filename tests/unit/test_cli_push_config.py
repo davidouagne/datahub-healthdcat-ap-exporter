@@ -12,6 +12,7 @@ from __future__ import annotations
 from typer.testing import CliRunner
 
 from dh_healthdcat.cli import app
+from tests.fixtures.fake_datahub import BASE_URI
 
 runner = CliRunner()
 
@@ -25,7 +26,7 @@ def _write_config(tmp_path, content: str):
 def test_no_url_anywhere_exits_2(tmp_path):
     config = _write_config(tmp_path, "profiles: {}\n")
 
-    result = runner.invoke(app, ["push-hdh", "--config", str(config)])
+    result = runner.invoke(app, ["push-hdh", "--base-uri", BASE_URI, "--config", str(config)])
 
     assert result.exit_code == 2
 
@@ -39,7 +40,9 @@ def test_unknown_profile_exits_2_and_lists_known_profiles(tmp_path):
         "  prod:\n    url: https://prod.test\n",
     )
 
-    result = runner.invoke(app, ["push-hdh", "--config", str(config), "--profile", "preprd"])
+    result = runner.invoke(
+        app, ["push-hdh", "--base-uri", BASE_URI, "--config", str(config), "--profile", "preprd"]
+    )
 
     assert result.exit_code == 2
     assert "dev" in result.output
@@ -48,7 +51,9 @@ def test_unknown_profile_exits_2_and_lists_known_profiles(tmp_path):
 
 
 def test_missing_config_path_exits_2(tmp_path):
-    result = runner.invoke(app, ["push-hdh", "--config", str(tmp_path / "absent.yml")])
+    result = runner.invoke(
+        app, ["push-hdh", "--base-uri", BASE_URI, "--config", str(tmp_path / "absent.yml")]
+    )
 
     assert result.exit_code == 2
 
@@ -57,7 +62,16 @@ def test_missing_api_key_exits_1(tmp_path):
     config = _write_config(tmp_path, "profiles: {}\n")
 
     result = runner.invoke(
-        app, ["push-hdh", "--hdh-url", "https://exemple.test", "--config", str(config)]
+        app,
+        [
+            "push-hdh",
+            "--base-uri",
+            BASE_URI,
+            "--hdh-url",
+            "https://exemple.test",
+            "--config",
+            str(config),
+        ],
     )
 
     assert result.exit_code == 1
@@ -68,7 +82,9 @@ def test_literal_api_key_in_config_is_rejected_before_any_network_call(tmp_path)
         tmp_path, "profiles:\n  prod:\n    url: https://prod.test\n    api_key: mdc_secret\n"
     )
 
-    result = runner.invoke(app, ["push-hdh", "--config", str(config), "--profile", "prod"])
+    result = runner.invoke(
+        app, ["push-hdh", "--base-uri", BASE_URI, "--config", str(config), "--profile", "prod"]
+    )
 
     assert result.exit_code == 2
     assert "api_key_env" in result.output

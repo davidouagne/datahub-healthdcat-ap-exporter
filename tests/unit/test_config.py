@@ -23,6 +23,7 @@ from dh_healthdcat.config import (
     find_config_file,
     load_config,
     normalize_url,
+    resolve_base_uri,
     resolve_target,
 )
 
@@ -416,3 +417,74 @@ class TestResolveTarget:
 
         assert resolved.url == "https://prod.test"
         assert resolved.api_key_env == "CLI_KEY"
+
+
+class TestResolveBaseUri:
+    """URI de base (ADR-0005 §4) : `--base-uri` > `base_uri` du profil
+    sélectionné, jamais de défaut. Mêmes règles de sélection de profil que
+    `resolve_target`."""
+
+    def _config(self, **profiles: str | None) -> Config:
+        return Config(
+            path=None,
+            profiles={name: Profile(name=name, base_uri=uri) for name, uri in profiles.items()},
+        )
+
+    def test_profile_base_uri_is_used(self):
+        config = self._config(prod="https://data.exemple.fr")
+
+        assert (
+            resolve_base_uri(config=config, env={}, cli_base_uri=None, cli_profile=None)
+            == "https://data.exemple.fr"
+        )
+
+    def test_option_wins_over_profile_and_is_normalized(self):
+        config = self._config(prod="https://data.exemple.fr")
+
+        assert (
+            resolve_base_uri(
+                config=config, env={}, cli_base_uri="https://autre.fr/", cli_profile="prod"
+            )
+            == "https://autre.fr"
+        )
+
+    def test_profile_is_selected_like_resolve_target(self):
+        config = self._config(dev="https://dev.fr", prod="https://prod.fr")
+
+        assert (
+            resolve_base_uri(
+                config=config, env={"HDH_PROFILE": "prod"}, cli_base_uri=None, cli_profile=None
+            )
+            == "https://prod.fr"
+        )
+
+    def test_nothing_declared_says_how_to_declare_it(self):
+        with pytest.raises(ConfigError, match="--base-uri") as exc:
+            resolve_base_uri(config=None, env={}, cli_base_uri=None, cli_profile=None)
+
+        assert "base_uri" in str(exc.value)
+
+    def test_selected_profile_without_base_uri_is_named(self):
+        config = self._config(prod=None)
+
+        with pytest.raises(ConfigError, match="profil 'prod'"):
+            resolve_base_uri(config=config, env={}, cli_base_uri=None, cli_profile=None)
+
+    def test_relative_option_is_rejected(self):
+        with pytest.raises(ConfigError, match="--base-uri doit être une URI http"):
+            resolve_base_uri(config=None, env={}, cli_base_uri="exemple.fr", cli_profile=None)
+
+    def test_profile_base_uri_is_validated_at_load(self, tmp_path):
+        path = tmp_path / "config.yml"
+        path.write_text("profiles:\n  prod:\n    base_uri: data.exemple.fr\n", encoding="utf-8")
+
+        with pytest.raises(ConfigError, match=r"Profil 'prod'.*`base_uri` doit être une URI http"):
+            load_config(path)
+
+    def test_profile_base_uri_is_loaded_without_trailing_slash(self, tmp_path):
+        path = tmp_path / "config.yml"
+        path.write_text(
+            "profiles:\n  prod:\n    base_uri: https://data.exemple.fr/\n", encoding="utf-8"
+        )
+
+        assert load_config(path).profiles["prod"].base_uri == "https://data.exemple.fr"

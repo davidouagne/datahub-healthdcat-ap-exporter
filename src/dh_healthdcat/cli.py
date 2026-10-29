@@ -16,13 +16,12 @@ from rdflib import Graph
 
 from dh_healthdcat import pipeline
 from dh_healthdcat.model import HealthDataset, Severity
-from dh_healthdcat.reader.dataproduct import DEFAULT_BASE_URI
 from dh_healthdcat.reader.graph import ReadContext, from_env
 from dh_healthdcat.selection import TagMode, select_data_product_urns
 from dh_healthdcat.validate.shacl import ShaclResult, validate_graph
 
 if TYPE_CHECKING:
-    from dh_healthdcat.config import Resolved
+    from dh_healthdcat.config import Config, Resolved
 
 app = typer.Typer(add_completion=False, help="Exporteur DataHub -> HealthDCAT-AP")
 
@@ -53,16 +52,48 @@ def _resolve_target_or_exit(
     from dh_healthdcat import config as config_module
 
     try:
-        config_path = config_module.find_config_file(
-            explicit=cli_config, env=os.environ, cwd=Path.cwd(), home=Path.home()
-        )
-        cfg = config_module.load_config(config_path) if config_path else None
         return config_module.resolve_target(
-            config=cfg,
+            config=_load_config(cli_config),
             env=os.environ,
             cli_url=cli_url,
             cli_profile=cli_profile,
             cli_api_key_env=cli_api_key_env,
+        )
+    except config_module.ConfigError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=2) from exc
+
+
+def _load_config(cli_config: Path | None) -> Config | None:
+    """Fichier de configuration résolu (`--config` > `$HDH_CONFIG` > `./` >
+    `~`), ou None. Lève `ConfigError`."""
+
+    import os
+
+    from dh_healthdcat import config as config_module
+
+    config_path = config_module.find_config_file(
+        explicit=cli_config, env=os.environ, cwd=Path.cwd(), home=Path.home()
+    )
+    return config_module.load_config(config_path) if config_path else None
+
+
+def _resolve_base_uri_or_exit(
+    *, cli_base_uri: str | None, cli_profile: str | None, cli_config: Path | None
+) -> str:
+    """URI de base (`--base-uri` > profil), résolue avant tout appel réseau ;
+    absente ou invalide : erreur de configuration, code 2."""
+
+    import os
+
+    from dh_healthdcat import config as config_module
+
+    try:
+        return config_module.resolve_base_uri(
+            config=_load_config(cli_config),
+            env=os.environ,
+            cli_base_uri=cli_base_uri,
+            cli_profile=cli_profile,
         )
     except config_module.ConfigError as exc:
         typer.secho(str(exc), fg=typer.colors.RED, err=True)
@@ -155,7 +186,27 @@ def export_file(
     split_per_dataset: bool = typer.Option(
         False, "--split-per-dataset", help="Un fichier par DataProduct dans --output (dossier)"
     ),
-    base_uri: str = typer.Option(DEFAULT_BASE_URI, "--base-uri", help="Base pour dct:identifier"),
+    base_uri: str | None = typer.Option(
+        None,
+        "--base-uri",
+        help=(
+            "URI de base de l'adoptant (dct:identifier, repli dct:conformsTo) ; "
+            "sinon celle du profil"
+        ),
+    ),
+    profile: str | None = typer.Option(
+        None,
+        "--profile",
+        help="Profil du fichier de configuration qui porte base_uri (mêmes règles que push-hdh)",
+    ),
+    config: Path | None = typer.Option(
+        None,
+        "--config",
+        help=(
+            "Fichier de configuration "
+            "(sinon $HDH_CONFIG, ./.dh-healthdcat.yml, ~/.dh-healthdcat.yml)"
+        ),
+    ),
     strict: bool = typer.Option(
         True,
         "--strict/--no-strict",
@@ -171,6 +222,9 @@ def export_file(
 
     from dh_healthdcat.emit.turtle import write_graph
 
+    resolved_base_uri = _resolve_base_uri_or_exit(
+        cli_base_uri=base_uri, cli_profile=profile, cli_config=config
+    )
     ctx = from_env()
     _check_server_version_or_exit(ctx, strict_version=strict_version)
     _check_sp_prefix_or_exit(ctx)
@@ -183,7 +237,7 @@ def export_file(
     any_shacl_violation = False
     excluded = 0
 
-    for outcome in pipeline.prepare(ctx, selected, base_uri=base_uri, strict=strict):
+    for outcome in pipeline.prepare(ctx, selected, base_uri=resolved_base_uri, strict=strict):
         if isinstance(outcome, pipeline.Unreadable):
             typer.secho(f"IGNORÉ {outcome.urn} : {outcome.reason}", fg=typer.colors.RED, err=True)
             any_error = True
@@ -360,7 +414,14 @@ def push_hdh(
     exclude_tag: list[str] = typer.Option(
         [], "--exclude-tag", help="Exclut les DataProducts portant ce tag (urn ou nom, répétable)"
     ),
-    base_uri: str = typer.Option(DEFAULT_BASE_URI, "--base-uri", help="Base pour dct:identifier"),
+    base_uri: str | None = typer.Option(
+        None,
+        "--base-uri",
+        help=(
+            "URI de base de l'adoptant (dct:identifier, repli dct:conformsTo) ; "
+            "sinon celle du profil"
+        ),
+    ),
     state_file: Path | None = typer.Option(
         None,
         "--state-file",
@@ -390,6 +451,9 @@ def push_hdh(
 
     resolved = _resolve_target_or_exit(
         cli_url=hdh_url, cli_profile=profile, cli_config=config, cli_api_key_env=api_key_env
+    )
+    resolved_base_uri = _resolve_base_uri_or_exit(
+        cli_base_uri=base_uri, cli_profile=profile, cli_config=config
     )
 
     resolved_key = api_key or os.environ.get(resolved.api_key_env)
@@ -430,7 +494,7 @@ def push_hdh(
     any_failure = False
 
     for outcome in pipeline.push(
-        ctx, selected, target=client, state=state, base_uri=base_uri, dry_run=dry_run
+        ctx, selected, target=client, state=state, base_uri=resolved_base_uri, dry_run=dry_run
     ):
         if isinstance(outcome, pipeline.Unreadable):
             typer.secho(f"IGNORÉ {outcome.urn} : {outcome.reason}", fg=typer.colors.RED, err=True)

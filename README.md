@@ -87,11 +87,13 @@ Ne pas confondre avec la configuration du **Catalogue de métadonnées de la PDS
 ### Export en fichier Turtle
 
 ```bash
-dh-healthdcat export-file --output catalogue.ttl
+dh-healthdcat export-file --base-uri https://data.mon-entrepot.fr --output catalogue.ttl
 dh-healthdcat export-file --urn urn:li:dataProduct:b78435bfad26dab4c11e6e41c2a72b53 --output un-jeu.ttl
 dh-healthdcat export-file --domain "Biologie" --tag eds --format json-ld --split-per-dataset out/
 dh-healthdcat export-file --tag eds --tag urgences --tag-mode all --exclude-tag dcat:sample --output prod.ttl
 ```
+
+L'URI de base est obligatoire : `--base-uri`, ou `base_uri` dans le profil du fichier de configuration (voir « Configuration de l'instance »). Les exemples suivants supposent qu'un profil la déclare.
 
 Chaque DataProduct est validé individuellement contre les shapes SHACL du HDH (`shapes/ehds/`) ; un jeu invalide (champ obligatoire manquant ou violation SHACL) est **exclu de l'export, pas l'export entier** — les autres DataProducts sélectionnés sont écrits normalement (`--no-strict` pour l'inclure quand même malgré ses erreurs, utile en exploration). Le code de sortie reste non nul dès qu'au moins un jeu a été exclu, même si le fichier produit contient les autres. Un jeu invalide produit un message explicite :
 
@@ -143,6 +145,7 @@ profiles:
     api_key_env: HDH_API_KEY_PREPROD   # variable dédiée, optionnel (sinon HDH_API_KEY)
   prod:
     url: https://catalogue.health-data-hub.fr
+    base_uri: https://data.mon-entrepot.fr   # URI de base de l'adoptant
 ```
 
 ```bash
@@ -160,8 +163,11 @@ Résolution par champ, chacun indépendamment, du plus prioritaire au moins prio
 | Profil | `--profile` `>` `$HDH_PROFILE` `>` `default_profile` du fichier `>` l'unique profil s'il n'y en a qu'un |
 | Fichier de config | `--config` `>` `$HDH_CONFIG` `>` `./.dh-healthdcat.yml` `>` `~/.dh-healthdcat.yml` (premier trouvé, pas de fusion) |
 | Variable de clé API | `--api-key-env` `>` `api_key_env` du profil `>` `HDH_API_KEY` |
+| URI de base | `--base-uri` `>` `base_uri` du profil sélectionné — **obligatoire**, sans valeur par défaut |
 
-Aucune invocation existante (`--hdh-url` seule, `$HDH_API_KEY`) ne change de comportement : sans fichier de configuration ni nouvelle variable, `push-hdh` se comporte exactement comme avant.
+L'**URI de base** est l'espace de noms HTTP de l'adoptant : l'exporteur y forge `dct:identifier` (`<base>/dataset/<id>`) et les spécifications de référence qu'aucun vocabulaire ne résout (`<base>/conformsTo/<code>`). `export-file` et `push-hdh` la lisent dans le profil (`--config`/`--profile` valent aussi pour `export-file`) ou via `--base-uri`. Sans l'une ni l'autre, la commande s'arrête avant tout appel réseau (code de sortie 2).
+
+Sans fichier de configuration, `push-hdh --hdh-url … --base-uri …` (clé dans `$HDH_API_KEY`) fonctionne comme avant.
 
 ## Structure du dépôt
 
