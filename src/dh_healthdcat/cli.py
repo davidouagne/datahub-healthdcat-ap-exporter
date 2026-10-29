@@ -236,6 +236,27 @@ def export_file(
         raise typer.Exit(code=1)
 
 
+@app.command("properties")
+def properties(
+    output: Path = typer.Option(
+        Path("structured-properties.yml"),
+        "--output",
+        help="Fichier à écrire, ou répertoire qui reçoit structured-properties.yml.",
+    ),
+) -> None:
+    """Écrit les définitions des structured properties lues par l'exporteur.
+
+    À appliquer avec `datahub properties upsert -f <fichier>` : l'exporteur
+    n'écrit jamais dans DataHub (ADR-0005 §3)."""
+
+    from dh_healthdcat import sp_definitions
+
+    path = sp_definitions.write(output)
+    count = len(sp_definitions.definitions())
+    typer.secho(f"{count} définitions écrites dans {path}.", fg=typer.colors.GREEN)
+    typer.echo(f"Appliquer avec : datahub properties upsert -f {path}")
+
+
 @app.command("validate")
 def validate(
     file: Path = typer.Argument(..., help="Fichier RDF à valider (Turtle, JSON-LD, N-Triples...)"),
