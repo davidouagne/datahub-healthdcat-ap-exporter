@@ -200,6 +200,23 @@ def _entities() -> dict[str, dict]:
 _PROFILES = {ASSET_URN: NS(sizeInBytes=123456)}
 
 
+class _RequestedAspects(dict):
+    """Entité renvoyée par `FakeGraph` : lire un aspect non demandé lève, même
+    si la fixture ne le porte pas — un oubli dans `ASPECTS_READ` est détecté
+    dès que le reader *tente* la lecture, pas seulement quand la donnée
+    existe."""
+
+    def __init__(self, aspects: dict, requested: list[str]) -> None:
+        super().__init__(aspects)
+        self._requested = frozenset(requested)
+
+    def get(self, name, default=None, /):
+        assert name in self._requested, (
+            f"aspect {name!r} lu sans avoir été demandé (ASPECTS_READ, reader/graph.py)"
+        )
+        return super().get(name, default)
+
+
 class FakeGraph:
     """Substitut minimal de `DataHubGraph` : `get_entity_semityped` et
     `get_latest_timeseries_value` sont ce que `ReadContext` utilise.
@@ -213,11 +230,21 @@ class FakeGraph:
     def __init__(self) -> None:
         self._entities = _entities()
         self.get_entity_semityped_calls: list[str] = []
+        self.requested_aspects: dict[str, list[str]] = {}
         self.last_extra_or_filters: object = None
 
     def get_entity_semityped(self, urn: str, aspects: list[str] | None = None) -> dict:
+        """Comme DataHub, ne renvoie que les aspects demandés : un aspect lu
+        par le reader mais absent de `ASPECTS_READ` est donc invisible ici et
+        fait échouer les tests (#142)."""
+
+        assert aspects, "ReadContext doit demander une liste d'aspects explicite"
         self.get_entity_semityped_calls.append(urn)
-        return self._entities[urn]
+        self.requested_aspects[urn] = list(aspects)
+        entity = self._entities[urn]
+        return _RequestedAspects(
+            {name: value for name, value in entity.items() if name in aspects}, aspects
+        )
 
     def get_urns_by_filter(self, *, entity_types=None, extra_or_filters=None, **kwargs):
         self.last_extra_or_filters = extra_or_filters

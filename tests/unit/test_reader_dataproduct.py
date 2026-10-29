@@ -253,3 +253,15 @@ def test_no_documentation_emits_nothing():
 
     assert dataset.landing_page is None
     assert dataset.pages == ()
+
+
+def test_glossary_term_label_becomes_a_keyword():
+    ctx = build_context()
+    term_urn = "urn:li:glossaryTerm:sejour"
+    ctx.graph._entities[term_urn] = {"glossaryTermInfo": NS(name="Séjour hospitalier")}
+    ctx.graph._entities[DATAPRODUCT_URN]["glossaryTerms"] = NS(terms=[NS(urn=term_urn)])
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN)
+
+    assert "Séjour hospitalier" in dataset.keywords
+    assert ctx.graph.requested_aspects[term_urn] == ["glossaryTermInfo"]
