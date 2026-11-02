@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.3.0...v0.3.1) (2026-11-02)
+
+
+### Dependencies
+
+* Bump acryl-datahub from 1.7.0.17 to 1.7.0.19 ([dffbddc](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/dffbddcf4e1f8abeafaeb21d9ee26195b11cc3da))
+* Bump pyshacl from 0.40.1 to 0.40.2 in the prod-minor-patch group ([08dba5d](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/08dba5d6e4ee493cbd0a180ee27eee361e72f789))
+
 ## [0.3.0](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.2.0...v0.3.0) (2026-10-29)
 
 
