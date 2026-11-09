@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.3.1...v0.3.2) (2026-11-09)
+
+
+### Dependencies
+
+* Bump typer from 0.27.3 to 0.28.0 in the prod-minor-patch group ([e722ca0](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/e722ca0bc60973b9f74a1f83b2e556bbc208ce4f))
+
 ## [0.3.1](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.3.0...v0.3.1) (2026-11-02)
 
 
