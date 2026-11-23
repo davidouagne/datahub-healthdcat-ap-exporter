@@ -18,6 +18,10 @@ Vérifié le 2026-10-29 contre les sources primaires listées en fin de document
 - Les clients `1.7.0.x` suivent `master` : 1.7.0.18 contient déjà les champs du serveur 1.8
   décrits ci-dessous ; 1.7.0 ne les contient pas.
 
+> **Mise à jour du 2026-11-23 (#141).** Le client `acryl-datahub` 1.8.0 est publié (non
+> *yanked*). La plage est portée à `>=1.7,<1.9`. Le contrôle Docker est passé sur un serveur
+> 1.8.0 : la référence `datahub-1.8.ttl` est identique à `datahub-1.7.ttl`.
+
 ## Ce qui change dans le modèle Data Product
 
 Comparaison des PDL `metadata-models/src/main/pegasus/com/linkedin/dataproduct/` et de
@@ -57,6 +61,9 @@ Conséquences :
   remède naturel : que `ReadContext.get_entity` demande explicitement les aspects que le
   reader exploite (paramètre `aspects` de `get_entity_semityped`). Ce n'est pas un
   aiguillage par version, donc c'est compatible avec ADR-0004 §4.
+  *Mise à jour du 2026-11-23 :* c'est fait dans #142. Lors du contrôle Docker de #141, le
+  client 1.7.0 a été lancé contre un serveur 1.8.0 : aucun `Ignoring unknown aspect type`
+  dans la sortie, et un graphe identique à la référence.
 - Tout nouveau champ lu doit tolérer son absence (`getattr(…, None)`) : la borne basse du
   client ne le connaît pas, et un serveur 1.7 ne le renvoie pas.
 
@@ -107,7 +114,7 @@ Sous-issues de #124 ouvertes à partir de cette recherche :
 
 | Ticket | Sujet | État |
 |---|---|---|
-| #141 | Élargir la plage à 1.8 | bloqué par #127, #129, #131 et la publication d'un client 1.8 |
+| #141 | Élargir la plage à 1.8 | fait (2026-11-23) : client 1.8.0 publié, contrôle Docker 1.8.0 passé |
 | #142 | `ReadContext` demande explicitement les aspects lus | prêt |
 | #143 | `dct:modified` jamais émis | source à choisir |
 | #144 | Asset partagé entre DataProducts | prêt |
