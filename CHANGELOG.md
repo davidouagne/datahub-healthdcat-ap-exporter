@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.4.0](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.3.3...v0.4.0) (2026-11-23)
+
+
+### Features
+
+* exporter la hiérarchie parentDataProduct ([891f9e4](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/891f9e406c4c2d6293fa97d12d56286c12cd0e25)), closes [#146](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/146)
+* signaler un asset partagé avec un DataProduct hors sélection ([994736a](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/994736a4e023b7325c8ff36b7b82747a085ab6bb)), closes [#189](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/189)
+* supporter le serveur DataHub 1.8 ([d4d1d37](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/d4d1d37773f437aca8f59d2f8a5e8cee97836aef)), closes [#141](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/141)
+* supporter le serveur DataHub 1.9 ([67c5884](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/67c5884196e905ce6f450156d3b4830f47148fc2)), closes [#191](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/191)
+
+
+### Bug Fixes
+
+* ignorer un asset qui n'est pas un Dataset au lieu d'échouer ([02ecb30](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/02ecb30d304a696685e26f175d3b7f1016ab345d)), closes [#191](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/191)
+
+
+### Documentation
+
+* consigner la sonde GMS 1.7 de l'aspect dataProducts ([01ab2a1](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/01ab2a1120935e59f552d451c1681b6583792622))
+* mettre à jour l'état des tickets de la recherche 1.8 ([47af948](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/47af948f95b2c3fd8845742c2a27f545108a7a7a))
+* noter dans la recherche 1.8 l'élargissement et l'absence de bruit ([949d0c8](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/commit/949d0c8f658d65029da4a358d7d062cc9e731e3c)), closes [#141](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/issues/141)
+
 ## [0.3.3](https://github.com/davidouagne/datahub-healthdcat-ap-exporter/compare/v0.3.2...v0.3.3) (2026-11-16)
 
 
