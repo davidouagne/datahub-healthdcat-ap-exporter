@@ -19,7 +19,7 @@ from dh_healthdcat.emit.hdh_client import HdhClient
 from dh_healthdcat.reader.graph import ServerInfo
 from tests.fixtures.fake_datahub import BASE_URI, DATAPRODUCT_URN, build_context
 
-RANGE = SpecifierSet(">=1.7,<1.8")
+RANGE = SpecifierSet(">=1.7,<1.9")
 runner = CliRunner()
 
 
@@ -39,17 +39,19 @@ class TestSupportedRange:
 
 
 class TestCheck:
-    @pytest.mark.parametrize("version", ["v1.7.0", "v1.7.0.1", "1.7.0.18", "v1.7.0.1-SNAPSHOT"])
+    @pytest.mark.parametrize(
+        "version", ["v1.7.0", "v1.7.0.1", "1.7.0.18", "v1.7.0.1-SNAPSHOT", "v1.8.0"]
+    )
     def test_in_range_says_nothing(self, version):
         assert datahub_version.check(ServerInfo(version=version), RANGE) is None
 
-    @pytest.mark.parametrize("version", ["v1.8.0", "v1.6.0.3", "v1.8.0rc2"])
+    @pytest.mark.parametrize("version", ["v1.9.0", "v1.6.0.3", "v1.9.0rc2"])
     def test_out_of_range_names_version_and_range(self, version):
         message = datahub_version.check(ServerInfo(version=version), RANGE)
 
         assert message is not None
         assert version in message
-        assert "hors de la plage supportée (<1.8,>=1.7)" in message
+        assert "hors de la plage supportée (<1.9,>=1.7)" in message
 
     @pytest.mark.parametrize(
         ("server", "reason"),
