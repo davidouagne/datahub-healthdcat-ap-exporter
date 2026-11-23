@@ -65,6 +65,7 @@ vérifié par le SHACL de base · `⚙️` = dérivé/calculé, pas une saisie.
 | `healthdcatap:hasVariables` → `csvw:TableGroup` (R7, `minCount 1` si `hasStructuredData`) | | ⚙️ regroupe par `csvw:table` toutes les `csvw:Table` du dataset (distributions + samples) | `dataset.py` ; émis ssi ≥1 `csvw:Table` ; nœud `<tablegroup:{uuid}>` ; validateur HDH indifférent (pas de `:CSVWTableGroup_Shape`) |
 | `dcat:landingPage` | | `dataProductProperties.externalUrl` ; valeur qui n'est pas une IRI absolue → WARNING, ignorée | dataproduct.py |
 | `foaf:page` | | `institutionalMemory.elements[].url`, un par lien, sans doublon ; valeur qui n'est pas une IRI absolue → WARNING, ignorée | dataproduct.py |
+| `dcat:qualifiedRelation` → `dcat:Relationship` | | `dataProductProperties.parentDataProduct` (serveur 1.8+) : `dct:relation` = `{base_uri}/dataset/{id du parent}` (son `dct:identifier`), `dcat:hadRole` = `http://www.iana.org/assignments/relation/up` ; parent direct seulement, émis même si le parent n'est pas sélectionné ; absent (serveur 1.7, client 1.7.0) → rien n'est émis ; valeur qui n'est pas un URN de DataProduct → WARNING, ignorée (ADR-0006). Le HDH conserve la relation mais réémet sa cible en `dcat:DataService` (`docs/research/hdh-healthdcat-ap-gaps.md`) | dataproduct.py (lecture via `graph.parent_data_product`), dataset.py ; nœud `<relationship:{uuid}>` |
 | `dqv:hasQualityAnnotation` | | entités `ASSERTION` | **P2, non implémenté** |
 
 ### Note — publisher / creator / hdab

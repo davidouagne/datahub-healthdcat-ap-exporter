@@ -53,6 +53,8 @@ DPVPD = Namespace("https://w3id.org/dpv/dpv-pd#")
 DQV = Namespace("http://www.w3.org/ns/dqv#")
 ELI = Namespace("http://data.europa.eu/eli/")
 HEALTHDCATAP = Namespace("http://healthdataportal.eu/ns/health#")
+# Rôles de dcat:qualifiedRelation (ADR-0006 §3) ; non lié à un préfixe Turtle.
+IANA_RELATION = Namespace("http://www.iana.org/assignments/relation/")
 LOCN = Namespace("http://www.w3.org/ns/locn#")
 OA = Namespace("https://www.w3.org/ns/oa#")
 ONT = Namespace("http://data.europa.eu/eli/ontology#")

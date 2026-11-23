@@ -323,3 +323,76 @@ def test_sample_is_kept_whether_or_not_it_is_a_port():
     dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert [s.source_urn for s in dataset.samples] == [SAMPLE_URN]
+
+
+PARENT_URN = "urn:li:dataProduct:dhhc-parent"
+IANA_UP = URIRef("http://www.iana.org/assignments/relation/up")
+
+
+def _parent_relations(graph, dataset):
+    uri = URIRef(f"dataset:{dataset.dataset_id}")
+    return [
+        (graph.value(rel, DCT.relation), graph.value(rel, DCAT.hadRole))
+        for rel in graph.objects(uri, DCAT.qualifiedRelation)
+    ]
+
+
+def test_parent_data_product_is_linked_by_qualified_relation():
+    """#146, ADR-0006 §2-4 : l'enfant pointe vers l'IRI stable de son parent
+    direct (son dct:identifier), rôle IANA `up` ; le parent n'a pas à être lu
+    ni sélectionné."""
+
+    ctx = build_context()
+    ctx.graph._entities[DATAPRODUCT_URN]["dataProductProperties"].parentDataProduct = PARENT_URN
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
+
+    assert dataset.parent_iri == f"{BASE_URI}/dataset/dhhc-parent"
+    graph = dataset_to_graph(dataset)
+    assert _parent_relations(graph, dataset) == [
+        (URIRef(f"{BASE_URI}/dataset/dhhc-parent"), IANA_UP)
+    ]
+    assert validate_graph(graph).conforms is True
+
+
+def test_no_parent_emits_no_relation():
+    ctx = build_context()
+    ctx.graph._entities[DATAPRODUCT_URN]["dataProductProperties"].parentDataProduct = None
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
+
+    assert dataset.parent_iri is None
+    assert _parent_relations(dataset_to_graph(dataset), dataset) == []
+
+
+def test_client_without_parent_field_emits_no_relation():
+    """Client acryl-datahub 1.7.0 (borne basse) : l'aspect n'a pas
+    l'attribut `parentDataProduct` du tout."""
+
+    ctx = build_context()
+    assert not hasattr(
+        ctx.graph._entities[DATAPRODUCT_URN]["dataProductProperties"], "parentDataProduct"
+    )
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
+
+    assert dataset.parent_iri is None
+    assert _parent_relations(dataset_to_graph(dataset), dataset) == []
+
+
+def test_parent_that_is_not_a_data_product_urn_is_ignored_with_a_warning():
+    """Seul un URN de DataProduct donne l'IRI stable du parent (ADR-0006 §4) :
+    toute autre valeur fabriquerait une IRI fausse."""
+
+    ctx = build_context()
+    ctx.graph._entities[DATAPRODUCT_URN][
+        "dataProductProperties"
+    ].parentDataProduct = "urn:li:dataset:(urn:li:dataPlatform:s3,a.b,PROD)"
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
+
+    assert dataset.parent_iri is None
+    [warning] = [i for i in dataset.issues if i.rdf_property == "dcat:qualifiedRelation"]
+    assert warning.severity is Severity.WARNING
+    assert warning.datahub_field == "dataProductProperties.parentDataProduct"
+    assert not dataset.has_errors

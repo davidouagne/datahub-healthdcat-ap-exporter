@@ -193,6 +193,9 @@ class HealthDataset:
     is_referenced_by: tuple[str, ...] = ()
     landing_page: str | None = None  # dcat:landingPage — dataProductProperties.externalUrl
     pages: tuple[str, ...] = ()  # foaf:page — institutionalMemory.elements[].url
+    # dcat:qualifiedRelation (rôle IANA `up`) vers le parent direct, ADR-0006 :
+    # IRI stable `{base_uri}/dataset/{id}` du parent (= son dct:identifier).
+    parent_iri: str | None = None  # dataProductProperties.parentDataProduct (1.8+)
 
     # Distributions
     distributions: tuple[Distribution, ...] = ()  # dcat:distribution

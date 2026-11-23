@@ -32,6 +32,7 @@ from dh_healthdcat.mapping.namespaces import (
     DPV,
     FOAF,
     HEALTHDCATAP,
+    IANA_RELATION,
     bind_prefixes,
 )
 from dh_healthdcat.mapping.nodes import node_uri
@@ -223,6 +224,8 @@ def _add_optional_metadata(graph: Graph, uri: URIRef, dataset: HealthDataset) ->
         graph.add((uri, DCAT.landingPage, URIRef(dataset.landing_page)))
     for page in dataset.pages:
         graph.add((uri, FOAF.page, URIRef(page)))
+    if dataset.parent_iri:
+        _add_parent_relation(graph, uri, dataset.source_urn, dataset.parent_iri)
 
     if dataset.temporal:
         agent_mapping.add_period_of_time(
@@ -236,6 +239,18 @@ def _add_optional_metadata(graph: Graph, uri: URIRef, dataset: HealthDataset) ->
             dataset.retention_period,
             dataset.source_urn + "|retention",
         )
+
+
+def _add_parent_relation(graph: Graph, uri: URIRef, source_urn: str, parent: str) -> None:
+    """Hiérarchie de DataProducts (ADR-0006 §3) : relation qualifiée vers le
+    parent direct, rôle IANA `up`, seule forme admise par `:Relationship_Shape`
+    et conservée par le HDH."""
+
+    relation = node_uri("relationship", source_urn, "parent")
+    graph.add((uri, DCAT.qualifiedRelation, relation))
+    graph.add((relation, RDF.type, DCAT.Relationship))
+    graph.add((relation, DCT.relation, URIRef(parent)))
+    graph.add((relation, DCAT.hadRole, IANA_RELATION.up))
 
 
 def _add_quantitative_metadata(graph: Graph, uri: URIRef, dataset: HealthDataset) -> None:

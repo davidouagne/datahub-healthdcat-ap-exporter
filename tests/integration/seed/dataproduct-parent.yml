@@ -1,0 +1,8 @@
+# DataProduct parent du contrôle Docker (#146, ADR-0006), chargé avant
+# dataproduct.yml qui le désigne par `parent_data_product`. Il n'est pas
+# exporté : le lien de l'enfant vers son IRI stable est émis quand même
+# (parent hors sélection, ADR-0006 §4).
+id: dhhc-verify-parcours
+domain: urn:li:domain:dhhc-verify
+display_name: Parcours de soins
+description: Regroupe les DataProducts du parcours patient.
