@@ -17,7 +17,7 @@ from dh_healthdcat.mapping import vocabularies as v
 from dh_healthdcat.mapping.vocabularies import resolve_or_warn
 from dh_healthdcat.model import Column, Distribution, Severity, Table, ValidationIssue
 from dh_healthdcat.reader import props
-from dh_healthdcat.reader.graph import ReadContext
+from dh_healthdcat.reader.graph import ReadContext, data_products_of
 
 SAMPLE_TAG_URN = "urn:li:tag:dcat:sample"
 
@@ -186,4 +186,5 @@ def read_distribution(
         modified=_millis_to_datetime(dp.lastModified.time if dp and dp.lastModified else None),
         table=table,
         source_urn=dataset_urn,
+        data_products=data_products_of(entity),
     )

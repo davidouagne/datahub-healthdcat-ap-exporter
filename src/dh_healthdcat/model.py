@@ -98,6 +98,9 @@ class Distribution:
     applicable_legislation: tuple[str, ...] = ()
     table: Table | None = None
     source_urn: str = ""  # URN DataHub du Dataset source, pour les messages d'erreur
+    # DataProducts dont l'asset est membre selon l'aspect `dataProducts` (1.8+),
+    # pour signaler un partage hors sélection (#189). Vide sur un serveur 1.7.
+    data_products: tuple[str, ...] = ()
 
 
 class Severity(StrEnum):

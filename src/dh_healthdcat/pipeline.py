@@ -79,9 +79,11 @@ def prepare(
     base_uri: str,
     strict: bool = True,
 ) -> Iterator[Outcome]:
+    ordered_urns = list(urns)  # parcourue une fois, puis consultée en entier
+    selection = frozenset(ordered_urns)
     # URN d'asset → (URN, titre) du 1ᵉʳ DataProduct de la sélection qui l'exporte
     first_owner: dict[str, tuple[str, str]] = {}
-    for urn in urns:
+    for urn in ordered_urns:
         try:
             dataset = read_data_product(ctx, urn, base_uri=base_uri)
         except ValueError as exc:
@@ -89,6 +91,7 @@ def prepare(
             continue
 
         _warn_shared_assets(dataset, first_owner)
+        _warn_assets_shared_outside_selection(dataset, selection)
         graph = dataset_to_graph(dataset)
         shacl = validate_graph(graph)
 
@@ -102,6 +105,32 @@ def prepare(
             continue
 
         yield Prepared(urn=urn, dataset=dataset, graph=graph, shacl=shacl)
+
+
+def _warn_assets_shared_outside_selection(
+    dataset: HealthDataset, selection: frozenset[str]
+) -> None:
+    """Signale un asset membre, d'après l'aspect `dataProducts` (serveur 1.8+),
+    d'un DataProduct que la sélection ne contient pas (#189). Un partage au sein
+    de la sélection reste signalé par `_warn_shared_assets`, une seule fois."""
+
+    reported: set[tuple[str, str]] = set()
+    for distribution in (*dataset.distributions, *dataset.samples):
+        asset = distribution.source_urn
+        for other in distribution.data_products:
+            if other == dataset.source_urn or other in selection or (asset, other) in reported:
+                continue
+            reported.add((asset, other))
+            # « peut » : si l'autre DataProduct déclare des ports dont cet asset
+            # n'est pas, il ne l'exporte pas (ADR-0006) — invisible d'ici.
+            dataset.issues.append(
+                _shared_asset_warning(
+                    dataset,
+                    "dataProducts",
+                    f"asset {asset} partagé avec le DataProduct {other}, hors sélection "
+                    "— la même donnée peut y être décrite aussi",
+                )
+            )
 
 
 def _warn_shared_assets(dataset: HealthDataset, first_owner: dict[str, tuple[str, str]]) -> None:
@@ -118,18 +147,26 @@ def _warn_shared_assets(dataset: HealthDataset, first_owner: dict[str, tuple[str
         owner_urn, owner_title = first_owner.setdefault(asset, (dataset.source_urn, dataset.title))
         if owner_urn != dataset.source_urn:
             dataset.issues.append(
-                ValidationIssue(
-                    severity=Severity.WARNING,
-                    dataset_name=dataset.title,
-                    dataset_urn=dataset.source_urn,
-                    rdf_property="dcat:distribution",
-                    datahub_field="dataProductProperties.assets",
-                    message=(
-                        f'asset {asset} partagé avec le DataProduct "{owner_title}" — '
-                        "exporté comme distribution distincte de chacun"
-                    ),
+                _shared_asset_warning(
+                    dataset,
+                    "dataProductProperties.assets",
+                    f'asset {asset} partagé avec le DataProduct "{owner_title}" — '
+                    "exporté comme distribution distincte de chacun",
                 )
             )
+
+
+def _shared_asset_warning(
+    dataset: HealthDataset, datahub_field: str, message: str
+) -> ValidationIssue:
+    return ValidationIssue(
+        severity=Severity.WARNING,
+        dataset_name=dataset.title,
+        dataset_urn=dataset.source_urn,
+        rdf_property="dcat:distribution",
+        datahub_field=datahub_field,
+        message=message,
+    )
 
 
 class PushAction(StrEnum):
