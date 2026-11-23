@@ -19,7 +19,7 @@ from dh_healthdcat.emit.hdh_client import HdhClient
 from dh_healthdcat.reader.graph import ServerInfo
 from tests.fixtures.fake_datahub import BASE_URI, DATAPRODUCT_URN, build_context
 
-RANGE = SpecifierSet(">=1.7,<1.9")
+RANGE = SpecifierSet(">=1.7,<1.10")
 runner = CliRunner()
 
 
@@ -40,18 +40,18 @@ class TestSupportedRange:
 
 class TestCheck:
     @pytest.mark.parametrize(
-        "version", ["v1.7.0", "v1.7.0.1", "1.7.0.18", "v1.7.0.1-SNAPSHOT", "v1.8.0"]
+        "version", ["v1.7.0", "v1.7.0.1", "1.7.0.18", "v1.7.0.1-SNAPSHOT", "v1.8.0", "v1.9.0"]
     )
     def test_in_range_says_nothing(self, version):
         assert datahub_version.check(ServerInfo(version=version), RANGE) is None
 
-    @pytest.mark.parametrize("version", ["v1.9.0", "v1.6.0.3", "v1.9.0rc2"])
+    @pytest.mark.parametrize("version", ["v1.10.0", "v1.6.0.3", "v1.10.0rc2"])
     def test_out_of_range_names_version_and_range(self, version):
         message = datahub_version.check(ServerInfo(version=version), RANGE)
 
         assert message is not None
         assert version in message
-        assert "hors de la plage supportée (<1.9,>=1.7)" in message
+        assert "hors de la plage supportée (<1.10,>=1.7)" in message
 
     @pytest.mark.parametrize(
         ("server", "reason"),
@@ -130,9 +130,9 @@ class TestCli:
         assert "non reconnue" not in result.output
 
     def test_last_verified_minor_is_in_range(self, tmp_path, monkeypatch):
-        """Plafond = dernière mineure vérifiée par le contrôle Docker (#141)."""
+        """Plafond = dernière mineure vérifiée par le contrôle Docker (#191)."""
 
-        monkeypatch.setattr(cli_module, "from_env", _context_with_version("v1.8.0"))
+        monkeypatch.setattr(cli_module, "from_env", _context_with_version("v1.9.0"))
 
         result = self._export(tmp_path, "--strict-version")
 
@@ -140,12 +140,12 @@ class TestCli:
         assert "Serveur DataHub" not in result.output
 
     def test_out_of_range_warns_and_exports(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(cli_module, "from_env", _context_with_version("v1.9.0"))
+        monkeypatch.setattr(cli_module, "from_env", _context_with_version("v1.10.0"))
 
         result = self._export(tmp_path)
 
         assert result.exit_code == 0, result.output
-        assert "Serveur DataHub v1.9.0 hors de la plage supportée" in result.output
+        assert "Serveur DataHub v1.10.0 hors de la plage supportée" in result.output
         assert (tmp_path / "out.ttl").is_file()
 
     def test_unrecognized_warns_and_exports(self, tmp_path, monkeypatch):
@@ -165,7 +165,7 @@ class TestCli:
         contexts = []
 
         def factory():
-            ctx = _context_with_version("v1.9.0")()
+            ctx = _context_with_version("v1.10.0")()
             contexts.append(ctx)
             return ctx
 
