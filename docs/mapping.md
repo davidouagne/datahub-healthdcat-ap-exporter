@@ -13,6 +13,9 @@ le code réel, vérifié par `pyshacl` contre les shapes réelles du HDH
 Si le DataProduct déclare au moins un **output port** (`outputPort` de
 l'association), seuls les ports deviennent des `dcat:distribution` ; les autres
 assets sont ignorés, sauf les échantillons tagués `dcat:sample` (ADR-0006).
+Un asset qui n'est pas un Dataset DataHub (dashboard, chart, type `api` du
+serveur 1.9…) n'est pas exporté : WARNING s'il aurait été lu, rien s'il est
+hors des ports.
 
 ## Espaces de noms (`mapping/namespaces.py`)
 

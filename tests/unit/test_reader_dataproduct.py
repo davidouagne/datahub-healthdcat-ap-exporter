@@ -10,6 +10,7 @@ import copy
 from datetime import UTC, datetime
 from types import SimpleNamespace as NS
 
+import pytest
 from rdflib import XSD, Literal, URIRef
 
 from dh_healthdcat.mapping.dataset import dataset_to_graph
@@ -323,6 +324,46 @@ def test_sample_is_kept_whether_or_not_it_is_a_port():
     dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
 
     assert [s.source_urn for s in dataset.samples] == [SAMPLE_URN]
+
+
+@pytest.mark.parametrize("output_port", [False, True])
+def test_asset_that_is_not_a_dataset_is_skipped_with_a_warning(output_port):
+    """Une distribution est un Dataset DataHub. Un asset d'un autre type (type
+    `api` ajouté par le serveur 1.9, dashboard…) n'est pas lu : l'export
+    continue sans lui (#191)."""
+
+    ctx = build_context()
+    dp = ctx.graph._entities[DATAPRODUCT_URN]["dataProductProperties"]
+    others = ["urn:li:api:dhhc-patient-search", "urn:li:dashboard:(looker,parcours)"]
+    for urn in others:
+        dp.assets.append(NS(destinationUrn=urn, outputPort=output_port))
+    if output_port:
+        dp.assets[0].outputPort = True
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
+
+    assert [d.source_urn for d in dataset.distributions] == [ASSET_URN]
+    skipped = [i for i in dataset.issues if i.dataset_urn in others]
+    assert [i.dataset_urn for i in skipped] == others
+    assert all(i.severity is Severity.WARNING for i in skipped)
+    assert all(i.datahub_field == "dataProductProperties.assets" for i in skipped)
+    assert not any(u in ctx.graph.get_entity_semityped_calls for u in others)
+
+
+def test_asset_that_is_not_a_dataset_outside_the_ports_is_silently_ignored():
+    """ADR-0006 §6-7 : avec des ports, un asset hors port n'existe pas pour
+    l'export, quel que soit son type."""
+
+    ctx = build_context()
+    dp = ctx.graph._entities[DATAPRODUCT_URN]["dataProductProperties"]
+    api_urn = "urn:li:api:dhhc-patient-search"
+    dp.assets.append(NS(destinationUrn=api_urn, outputPort=False))
+    dp.assets[0].outputPort = True
+
+    dataset = read_data_product(ctx, DATAPRODUCT_URN, base_uri=BASE_URI)
+
+    assert [d.source_urn for d in dataset.distributions] == [ASSET_URN]
+    assert [i for i in dataset.issues if i.dataset_urn == api_urn] == []
 
 
 PARENT_URN = "urn:li:dataProduct:dhhc-parent"
