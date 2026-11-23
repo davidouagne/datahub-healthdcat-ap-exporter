@@ -34,6 +34,7 @@ from dh_healthdcat.reader import props
 from dh_healthdcat.reader.graph import ReadContext, SemitypedEntity, parent_data_product
 
 DATAPRODUCT_URN_PREFIX = "urn:li:dataProduct:"
+DATASET_URN_PREFIX = "urn:li:dataset:"
 
 
 def _dataset_id_from_urn(urn: str) -> str:
@@ -288,6 +289,22 @@ def _read_period(
     return PeriodOfTime(start_date=start, end_date=end) if (start or end) else None
 
 
+def _warn_asset_not_a_dataset(urn: str, title: str, issues: list[ValidationIssue]) -> None:
+    """Une distribution est un Dataset DataHub : un asset d'un autre type
+    (dashboard, `api` du serveur 1.9…) n'est pas lu, l'export continue (#191)."""
+
+    issues.append(
+        ValidationIssue(
+            severity=Severity.WARNING,
+            dataset_name=title,
+            dataset_urn=urn,
+            rdf_property="dcat:distribution",
+            datahub_field="dataProductProperties.assets",
+            message="asset qui n'est pas un Dataset DataHub, non exporté",
+        )
+    )
+
+
 def _read_assets(
     ctx: ReadContext,
     dp: Any,
@@ -308,11 +325,15 @@ def _read_assets(
     distributions: list[Distribution] = []
     samples: list[Distribution] = []
     for association in associations:
+        is_dataset = association.destinationUrn.startswith(DATASET_URN_PREFIX)
         if (
             has_ports
             and not association.outputPort
-            and not dataset_reader.is_sample_asset(ctx, association.destinationUrn)
+            and not (is_dataset and dataset_reader.is_sample_asset(ctx, association.destinationUrn))
         ):
+            continue
+        if not is_dataset:
+            _warn_asset_not_a_dataset(association.destinationUrn, title, issues)
             continue
         distribution = dataset_reader.read_distribution(
             ctx, association.destinationUrn, association.destinationUrn, title, issues
