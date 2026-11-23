@@ -127,13 +127,23 @@ class TestCli:
         assert "Serveur DataHub" not in result.output
         assert "non reconnue" not in result.output
 
-    def test_out_of_range_warns_and_exports(self, tmp_path, monkeypatch):
+    def test_last_verified_minor_is_in_range(self, tmp_path, monkeypatch):
+        """Plafond = dernière mineure vérifiée par le contrôle Docker (#141)."""
+
         monkeypatch.setattr(cli_module, "from_env", _context_with_version("v1.8.0"))
+
+        result = self._export(tmp_path, "--strict-version")
+
+        assert result.exit_code == 0, result.output
+        assert "Serveur DataHub" not in result.output
+
+    def test_out_of_range_warns_and_exports(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(cli_module, "from_env", _context_with_version("v1.9.0"))
 
         result = self._export(tmp_path)
 
         assert result.exit_code == 0, result.output
-        assert "Serveur DataHub v1.8.0 hors de la plage supportée" in result.output
+        assert "Serveur DataHub v1.9.0 hors de la plage supportée" in result.output
         assert (tmp_path / "out.ttl").is_file()
 
     def test_unrecognized_warns_and_exports(self, tmp_path, monkeypatch):
@@ -153,7 +163,7 @@ class TestCli:
         contexts = []
 
         def factory():
-            ctx = _context_with_version("v1.8.0")()
+            ctx = _context_with_version("v1.9.0")()
             contexts.append(ctx)
             return ctx
 
