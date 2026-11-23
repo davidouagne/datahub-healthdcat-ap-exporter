@@ -85,7 +85,8 @@ step "Seed : Datasets, profil et valeurs des SP (MCP JSON)"
 # Chemin relatif : sous Windows, la source `file` lit « C: » comme un schéma d'URL.
 (cd "$root" && dh ingest mcps tests/integration/seed/metadata.json)
 
-step "Seed : DataProduct"
+step "Seed : DataProducts (parent, puis enfant exporté)"
+dh dataproduct upsert -f "$seed/dataproduct-parent.yml"
 dh dataproduct upsert -f "$seed/dataproduct.yml"
 
 step "Export"

@@ -31,11 +31,45 @@ from dh_healthdcat.model import (
 from dh_healthdcat.reader import agents as agents_reader
 from dh_healthdcat.reader import dataset as dataset_reader
 from dh_healthdcat.reader import props
-from dh_healthdcat.reader.graph import ReadContext, SemitypedEntity
+from dh_healthdcat.reader.graph import ReadContext, SemitypedEntity, parent_data_product
+
+DATAPRODUCT_URN_PREFIX = "urn:li:dataProduct:"
 
 
 def _dataset_id_from_urn(urn: str) -> str:
     return urn.rsplit(":", 1)[-1]
+
+
+def _stable_iri(base_uri: str, dataproduct_urn: str) -> str:
+    """IRI stable d'un DataProduct, `{base_uri}/dataset/{id}` : son
+    dct:identifier, et la cible des liens vers lui (ADR-0006 §4)."""
+
+    return f"{base_uri}/dataset/{_dataset_id_from_urn(dataproduct_urn)}"
+
+
+def _read_parent_iri(
+    dp: Any, base_uri: str, title: str, urn: str, issues: list[ValidationIssue]
+) -> str | None:
+    """IRI stable du parent direct (ADR-0006). Le parent n'est pas lu : son
+    IRI ne dépend que de son id. Une valeur qui n'est pas un URN de
+    DataProduct est ignorée avec un WARNING : elle donnerait une IRI fausse."""
+
+    parent_urn = parent_data_product(dp)
+    if not parent_urn:
+        return None
+    if parent_urn.startswith(DATAPRODUCT_URN_PREFIX):
+        return _stable_iri(base_uri, parent_urn)
+    issues.append(
+        ValidationIssue(
+            severity=Severity.WARNING,
+            dataset_name=title,
+            dataset_urn=urn,
+            rdf_property="dcat:qualifiedRelation",
+            datahub_field="dataProductProperties.parentDataProduct",
+            message=f"URN de DataProduct attendu, parent ignoré ({parent_urn!r})",
+        )
+    )
+    return None
 
 
 def _warn_undeclared_properties(
@@ -321,6 +355,7 @@ def read_data_product(
         issues,
     )
     pages = _read_pages(entity, title, dataproduct_urn, issues)
+    parent_iri = _read_parent_iri(dp, base_uri, title, dataproduct_urn, issues)
 
     # --- Champs structured properties, valeurs simples ---
     acronym = props.get_string(ctx, entity, "acronym", title, dataproduct_urn, issues)
@@ -462,7 +497,7 @@ def read_data_product(
     return HealthDataset(
         source_urn=dataproduct_urn,
         dataset_id=dataset_id,
-        identifier=f"{base_uri}/dataset/{dataset_id}",
+        identifier=_stable_iri(base_uri, dataproduct_urn),
         title=title,
         description=description,
         acronym=acronym,
@@ -499,6 +534,7 @@ def read_data_product(
         is_referenced_by=is_referenced_by,
         landing_page=landing_page,
         pages=pages,
+        parent_iri=parent_iri,
         distributions=tuple(distributions),
         samples=tuple(samples),
         issues=issues,

@@ -5,6 +5,8 @@ id: dhhc-verify-venues
 domain: urn:li:domain:dhhc-verify
 display_name: Venues et sejours des patients
 description: Enregistrements de venues et sejours.
+# Serveur 1.8+ : dcat:qualifiedRelation (rôle `up`) vers le parent (#146).
+parent_data_product: urn:li:dataProduct:dhhc-verify-parcours
 # globalTags → dcat:keyword (obligatoire).
 tags:
   - venues

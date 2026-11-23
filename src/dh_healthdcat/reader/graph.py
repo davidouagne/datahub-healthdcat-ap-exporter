@@ -160,6 +160,16 @@ ASPECTS_READ: dict[str, tuple[str, ...]] = {
 }
 
 
+def parent_data_product(properties: Any) -> str | None:
+    """`dataProductProperties.parentDataProduct` (serveur 1.8+), sinon None.
+
+    Adaptation de version constatée (#146, ADR-0004 §4) : un serveur 1.7 ne
+    renvoie pas le champ, et le client 1.7.0 (borne basse de la plage) ne le
+    déclare même pas sur `DataProductPropertiesClass`."""
+
+    return getattr(properties, "parentDataProduct", None)
+
+
 def _entity_type(urn: str) -> str:
     """`urn:li:<type>:…` → `<type>`."""
 

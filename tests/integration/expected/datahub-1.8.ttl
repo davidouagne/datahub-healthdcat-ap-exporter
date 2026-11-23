@@ -41,6 +41,7 @@
     dcat:distribution <distribution:1cb84b78-e0aa-5ed6-8310-6b92fe68baeb> ;
     dcat:keyword "sejours",
         "venues" ;
+    dcat:qualifiedRelation <relationship:60943cf9-2fed-5068-850a-b16acdf27087> ;
     dcat:theme <http://publications.europa.eu/resource/authority/data-theme/HEAL> ;
     dpv:hasPurpose <purpose:5fdc253d-a384-5f9f-aa59-abc9fc9eabe3> .
 
@@ -107,6 +108,10 @@
 
 <purpose:5fdc253d-a384-5f9f-aa59-abc9fc9eabe3> a dpv:Purpose ;
     dct:description "Recherche et pilotage de l'activite hospitaliere."@fr .
+
+<relationship:60943cf9-2fed-5068-850a-b16acdf27087> a dcat:Relationship ;
+    dct:relation <https://example.org/dataset/dhhc-verify-parcours> ;
+    dcat:hadRole <http://www.iana.org/assignments/relation/up> .
 
 <rights:da9d9d10-1afb-56e6-9773-4d05de54b044> a dct:RightsStatement ;
     rdfs:label "https://eds.example.org/licence"@fr .
