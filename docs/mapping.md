@@ -17,6 +17,13 @@ Un asset qui n'est pas un Dataset DataHub (dashboard, chart, type `api` du
 serveur 1.9…) n'est pas exporté : WARNING s'il aurait été lu, rien s'il est
 hors des ports.
 
+Un asset membre de plusieurs DataProducts reçoit une distribution distincte
+dans chacun, avec un WARNING :
+
+- partage entre deux DataProducts sélectionnés : sur le second (#144) ;
+- partage avec un DataProduct hors sélection : d'après l'aspect asset
+  `dataProducts` (serveur 1.8+, absent en 1.7 : rien n'est signalé), #189.
+
 ## Espaces de noms (`mapping/namespaces.py`)
 
 Alignés sur `queries.yaml:prefixes_ttl` côté HDH. `DCT` est un alias de

@@ -10,6 +10,7 @@ boucles."""
 from __future__ import annotations
 
 import copy
+from types import SimpleNamespace as NS
 
 from rdflib import Graph
 
@@ -19,9 +20,11 @@ from dh_healthdcat.pipeline import Prepared, Rejected, Unreadable, prepare
 from dh_healthdcat.validate.shacl import validate_graph
 from tests.fixtures.fake_datahub import (
     ALL_DATAPRODUCT_URNS,
+    ASSET_URN,
     BASE_URI,
     DATAPRODUCT_URN,
     NONCONFORMING_DATAPRODUCT_URN,
+    SAMPLE_URN,
     UNREADABLE_DATAPRODUCT_URN,
     build_context,
 )
@@ -145,20 +148,89 @@ def test_shared_asset_gets_one_distribution_node_per_dataproduct():
     assert validate_graph(merged).conforms is True
 
 
+def _shared(outcome) -> list:
+    return [i for i in outcome.dataset.issues if "partagé avec" in i.message]
+
+
 def test_shared_asset_is_reported_on_the_later_dataproduct_only():
     ctx = build_context()
     _add_twin_sharing_assets(ctx)
 
     first, second = list(prepare(ctx, [DATAPRODUCT_URN, TWIN_DATAPRODUCT_URN], base_uri=BASE_URI))
 
-    def shared(outcome):
-        return [i for i in outcome.dataset.issues if "partagé avec" in i.message]
-
-    assert shared(first) == []
+    assert _shared(first) == []
     # Distribution et échantillon sont tous deux partagés.
-    assert len(shared(second)) == 2
-    assert all(i.severity is Severity.WARNING for i in shared(second))
-    assert all('"Venues et sejours des patients"' in i.message for i in shared(second))
+    assert len(_shared(second)) == 2
+    assert all(i.severity is Severity.WARNING for i in _shared(second))
+    assert all('"Venues et sejours des patients"' in i.message for i in _shared(second))
+
+
+UNSELECTED_DATAPRODUCT_URN = "urn:li:dataProduct:hors-selection"
+
+
+def test_asset_shared_with_an_unselected_dataproduct_is_reported():
+    """#189 : l'aspect asset `dataProducts` (serveur 1.8+) révèle un partage
+    même quand l'autre DataProduct n'est pas sélectionné."""
+
+    ctx = build_context()
+    ctx.graph._entities[ASSET_URN]["dataProducts"].dataProducts.append(
+        NS(destinationUrn=UNSELECTED_DATAPRODUCT_URN, outputPort=False)
+    )
+
+    [outcome] = list(prepare(ctx, [DATAPRODUCT_URN], base_uri=BASE_URI))
+
+    [warning] = _shared(outcome)
+    assert warning.severity is Severity.WARNING
+    assert warning.datahub_field == "dataProducts"
+    assert ASSET_URN in warning.message
+    assert UNSELECTED_DATAPRODUCT_URN in warning.message
+    assert "hors sélection" in warning.message
+    assert isinstance(outcome, Prepared)
+
+
+def test_asset_shared_with_an_unselected_dataproduct_is_reported_once():
+    """Un DataProduct cité deux fois par l'aspect ne double pas l'avertissement."""
+
+    ctx = build_context()
+    for _ in range(2):
+        ctx.graph._entities[ASSET_URN]["dataProducts"].dataProducts.append(
+            NS(destinationUrn=UNSELECTED_DATAPRODUCT_URN, outputPort=False)
+        )
+
+    [outcome] = list(prepare(ctx, [DATAPRODUCT_URN], base_uri=BASE_URI))
+
+    assert len(_shared(outcome)) == 1
+
+
+def test_asset_shared_within_the_selection_is_reported_once():
+    """Un partage entre deux DataProducts sélectionnés reste signalé une seule
+    fois, sur le second (#144), même si l'aspect le révèle dès le premier."""
+
+    ctx = build_context()
+    _add_twin_sharing_assets(ctx)
+    for asset in (ASSET_URN, SAMPLE_URN):
+        ctx.graph._entities[asset]["dataProducts"].dataProducts.append(
+            NS(destinationUrn=TWIN_DATAPRODUCT_URN, outputPort=False)
+        )
+
+    first, second = list(prepare(ctx, [DATAPRODUCT_URN, TWIN_DATAPRODUCT_URN], base_uri=BASE_URI))
+
+    assert _shared(first) == []
+    assert len(_shared(second)) == 2
+    assert not any("hors sélection" in i.message for i in _shared(second))
+
+
+def test_without_data_products_aspect_nothing_is_reported():
+    """Serveur 1.7, ou client 1.7.0 qui ne connaît pas l'aspect : rien."""
+
+    ctx = build_context()
+    for asset in (ASSET_URN, SAMPLE_URN):
+        del ctx.graph._entities[asset]["dataProducts"]
+
+    [outcome] = list(prepare(ctx, [DATAPRODUCT_URN], base_uri=BASE_URI))
+
+    assert _shared(outcome) == []
+    assert isinstance(outcome, Prepared)
 
 
 def test_shared_asset_ids_are_stable_across_runs():

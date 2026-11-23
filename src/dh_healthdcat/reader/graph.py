@@ -155,9 +155,25 @@ ASPECTS_READ: dict[str, tuple[str, ...]] = {
         "deprecation",
         "globalTags",
         "structuredProperties",
+        # Serveur 1.8+ ; un GMS 1.7 ignore ce nom inconnu (sondé, #189).
+        "dataProducts",
     ),
     "glossaryTerm": ("glossaryTermInfo",),
 }
+
+
+def data_products_of(entity: SemitypedEntity) -> tuple[str, ...]:
+    """URN des DataProducts dont l'asset est membre, d'après l'aspect asset
+    `dataProducts` (serveur 1.8+), sinon `()`.
+
+    Adaptation de version constatée (#189, ADR-0004 §4) : un serveur 1.7 ne
+    renvoie pas l'aspect, et le client 1.7.0 l'écarte (aspect inconnu). Miroir
+    maintenu par DataHub, pour contrôle seulement : la source qui fait foi
+    reste `dataProductProperties.assets`."""
+
+    aspect = entity.get("dataProducts")
+    associations = getattr(aspect, "dataProducts", None) or ()
+    return tuple(a.destinationUrn for a in associations)
 
 
 def parent_data_product(properties: Any) -> str | None:

@@ -48,6 +48,12 @@ def _sp(name: str, *values: str) -> NS:
     return NS(propertyUrn=f"urn:li:structuredProperty:{name}", values=list(values))
 
 
+def _member_of(*dataproduct_urns: str) -> NS:
+    """Aspect asset `dataProducts` (serveur 1.8+) : DataProducts dont l'asset est membre."""
+
+    return NS(dataProducts=[NS(destinationUrn=u, outputPort=False) for u in dataproduct_urns])
+
+
 def _entities() -> dict[str, dict]:
     return {
         DATAPRODUCT_URN: {
@@ -152,6 +158,7 @@ def _entities() -> dict[str, dict]:
                 ]
             ),
             "deprecation": None,
+            "dataProducts": _member_of(DATAPRODUCT_URN),
             "globalTags": NS(tags=[]),
             "structuredProperties": NS(
                 properties=[
@@ -174,6 +181,7 @@ def _entities() -> dict[str, dict]:
             "editableDatasetProperties": None,
             "schemaMetadata": NS(fields=[]),
             "deprecation": None,
+            "dataProducts": _member_of(DATAPRODUCT_URN),
             "globalTags": NS(tags=[NS(tag="urn:li:tag:dcat:sample")]),
             "structuredProperties": NS(
                 properties=[
