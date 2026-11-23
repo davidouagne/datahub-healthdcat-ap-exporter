@@ -96,6 +96,11 @@ deux `dct:rights` hérités différents, la contrainte `maxCount 1` de
 l'aspect 1.8 (en comparant les assets de la sélection). L'aspect `dataProducts` permet
 seulement de le signaler même quand l'autre Data Product n'est pas sélectionné.
 
+*Mise à jour du 2026-11-23 (#189) :* un GMS 1.7.0.1 ignore un nom d'aspect inconnu,
+comme un GMS 1.8 (`entitiesV2?aspects=List(dataProducts)` → 200, `datasetKey` seul).
+`dataProducts` est donc demandé à tous les serveurs de la plage ; l'avertissement
+« hors sélection » n'apparaît qu'à partir d'un serveur 1.8.
+
 ### Hors périmètre 1.8
 
 - Assets de type `api` (1.9) → candidat `dcat:DataService` / `dcat:accessService`. À
@@ -125,7 +130,7 @@ Sous-issues de #124 ouvertes à partir de cette recherche :
 | #145 | `dcat:landingPage` + `foaf:page` | fait (2026-10-29) |
 | #146 | Hiérarchie `parentDataProduct` | fait (2026-11-23, PR #190) |
 | #147 | Output ports → `dcat:distribution` | fait (2026-10-29) |
-| #189 | Aspect asset `dataProducts` (asset partagé hors sélection) | sonde d'un GMS 1.7 d'abord |
+| #189 | Aspect asset `dataProducts` (asset partagé hors sélection) | fait (2026-11-23) : sonde GMS 1.7 concluante, WARNING hors sélection |
 | #191 | Élargir la plage à 1.9 | fait (2026-11-23) : client 1.9.0 publié, contrôle Docker 1.9.0 passé, référence identique à 1.8 |
 
 ## Sources
