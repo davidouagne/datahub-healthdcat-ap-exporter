@@ -100,6 +100,10 @@ seulement de le signaler même quand l'autre Data Product n'est pas sélectionn�
 
 - Assets de type `api` (1.9) → candidat `dcat:DataService` / `dcat:accessService`. À
   instruire avec l'élargissement 1.9.
+  *Mise à jour du 2026-11-23 (#191) :* entité `api` (URN `urn:li:api:<id>`). Depuis #142,
+  tout asset qui n'est pas un Dataset (dashboard, chart, `api`) faisait échouer l'export
+  (`type d'entité absent de ASPECTS_READ`). Il est désormais ignoré avec un WARNING. Son
+  export en `dcat:DataService` reste à décider.
 
 ## Questions ouvertes
 
@@ -115,12 +119,14 @@ Sous-issues de #124 ouvertes à partir de cette recherche :
 | Ticket | Sujet | État |
 |---|---|---|
 | #141 | Élargir la plage à 1.8 | fait (2026-11-23) : client 1.8.0 publié, contrôle Docker 1.8.0 passé |
-| #142 | `ReadContext` demande explicitement les aspects lus | prêt |
-| #143 | `dct:modified` jamais émis | source à choisir |
-| #144 | Asset partagé entre DataProducts | prêt |
-| #145 | `dcat:landingPage` + `foaf:page` | prêt |
-| #146 | Hiérarchie `parentDataProduct` | ADR-0006 ; bloqué par #141 |
-| #147 | Output ports → `dcat:distribution` | ADR-0006 ; prêt |
+| #142 | `ReadContext` demande explicitement les aspects lus | fait (2026-10-29) |
+| #143 | `dct:modified` jamais émis | fait (2026-10-29) |
+| #144 | Asset partagé entre DataProducts | fait (2026-10-29) |
+| #145 | `dcat:landingPage` + `foaf:page` | fait (2026-10-29) |
+| #146 | Hiérarchie `parentDataProduct` | fait (2026-11-23, PR #190) |
+| #147 | Output ports → `dcat:distribution` | fait (2026-10-29) |
+| #189 | Aspect asset `dataProducts` (asset partagé hors sélection) | sonde d'un GMS 1.7 d'abord |
+| #191 | Élargir la plage à 1.9 | fait (2026-11-23) : client 1.9.0 publié, contrôle Docker 1.9.0 passé, référence identique à 1.8 |
 
 ## Sources
 
